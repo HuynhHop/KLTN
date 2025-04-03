@@ -12,6 +12,7 @@ import Layout from "./Layout";
 import Home from "./pages/Home";
 import HotelSearchResults from "./components/HotelSearchResults";
 import AdminLayout from "./admin/Config/AdminLayout";
+// import HotelInfo from "./components/HotelInfo";
 
 const theme = createTheme();
 
@@ -29,7 +30,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/home" element={<Home />} />
             <Route path="/resultHotel" element={<HotelSearchResults />} />
-            <Route path="/hotelInfo" element={<HotelInfo />} />
+            {/* <Route path="/hotelInfo" element={<HotelInfo />} /> */}
           </Route>
         </Routes>
       </Router>
