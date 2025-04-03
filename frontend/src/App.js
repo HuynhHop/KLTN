@@ -6,6 +6,7 @@ import Register from "./pages/Register"
 import Layout from "./Layout"
 import Home from "./pages/Home"
 import HotelSearchResults from "./components/HotelSearchResults"
+import HotelInfo from "./pages/HotelInfo"
 
 const theme = createTheme()
 
@@ -23,6 +24,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/home" element={<Home />} />
             <Route path="/resultHotel" element={<HotelSearchResults />} />
+            <Route path="/hotelInfo" element={<HotelInfo />} />
           </Route>
         </Routes>
       </Router>
