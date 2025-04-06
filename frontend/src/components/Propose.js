@@ -1,0 +1,119 @@
+import React, { useState } from "react";
+import "../css/Propose.css";
+import RoomDetailModal from "./RoomDetailModal";
+
+const Propose = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showMoreAmenities, setShowMoreAmenities] = useState(false);
+  const [showDetails, setShowDetails] = useState(false); // Trạng thái để hiển thị chi tiết
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const room = {
+    name: "Premium Deluxe Twin Room",
+    people: "2 người",
+    maxPeople: "4",
+    standardPeople: "2",
+    area: "50 m² / 538 ft²",
+    view: "Hướng Vườn",
+    beds: "2 Giường đơn",
+    priceOld: "2.560.667 ₫",
+    priceDiscounted: "2.114.020 ₫",
+    coupon: "DEALVUI25",
+    finalPrice: "1.944.898 ₫",
+    finalTotal: "2.228.878 ₫",
+    cashback: "Hoàn 22.288 ₫ vào Mytour Cash",
+    images: [
+      "https://lottecityhotel.jp/assets/images/room/premium_deluxe_twin/mv_slide01_pc.jpg",
+      "https://lottecityhotel.jp/assets/images/room/premium_deluxe_twin/mv_slide02_pc.jpg",
+      "https://lottecityhotel.jp/assets/images/room/premium_deluxe_twin/mv_slide03_pc.jpg",
+    ],
+    amenities: [
+      "Điều hòa nhiệt độ", "Sàn gỗ", "Tivi màn hình phẳng", "Dép đi trong nhà", "Tủ", "Minibar", "Két an toàn",
+      "Dọn phòng hàng ngày", "Ấm đun nước điện", "Máy sấy tóc", "Giá treo quần áo", "Bàn là", "Khăn tắm", "Cửa sổ",
+      "Điện thoại", "Không hút thuốc", "Đồ vệ sinh cá nhân miễn phí", "Truyền hình cáp", "Phòng tắm riêng",
+      "Bình nước nóng", "Tivi", "Wifi miễn phí", "Vòi hoa sen", "Trà, cà phê miễn phí", "Nước suối miễn phí",
+      "Kệ để hành lý", "Tủ quần áo", "Truyền hình vệ tinh", "Dịch vụ báo thức"
+    ]
+  };
+
+  return (
+    <div className="propose-container">
+      <div className="propose-header">⭐ Được đề xuất</div>
+      <div className="propose-content">
+        <div className="propose-image">
+          <img src={room.images[0]} alt={room.name} />
+          <button className="propose-view-details" onClick={openModal}>
+            Xem chi tiết phòng »
+          </button>
+        </div>
+
+        <div className="propose-info">
+          <h3>{room.name}</h3>
+          <p className="light-text">{room.people} | {room.area} | {room.view}</p>
+          <p className="recent-booked">🔥 Vừa được đặt 3 giờ trước</p>
+          <ul className="bullet-list">
+            <li>✅ Hoàn huỷ một phần</li>
+            <li>✅ Giá đã bao gồm bữa sáng</li>
+            <li>⚠️ Xác nhận trong 15 phút</li>
+          </ul>
+
+          {/* Khung hiển thị "Ưu đãi bao gồm" và "Thông tin bổ sung" */}
+          <div className="propose-advantages">
+            <div className="advantage-frame" onClick={() => setShowDetails(!showDetails)}>
+              <p><b>Ưu đãi bao gồm:</b> Ăn sáng</p>
+              <p><b>Thông tin bổ sung:</b> Đặt phòng không đổi tên khách</p>
+            </div>
+          </div>
+
+          {/* Hiển thị chi tiết khi nhấn vào phần "Ưu đãi bao gồm" */}
+          {showDetails && (
+            <div className="room-details">
+              <p><b>Chính sách hủy:</b> Bạn sẽ được hoàn 52.000 ₫ nếu hủy phòng trước 15:00 ngày 04/04/2025. Bạn sẽ không được hoàn tiền nếu hủy phòng từ 15:00 ngày 04/04/2025.</p>
+              <p><b>Bữa ăn:</b> Giá đã bao gồm bữa sáng</p>
+              <p><b>Xác nhận:</b> Phòng này có mức giá rất rẻ nên đang bán rất chạy. Để đảm bảo bạn có được ưu đãi này, chúng tôi cần khách sạn xác nhận còn phòng hay không. Khách sạn thường xác nhận yêu cầu đặt phòng trong vòng 15 phút. Nếu yêu cầu đặt phòng của bạn không thể xác nhận, chúng tôi sẽ hoàn tiền đầy đủ.</p>
+              <p><b>Hóa đơn:</b> An tâm đặt phòng, Mytour hỗ trợ xuất hoá đơn nhanh chóng, tiết kiệm thời gian cho bạn.</p>
+              <p><b>Ưu đãi:</b> Ăn sáng</p>
+              <p><b>Thông tin bổ sung:</b> Đặt phòng không đổi tên khách</p>
+            </div>
+          )}
+
+          <div className="propose-amenities">
+            {room.amenities.slice(0, 3).map((item, i) => <span key={i}>{item}</span>)}
+            <span className="more-amenities" onClick={() => setShowMoreAmenities(!showMoreAmenities)}>
+              {showMoreAmenities ? "Ẩn tiện ích" : `+ ${room.amenities.length - 3} tiện ích`}
+            </span>
+
+            {/* Hiển thị thêm tiện ích nếu trạng thái showMoreAmenities là true */}
+            {showMoreAmenities && (
+              <div className="full-amenities">
+                {room.amenities.slice(3).map((item, i) => (
+                  <span key={i}>{item}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="propose-bed">
+          <p>{room.beds}</p>
+        </div>
+
+        <div className="propose-pricing">
+          <p className="old-price">-18% <s>{room.priceOld}</s></p>
+          <p className="discounted-price">{room.priceDiscounted}</p>
+          <p className="coupon">Nhập mã: <b>{room.coupon}</b> (-8%)</p>
+          <p className="final-price">{room.finalPrice}</p>
+          <p className="total-price">Giá cuối cùng {room.finalTotal}</p>
+          <button className="book-btn">Đặt phòng</button>
+          <p className="cashback">{room.cashback}</p>
+        </div>
+      </div>
+
+      {isModalOpen && <RoomDetailModal room={room} onClose={closeModal} />}
+    </div>
+  );
+};
+
+export default Propose;

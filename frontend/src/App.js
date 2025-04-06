@@ -12,7 +12,9 @@ import Layout from "./Layout";
 import Home from "./pages/Home";
 import HotelSearchResults from "./components/HotelSearchResults";
 import AdminLayout from "./admin/Config/AdminLayout";
-// import HotelInfo from "./components/HotelInfo";
+import HotelInfo from "./pages/HotelInfo";
+import HotelCheckout from "./pages/HotelCheckout";
+import AccountPage from "./pages/AccountPage";
 
 const theme = createTheme();
 
@@ -30,7 +32,9 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/home" element={<Home />} />
             <Route path="/resultHotel" element={<HotelSearchResults />} />
-            {/* <Route path="/hotelInfo" element={<HotelInfo />} /> */}
+            <Route path="/hotelInfo" element={<HotelInfo />} />
+            <Route path="/checkout" element={<HotelCheckout />} />
+            <Route path="/account" element={<AccountPage />} />
           </Route>
         </Routes>
       </Router>
