@@ -135,6 +135,7 @@ class UserController {
     }
   }
 
+  // [POST] /user/loginGoogle
   async loginWithGoogle(req, res) {
     const { tokenId } = req.body;
 
@@ -173,8 +174,8 @@ class UserController {
       res.status(200).json({
         success: true,
         message: "Login with Google successful",
-        token: accessToken,
-        user,
+        accessToken,
+        userData: user,
       });
     } catch (err) {
       console.error(err);
@@ -186,6 +187,63 @@ class UserController {
     }
   }
 
+  // [POST] /user/loginFacebook
+  async loginWithFacebook(req, res) {
+    const { TokenId, userId } = req.body;
+
+    try {
+      // 1. Gửi yêu cầu đến Facebook để xác minh token và lấy thông tin người dùng
+      const response = await fetch(
+        `https://graph.facebook.com/v12.0/${userId}?fields=id,name,email,picture&access_token=${TokenId}`
+      );
+      const data = await response.json();
+
+      if (!data || data.error) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Facebook token",
+        });
+      }
+
+      const { id, name, email, picture } = data;
+
+      // 2. Kiểm tra user có tồn tại chưa
+      let user = await User.findOne({ email, provider: "facebook" });
+
+      if (!user) {
+        // 3. Nếu chưa có → tạo user mới
+        user = new User({
+          username: `facebook_${id}`,
+          fullname: name,
+          email: email || null,
+          phone: null,
+          avatar: picture?.data?.url || null,
+          role: 3, // mặc định là khách
+          provider: "facebook", // đánh dấu là tài khoản facebook
+          password: id, // chỉ để vượt qua validate, không dùng để đăng nhập
+        });
+
+        await user.save();
+      }
+
+      // 4. Trả về access token
+      const accessToken = generateAccessToken(user._id, user.role);
+
+      res.status(200).json({
+        success: true,
+        message: "Login with Facebook successful",
+        accessToken,
+        userData: user,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        success: false,
+        message: "Facebook login failed",
+        error: err.message,
+      });
+    }
+  }
   // [POST] /user/createAccount
   async createAccRole(req, res) {
     try {

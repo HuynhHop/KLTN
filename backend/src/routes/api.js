@@ -89,6 +89,7 @@ router.post("/user/current", verifyAccessToken, userController.current);
 router.post("/user/register", userController.register);
 router.post("/user/login", userController.login);
 router.post("/user/loginGoogle", userController.loginWithGoogle);
+router.post("/user/loginFacebook", userController.loginWithFacebook);
 router.post("/user/createAccount", userController.createAccRole);
 
 router.put("/user/refreshAccessToken", userController.refreshAccessToken);

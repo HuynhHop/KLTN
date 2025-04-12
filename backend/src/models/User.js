@@ -18,14 +18,13 @@ const userSchema = new mongoose.Schema(
     },
     provider: {
       type: String,
-      enum: ["local", "google"],
+      enum: ["local", "google", "facebook"],
       default: "local",
     },
     email: {
       type: String,
       maxLength: 255,
       required: true,
-      unique: true,
       validate: {
         validator: function (v) {
           // Regex kiểm tra định dạng email
@@ -36,10 +35,9 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: true,
       validate: {
         validator: function (v) {
-          return /^\d{10}$/.test(v); // kiểm tra nếu chuỗi số điện thoại có đúng 10 số
+          return v === null || /^\d{10}$/.test(v); // kiểm tra nếu chuỗi số điện thoại có đúng 10 số
         },
         message: (props) => `${props.value} is not a valid phone number!`,
       },
@@ -56,6 +54,8 @@ const userSchema = new mongoose.Schema(
 
   { timestamps: true }
 );
+
+userSchema.index({ email: 1, provider: 1 }, { unique: true });
 
 const BCRYPT_COST = 4;
 
