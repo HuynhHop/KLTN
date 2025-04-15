@@ -16,29 +16,63 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const clientId = process.env.REACT_APP_FACEBOOK_CLIENT_ID;
-  console.log("Facebook Client ID:", clientId);
+  const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Login attempt with:", { username, password });
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  // };
+
+  const handleLogin = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("user", JSON.stringify(data.userData));
+        console.log("User data saved to localStorage:", data.userData);
+        const decodedToken = jwtDecode(data.accessToken);
+        const userRole = decodedToken.role;
+        setIsModalOpen(true); // Show modal on successful login
+
+        // Automatically navigate to home after 3 seconds
+        setTimeout(() => {
+          setIsModalOpen(false);
+          if (userRole === 3) {
+            navigate("/home");
+          } else {
+            navigate("/admin");
+          }
+        }, 2000);
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (error) {
+      setError("An error occurred");
+    }
   };
 
   const handleGoogle = async (credentialReponse) => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/v1/api/user/loginGoogle",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ tokenId: credentialReponse.credential }),
-        }
-      );
+      const response = await fetch(`${apiUrl}/user/loginGoogle`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tokenId: credentialReponse.credential }),
+      });
 
       const data = await response.json();
 
@@ -67,19 +101,16 @@ const Login = () => {
   const handleFacebok = async (response) => {
     try {
       console.log("Facebook login data:", response);
-      const res = await fetch(
-        "http://localhost:8080/v1/api/user/loginFacebook",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: response.userID,
-            TokenId: response.accessToken,
-          }),
-        }
-      );
+      const res = await fetch(`${apiUrl}/user/loginFacebook`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: response.userID,
+          TokenId: response.accessToken,
+        }),
+      });
 
       const data = await res.json();
 
@@ -147,11 +178,7 @@ const Login = () => {
           >
             Sign in
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ mt: 1, width: "100%" }}
-          >
+          <Box component="form" sx={{ mt: 1, width: "100%" }}>
             <TextField
               margin="dense" // Giảm khoảng cách giữa các input
               required
@@ -186,9 +213,11 @@ const Login = () => {
               }}
             />
             <Button
-              type="submit"
+              // type="submit"
+              type="button"
               fullWidth
               variant="contained"
+              onClick={handleLogin}
               sx={{
                 mt: 1.5,
                 mb: 1,
@@ -218,7 +247,7 @@ const Login = () => {
                 style={{ width: "100%" }} // Đặt chiều rộng của nút GoogleLogin
               />
               <FacebookLogin
-                appId="1088597931155576"
+                appId={clientId}
                 autoLoad={false}
                 fields="name,email,picture"
                 callback={handleFacebok}
@@ -275,6 +304,52 @@ const Login = () => {
           tools. Sign in to get started.
         </Typography>
       </Grid>
+      {isModalOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "8px",
+              textAlign: "center",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              width: "300px",
+            }}
+          >
+            <h2 style={{ marginBottom: "10px" }}>Chúc mừng!</h2>
+            <p style={{ marginBottom: "20px" }}>Đăng nhập thành công!</p>
+            <button
+              onClick={() => {
+                setIsModalOpen(false);
+                navigate("/home");
+              }}
+              style={{
+                backgroundColor: "#4CAF50",
+                color: "white",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </Grid>
   );
 };

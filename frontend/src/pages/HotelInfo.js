@@ -16,14 +16,12 @@ const HotelInfo = () => {
   const [hotel, setHotel] = useState(null);
   const [recommendedRooms, setRecommendedRooms] = useState([]);
   const [modalContent, setModalContent] = useState(null);
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     // Fetch hotel details
     const fetchHotelDetails = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8080/v1/api/hotels/${hotelId}`
-        );
+        const response = await fetch(`${apiUrl}/hotels/${hotelId}`);
         const data = await response.json();
         if (data) {
           setHotel(data);
@@ -36,7 +34,7 @@ const HotelInfo = () => {
     // const fetchRecommendedRooms = async () => {
     //   try {
     //     const response = await fetch(
-    //       `http://localhost:8080/v1/api/rooms/hotel/${hotelId}`
+    //       `${apiUrl}/rooms/hotel/${hotelId}`
     //     );
     //     const data = await response.json();
     //     if (data.success) {

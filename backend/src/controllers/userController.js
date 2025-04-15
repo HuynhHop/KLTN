@@ -272,7 +272,10 @@ class UserController {
           });
         }
 
-        const isUsernameExist = await User.findOne({ username });
+        const isUsernameExist = await User.findOne({
+          username,
+          provider: "local",
+        });
         if (isUsernameExist) {
           return res.status(400).json({
             success: false,
@@ -344,7 +347,10 @@ class UserController {
         }
 
         // Kiểm tra xem username đã tồn tại chưa
-        let isUsernameExist = await User.findOne({ username });
+        let isUsernameExist = await User.findOne({
+          username,
+          provider: "local",
+        });
         if (isUsernameExist) {
           return res.status(400).json({
             success: false,
@@ -352,7 +358,7 @@ class UserController {
           });
         }
 
-        let isEmailExist = await User.findOne({ email });
+        let isEmailExist = await User.findOne({ email, provider: "local" });
         if (isEmailExist) {
           return res.status(400).json({
             success: false,
@@ -361,7 +367,7 @@ class UserController {
         }
 
         // Kiểm tra xem phone đã tồn tại chưa
-        let isPhoneExist = await User.findOne({ phone });
+        let isPhoneExist = await User.findOne({ phone, provider: "local" });
         if (isPhoneExist) {
           return res.status(400).json({
             success: false,
@@ -629,7 +635,10 @@ class UserController {
       // Tạo tài khoản thì ms cần check email exist để loại
       if (action === "CreateAccount") {
         // Kiểm tra xem username đã tồn tại chưa
-        let isUsernameExist = await User.findOne({ username });
+        let isUsernameExist = await User.findOne({
+          username,
+          provider: "local",
+        });
         if (isUsernameExist) {
           return res.status(400).json({
             success: false,
@@ -637,7 +646,7 @@ class UserController {
           });
         }
 
-        let isEmailExist = await User.findOne({ email });
+        let isEmailExist = await User.findOne({ email, provider: "local" });
         if (isEmailExist) {
           return res.status(400).json({
             success: false,
@@ -646,7 +655,7 @@ class UserController {
         }
 
         // Kiểm tra xem phone đã tồn tại chưa
-        let isPhoneExist = await User.findOne({ phone });
+        let isPhoneExist = await User.findOne({ phone, provider: "local" });
         if (isPhoneExist) {
           return res.status(400).json({
             success: false,
@@ -724,7 +733,7 @@ class UserController {
         return res
           .status(400)
           .json({ success: false, message: "Missing inputs" });
-      let user = await User.findOne({ email });
+      let user = await User.findOne({ email, provider: "local" });
       if (!user) throw new Error("User not existed !!!");
       let otp_code = Math.floor(100000 + Math.random() * 900000);
       otp_code = otp_code.toString();
@@ -827,7 +836,7 @@ class UserController {
       }
 
       // Nếu muốn dùng object thuần (plain obj) thì dùng hàm toObject()
-      const response = await User.findOne({ username });
+      const response = await User.findOne({ username, provider: "local" });
       // Phải có else ở dưới vì khi không đúng mật khẩu thì hàm isCorrectPassword vẫn không sinh ra lỗi
       if (response && (await response.isCorrectPassword(password))) {
         // Phải dùng (plain Obj) để đưa instance mongooseDB về thành object thường
@@ -900,7 +909,7 @@ class UserController {
           .status(400)
           .json({ success: false, message: "Missing email input" });
 
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email, provider: "local" });
       if (!user) throw new Error("User not found with this email");
 
       // Generate OTP
@@ -990,7 +999,7 @@ class UserController {
           .status(400)
           .json({ success: false, message: "Passwords do not match" });
 
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email, provider: "local" });
       if (!user) throw new Error("User not found with this email");
 
       // Check if OTP matches and is not expired

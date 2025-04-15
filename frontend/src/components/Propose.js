@@ -7,12 +7,13 @@ const Propose = (hotelId) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showMoreAmenities, setShowMoreAmenities] = useState(false);
-  const [showDetails, setShowDetails] = useState(false); // Trạng thái để hiển thị chi tiết
+  const [showDetails, setShowDetails] = useState(false); // Trạng thái để hiển thị chi
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/v1/api/rooms/hotel/${hotelId.hotelId}`
+          `${apiUrl}/rooms/hotel/${hotelId.hotelId}`
         );
         const data = await response.json();
         if (data.success) {
@@ -30,9 +31,7 @@ const Propose = (hotelId) => {
 
   const openModal = async (roomId) => {
     try {
-      const response = await fetch(
-        `http://localhost:8080/v1/api/rooms/${roomId}`
-      );
+      const response = await fetch(`${apiUrl}/rooms/${roomId}`);
       const data = await response.json();
       if (data.success) {
         setSelectedRoom(data.data);
