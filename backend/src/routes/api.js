@@ -11,6 +11,7 @@ const supportRequestController = require("../controllers/supportRequestControlle
 const notificationController = require("../controllers/notificationController.js");
 const orderController = require("../controllers/orderController");
 const hotelController = require("../controllers/hotelController");
+const roomController = require("../controllers/roomController");
 const flightController = require("../controllers/flightController");
 const voucherController = require("../controllers/voucherController");
 const BlogController = require("../controllers/BlogController");
@@ -28,16 +29,29 @@ router.post(
   imageUpload.array("images", 15),
   hotelController.createHotel
 );
+router.get("/hotels/filter", hotelController.filterHotels);
 router.get("/hotels/", hotelController.getAllHotel);
 router.get("/hotels/:id", hotelController.getHotelById);
+router.get("/hotels/filter", hotelController.filterHotels);
 router.get("/hotels/province/:province", hotelController.getHotelsByProvince);
 router.get("/hotels/district/:district", hotelController.getHotelsByDistrict);
+router.get(
+  "/hotels/:hotelId/recommendrooms",
+  hotelController.getRecommendedRooms
+);
 router.put(
   "/hotels/:id",
   imageUpload.array("images", 15),
   hotelController.updateHotel
 );
 router.delete("/hotels/:id", hotelController.deleteHotel);
+
+router.get("/rooms/", roomController.getAllRooms);
+router.get("/rooms/:id", roomController.getRoomById);
+router.get("/rooms/hotel/:hotelId", roomController.getRoomsByHotelId);
+router.post("/rooms/create", roomController.createRoom);
+router.put("/rooms/:id", roomController.updateRoom);
+router.delete("/rooms/:id", roomController.deleteRoom);
 
 router.get("/orders", orderController.getAllOrder);
 router.get("/orders/user/:userId", orderController.getByUser);

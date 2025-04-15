@@ -1,6 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 
-const FilterComponent = () => {
+const FilterComponent = ({ onFilterChange }) => {
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [starRating, setStarRating] = useState([]);
+  const [amenities, setAmenities] = useState([]);
+
+  const handleCheckboxChange = (value, setState, state) => {
+    if (state.includes(value)) {
+      setState(state.filter((item) => item !== value));
+    } else {
+      setState([...state, value]);
+    }
+  };
+
+  const applyFilters = () => {
+    onFilterChange({
+      minPrice,
+      maxPrice,
+      starRating: starRating.join(","),
+      amenities: amenities.join(","),
+    });
+  };
+
   return (
     <div className="filter-container">
       <h3>Bộ lọc</h3>
@@ -13,6 +35,18 @@ const FilterComponent = () => {
           <span>Thấp nhất: 0₫</span>
           <span>Cao nhất: Không giới hạn</span>
         </div>
+        {/* <input
+          type="number"
+          placeholder="Thấp nhất"
+          value={minPrice}
+          onChange={(e) => setMinPrice(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Cao nhất"
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(e.target.value)}
+        /> */}
       </div>
 
       {/* Bộ lọc phổ biến */}
@@ -53,15 +87,21 @@ const FilterComponent = () => {
       <div className="filter-category">
         <h4>Hạng khách sạn</h4>
         <label>
-          <input type="checkbox" /> ⭐⭐⭐⭐⭐ (5 sao)
+          <input
+            type="checkbox"
+            onChange={() => handleCheckboxChange(5, setStarRating, starRating)}
+          />{" "}
+          ⭐⭐⭐⭐⭐ (5 sao)
         </label>
         <label>
-          <input type="checkbox" /> ⭐⭐⭐⭐ (4 sao)
-        </label>
-        <label>
-          <input type="checkbox" /> ⭐⭐⭐ (3 sao)
+          <input
+            type="checkbox"
+            onChange={() => handleCheckboxChange(4, setStarRating, starRating)}
+          />{" "}
+          ⭐⭐⭐⭐ (4 sao)
         </label>
       </div>
+      <button onClick={applyFilters}>Áp dụng</button>
     </div>
   );
 };

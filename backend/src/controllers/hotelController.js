@@ -198,6 +198,60 @@ class HotelController {
       res.status(500).json({ success: false, message: err.message });
     }
   }
+
+  async filterHotels(req, res) {
+    try {
+      const { minPrice, maxPrice, starRating, amenities, province } = req.query;
+
+      const filter = {};
+
+      if (minPrice || maxPrice) {
+        filter.pricePerNight = {};
+        if (minPrice) filter.pricePerNight.$gte = Number(minPrice);
+        if (maxPrice) filter.pricePerNight.$lte = Number(maxPrice);
+      }
+
+      if (starRating) {
+        filter.starRating = { $in: starRating.split(",").map(Number) };
+      }
+
+      if (amenities) {
+        filter.amenities = { $all: amenities.split(",") };
+      }
+
+      if (province) {
+        filter.province = new RegExp(province, "i");
+      }
+
+      const hotels = await Hotel.find(filter);
+      res.status(200).json({ success: true, data: hotels });
+    } catch (err) {
+      console.error("Error filtering hotels:", err);
+      res.status(500).json({ success: false, message: err.message });
+    }
+  }
+
+  async getRecommendedRooms(req, res) {
+    try {
+      const { hotelId } = req.params;
+
+      // Giả sử mỗi khách sạn có danh sách phòng trong trường `rooms`
+      const hotel = await Hotel.findById(hotelId).populate("rooms"); // Populate nếu có liên kết với model Room
+      if (!hotel) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Hotel not found" });
+      }
+
+      // Lọc danh sách phòng được đề xuất (ví dụ: dựa trên giá hoặc đánh giá)
+      const recommendedRooms = hotel.rooms.filter((room) => room.isRecommended);
+
+      res.status(200).json({ success: true, data: recommendedRooms });
+    } catch (err) {
+      console.error("Error fetching recommended rooms:", err);
+      res.status(500).json({ success: false, message: err.message });
+    }
+  }
 }
 
 module.exports = new HotelController();
