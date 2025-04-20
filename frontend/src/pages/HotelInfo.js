@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import HotelHeader from "../components/HotelHeader";
 import HotelImages from "../components/HotelImages";
 import HotelReviews from "../components/HotelReviews";
-import HotelReview2 from "../components/HotelReviews2";
+// import HotelReview2 from "../components/HotelReviews2";
 import HotelAmenities from "../components/HotelAmenities";
 import HotelLocation from "../components/HotelLocation";
 import Propose from "../components/Propose"; // ✅ Thêm Propose Component
@@ -14,7 +14,7 @@ const HotelInfo = () => {
   const [searchParams] = useSearchParams();
   const hotelId = searchParams.get("id"); // Lấy hotelId từ query string
   const [hotel, setHotel] = useState(null);
-  const [recommendedRooms, setRecommendedRooms] = useState([]);
+  // const [recommendedRooms, setRecommendedRooms] = useState([]);
   const [modalContent, setModalContent] = useState(null);
   const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
@@ -49,15 +49,15 @@ const HotelInfo = () => {
       fetchHotelDetails();
       // fetchRecommendedRooms();
     }
-  }, [hotelId]);
+  }, [hotelId, apiUrl]);
 
   const openModal = (content) => {
     setModalContent(content);
   };
 
-  const closeModal = () => {
-    setModalContent(null);
-  };
+  // const closeModal = () => {
+  //   setModalContent(null);
+  // };
 
   if (!hotel) {
     return <p>Loading...</p>;
@@ -65,13 +65,16 @@ const HotelInfo = () => {
 
   return (
     <div className="hotel-container">
-      <HotelHeader hotel={hotel} />
-      <HotelImages images={hotel.images} />
+      <HotelHeader hotel={hotel.data} />
+      <HotelImages images={hotel.data.images} />
       <div className="hotel-details">
         {/* ✅ Thêm HotelReviews vào */}
         <HotelReviews openModal={openModal} />
-        <HotelAmenities amenities={hotel.amenities} openModal={openModal} />
-        <HotelLocation location={hotel.location} openModal={openModal} />
+        <HotelAmenities
+          amenities={hotel.data.amenities}
+          openModal={openModal}
+        />
+        <HotelLocation location={hotel.data.location} openModal={openModal} />
       </div>
 
       {/* ✅ Thêm danh sách phòng được đề xuất */}

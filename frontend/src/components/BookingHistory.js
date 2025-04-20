@@ -22,7 +22,7 @@ const BookingHistory = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [apiUrl]);
   const getStatusClass = (status) => {
     switch (status) {
       case "booking_pending":

@@ -3,35 +3,35 @@ import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import hotel1_1 from "../assets/hotel1.jpg";
-import hotel1_2 from "../assets/hotel2.jpg";
-import hotel1_3 from "../assets/hotel3.jpeg";
-import hotel2_1 from "../assets/hotel3.jpeg";
-import hotel2_2 from "../assets/hotel1.jpg";
-import hotel2_3 from "../assets/hotel4.jpg";
+// import hotel1_1 from "../assets/hotel1.jpg";
+// import hotel1_2 from "../assets/hotel2.jpg";
+// import hotel1_3 from "../assets/hotel3.jpeg";
+// import hotel2_1 from "../assets/hotel3.jpeg";
+// import hotel2_2 from "../assets/hotel1.jpg";
+// import hotel2_3 from "../assets/hotel4.jpg";
 
-const hotels = [
-  {
-    name: "Khách Sạn ibis Styles Vũng Tàu",
-    starRating: 9.4,
-    address: "Thùy Vân, Thành Phố Vũng Tàu",
-    pricePerNight: 1105056,
-    originalPrice: 1280334,
-    discount: "-14%",
-    images: [hotel1_1, hotel1_2, hotel1_3],
-    amenities: ["Bữa sáng miễn phí", "Hồ bơi", "WiFi miễn phí"],
-  },
-  {
-    name: "Khách Sạn Fusion Suites Vũng Tàu",
-    rating: 9.2,
-    address: "Trương Công Định, Vũng Tàu",
-    pricePerNight: 1340363,
-    originalPrice: 1634590,
-    discount: "-19%",
-    images: [hotel2_1, hotel2_2, hotel2_3],
-    amenities: ["View biển", "Gym miễn phí", "Dịch vụ Spa"],
-  },
-];
+// const hotels = [
+//   {
+//     name: "Khách Sạn ibis Styles Vũng Tàu",
+//     starRating: 9.4,
+//     address: "Thùy Vân, Thành Phố Vũng Tàu",
+//     pricePerNight: 1105056,
+//     originalPrice: 1280334,
+//     discount: "-14%",
+//     images: [hotel1_1, hotel1_2, hotel1_3],
+//     amenities: ["Bữa sáng miễn phí", "Hồ bơi", "WiFi miễn phí"],
+//   },
+//   {
+//     name: "Khách Sạn Fusion Suites Vũng Tàu",
+//     rating: 9.2,
+//     address: "Trương Công Định, Vũng Tàu",
+//     pricePerNight: 1340363,
+//     originalPrice: 1634590,
+//     discount: "-19%",
+//     images: [hotel2_1, hotel2_2, hotel2_3],
+//     amenities: ["View biển", "Gym miễn phí", "Dịch vụ Spa"],
+//   },
+// ];
 
 const HotelListComponent = ({ filters }) => {
   const sliderSettings = {

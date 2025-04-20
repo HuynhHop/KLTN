@@ -22,15 +22,13 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: [
-        "booking_pending", // Đặt chỗ đang chờ
-        "reserved", // Đã giữ chỗ
-        "pending", // Đang chờ thanh toán
-        "confirmed", // Đã xác nhận
-        "paid", // Đã thanh toán
-        "cancelled", // Đã hủy
-        "refunded", // Đã hoàn tiền
+        "Reserved", // Đã giữ chỗ
+        "Pending", // Đang chờ thanh toán
+        "Paid", // Đã thanh toán
+        "Cancelled", // Đã hủy
+        "Refunded", // Đã hoàn tiền
       ],
-      default: "booking_pending",
+      default: "Paid",
     },
     contactInfo: {
       fullName: String,

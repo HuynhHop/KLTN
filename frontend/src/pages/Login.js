@@ -14,7 +14,7 @@ import backgroundImage from "../assets/speak.png";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const clientId = process.env.REACT_APP_FACEBOOK_CLIENT_ID;
+  // const clientId = process.env.REACT_APP_FACEBOOK_CLIENT_ID;
   const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -263,6 +263,7 @@ const Login = () => {
               <Link href="#" variant="body2" sx={{ color: "#4CAF50" }}>
                 Forgot password?
               </Link>
+              {error && <p className="error-message">{error}</p>}
               <Box sx={{ mt: 1 }}>
                 <Typography variant="body2" display="inline">
                   Don't have an account?

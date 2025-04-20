@@ -35,7 +35,7 @@ const FilterComponent = ({ onFilterChange }) => {
           <span>Thấp nhất: 0₫</span>
           <span>Cao nhất: Không giới hạn</span>
         </div>
-        {/* <input
+        <input
           type="number"
           placeholder="Thấp nhất"
           value={minPrice}
@@ -46,7 +46,7 @@ const FilterComponent = ({ onFilterChange }) => {
           placeholder="Cao nhất"
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
-        /> */}
+        />
       </div>
 
       {/* Bộ lọc phổ biến */}

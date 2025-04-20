@@ -29,7 +29,7 @@ const Propose = (hotelId) => {
     if (hotelId) {
       fetchRooms();
     }
-  }, [hotelId]);
+  }, [hotelId, apiUrl]);
 
   const openModal = async (roomId) => {
     try {
@@ -49,57 +49,57 @@ const Propose = (hotelId) => {
     setSelectedRoom(null);
   };
 
-  const room = {
-    name: "Premium Deluxe Twin Room",
-    people: "2 người",
-    maxPeople: "4",
-    standardPeople: "2",
-    area: "50 m² / 538 ft²",
-    view: "Hướng Vườn",
-    beds: "2 Giường đơn",
-    priceOld: "2.560.667 ₫",
-    priceDiscounted: "2.114.020 ₫",
-    coupon: "DEALVUI25",
-    finalPrice: "1.944.898 ₫",
-    finalTotal: "2.228.878 ₫",
-    cashback: "Hoàn 22.288 ₫ vào Mytour Cash",
-    images: [
-      "https://lottecityhotel.jp/assets/images/room/premium_deluxe_twin/mv_slide01_pc.jpg",
-      "https://lottecityhotel.jp/assets/images/room/premium_deluxe_twin/mv_slide02_pc.jpg",
-      "https://lottecityhotel.jp/assets/images/room/premium_deluxe_twin/mv_slide03_pc.jpg",
-    ],
-    amenities: [
-      "Điều hòa nhiệt độ",
-      "Sàn gỗ",
-      "Tivi màn hình phẳng",
-      "Dép đi trong nhà",
-      "Tủ",
-      "Minibar",
-      "Két an toàn",
-      "Dọn phòng hàng ngày",
-      "Ấm đun nước điện",
-      "Máy sấy tóc",
-      "Giá treo quần áo",
-      "Bàn là",
-      "Khăn tắm",
-      "Cửa sổ",
-      "Điện thoại",
-      "Không hút thuốc",
-      "Đồ vệ sinh cá nhân miễn phí",
-      "Truyền hình cáp",
-      "Phòng tắm riêng",
-      "Bình nước nóng",
-      "Tivi",
-      "Wifi miễn phí",
-      "Vòi hoa sen",
-      "Trà, cà phê miễn phí",
-      "Nước suối miễn phí",
-      "Kệ để hành lý",
-      "Tủ quần áo",
-      "Truyền hình vệ tinh",
-      "Dịch vụ báo thức",
-    ],
-  };
+  // const room = {
+  //   name: "Premium Deluxe Twin Room",
+  //   people: "2 người",
+  //   maxPeople: "4",
+  //   standardPeople: "2",
+  //   area: "50 m² / 538 ft²",
+  //   view: "Hướng Vườn",
+  //   beds: "2 Giường đơn",
+  //   priceOld: "2.560.667 ₫",
+  //   priceDiscounted: "2.114.020 ₫",
+  //   coupon: "DEALVUI25",
+  //   finalPrice: "1.944.898 ₫",
+  //   finalTotal: "2.228.878 ₫",
+  //   cashback: "Hoàn 22.288 ₫ vào Mytour Cash",
+  //   images: [
+  //     "https://lottecityhotel.jp/assets/images/room/premium_deluxe_twin/mv_slide01_pc.jpg",
+  //     "https://lottecityhotel.jp/assets/images/room/premium_deluxe_twin/mv_slide02_pc.jpg",
+  //     "https://lottecityhotel.jp/assets/images/room/premium_deluxe_twin/mv_slide03_pc.jpg",
+  //   ],
+  //   amenities: [
+  //     "Điều hòa nhiệt độ",
+  //     "Sàn gỗ",
+  //     "Tivi màn hình phẳng",
+  //     "Dép đi trong nhà",
+  //     "Tủ",
+  //     "Minibar",
+  //     "Két an toàn",
+  //     "Dọn phòng hàng ngày",
+  //     "Ấm đun nước điện",
+  //     "Máy sấy tóc",
+  //     "Giá treo quần áo",
+  //     "Bàn là",
+  //     "Khăn tắm",
+  //     "Cửa sổ",
+  //     "Điện thoại",
+  //     "Không hút thuốc",
+  //     "Đồ vệ sinh cá nhân miễn phí",
+  //     "Truyền hình cáp",
+  //     "Phòng tắm riêng",
+  //     "Bình nước nóng",
+  //     "Tivi",
+  //     "Wifi miễn phí",
+  //     "Vòi hoa sen",
+  //     "Trà, cà phê miễn phí",
+  //     "Nước suối miễn phí",
+  //     "Kệ để hành lý",
+  //     "Tủ quần áo",
+  //     "Truyền hình vệ tinh",
+  //     "Dịch vụ báo thức",
+  //   ],
+  // };
 
   return (
     <div className="propose-container">

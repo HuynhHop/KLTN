@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaBell, FaGift, FaUser } from "react-icons/fa";
+import { FaBell, FaGift } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import "../css/SiteHeader.css"; // Import CSS

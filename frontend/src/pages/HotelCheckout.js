@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "../css/HotelCheckout.css";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
-import hotelImg from "../assets/hotel1.jpg";
-import roomImg from "../assets/hotel2.jpg";
+// import hotelImg from "../assets/hotel1.jpg";
+// import roomImg from "../assets/hotel2.jpg";
 
 const HotelCheckout = () => {
   const [searchParams] = useSearchParams();
@@ -52,7 +52,7 @@ const HotelCheckout = () => {
     };
 
     fetchRoomAndHotel();
-  }, [roomId]);
+  }, [roomId, apiUrl]);
 
   const handleContactChange = (e) => {
     setContactInfo({ ...contactInfo, [e.target.name]: e.target.value });
@@ -61,6 +61,76 @@ const HotelCheckout = () => {
   const handleGuestChange = (e) => {
     setGuestInfo({ ...guestInfo, [e.target.name]: e.target.value });
   };
+
+  const handlePaymentReturn = useCallback(
+    async (success) => {
+      if (success) {
+        try {
+          const savedHotelName = localStorage.getItem("hotelName"); // Lấy hotelName từ localStorage
+          const savedRoomName = localStorage.getItem("roomName"); // Lấy roomName từ localStorage
+          const savedContactInfo = JSON.parse(
+            localStorage.getItem("contactInfo")
+          );
+          const savedGuestInfo = JSON.parse(localStorage.getItem("guestInfo"));
+          const savedNote = localStorage.getItem("note");
+          const savedIsBookingForOthers =
+            localStorage.getItem("isBookingForOthers");
+          const savedRoomId = localStorage.getItem("roomId");
+          const savedPrice = localStorage.getItem("price"); // Lấy hotelId từ localStorage
+          const savedImage = localStorage.getItem("image"); // Lấy hình ảnh từ localStorage
+
+          // Gọi API tạo Order
+          const response = await fetch(`${apiUrl}/orders/create`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user: JSON.parse(localStorage.getItem("user"))._id,
+              serviceType: "Hotel",
+              serviceId: savedRoomId,
+              hotelName: savedHotelName,
+              roomName: savedRoomName,
+              quantity: 1,
+              totalPrice: Number(savedPrice.replace(/\./g, "")),
+              contactInfo: savedContactInfo,
+              guestInfo: savedIsBookingForOthers
+                ? savedGuestInfo
+                : savedContactInfo,
+              note: savedNote,
+              imageRoom: savedImage,
+            }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            alert("Đặt phòng thành công!");
+            navigate("/account?tab=booking"); // Chuyển đến trang BookingHistory
+          } else {
+            alert("Không thể lưu thông tin đặt phòng. Vui lòng thử lại!");
+            navigate(`/checkout?id=${savedRoomId}`);
+          }
+        } catch (error) {
+          console.error("Error creating order:", error);
+          alert("Có lỗi xảy ra khi lưu thông tin đặt phòng!");
+        }
+      } else {
+        const savedRoomId = localStorage.getItem("roomId");
+        alert("Thanh toán thất bại. Vui lòng thử lại!");
+        navigate(`/checkout?id=${savedRoomId}`); // Quay lại trang thanh toán
+      }
+      localStorage.removeItem("paymentProcessed");
+      localStorage.removeItem("hotelName"); // Xóa thông tin khỏi localStorage
+      localStorage.removeItem("roomName"); // Xóa thông tin khỏi localStorage
+      localStorage.removeItem("contactInfo");
+      localStorage.removeItem("guestInfo");
+      localStorage.removeItem("note");
+      localStorage.removeItem("isBookingForOthers");
+      localStorage.removeItem("roomId");
+      localStorage.removeItem("price");
+      localStorage.removeItem("image"); // Xóa thông tin khỏi localStorage
+    },
+    [apiUrl, navigate]
+  );
 
   useEffect(() => {
     const checkPaymentStatus = () => {
@@ -80,7 +150,7 @@ const HotelCheckout = () => {
     };
 
     checkPaymentStatus();
-  }, []);
+  }, [handlePaymentReturn]);
 
   const handleConfirmPayment = async () => {
     try {
@@ -119,73 +189,6 @@ const HotelCheckout = () => {
       console.error("Error confirming payment:", error);
       alert("Có lỗi xảy ra khi xác nhận thanh toán!");
     }
-  };
-
-  const handlePaymentReturn = async (success) => {
-    if (success) {
-      try {
-        const savedHotelName = localStorage.getItem("hotelName"); // Lấy hotelName từ localStorage
-        const savedRoomName = localStorage.getItem("roomName"); // Lấy roomName từ localStorage
-        const savedContactInfo = JSON.parse(
-          localStorage.getItem("contactInfo")
-        );
-        const savedGuestInfo = JSON.parse(localStorage.getItem("guestInfo"));
-        const savedNote = localStorage.getItem("note");
-        const savedIsBookingForOthers =
-          localStorage.getItem("isBookingForOthers");
-        const savedRoomId = localStorage.getItem("roomId");
-        const savedPrice = localStorage.getItem("price"); // Lấy hotelId từ localStorage
-        const savedImage = localStorage.getItem("image"); // Lấy hình ảnh từ localStorage
-
-        // Gọi API tạo Order
-        const response = await fetch(`${apiUrl}/orders/create`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user: JSON.parse(localStorage.getItem("user"))._id,
-            serviceType: "Hotel",
-            serviceId: savedRoomId,
-            hotelName: savedHotelName,
-            roomName: savedRoomName,
-            quantity: 1,
-            totalPrice: Number(savedPrice.replace(/\./g, "")),
-            contactInfo: savedContactInfo,
-            guestInfo: savedIsBookingForOthers
-              ? savedGuestInfo
-              : savedContactInfo,
-            note: savedNote,
-            imageRoom: savedImage,
-          }),
-        });
-        const data = await response.json();
-        if (data.success) {
-          alert("Đặt phòng thành công!");
-          navigate("/account?tab=booking"); // Chuyển đến trang BookingHistory
-        } else {
-          alert("Không thể lưu thông tin đặt phòng. Vui lòng thử lại!");
-          navigate(`/checkout?id=${savedRoomId}`);
-        }
-      } catch (error) {
-        console.error("Error creating order:", error);
-        alert("Có lỗi xảy ra khi lưu thông tin đặt phòng!");
-      }
-    } else {
-      const savedRoomId = localStorage.getItem("roomId");
-      alert("Thanh toán thất bại. Vui lòng thử lại!");
-      navigate(`/checkout?id=${savedRoomId}`); // Quay lại trang thanh toán
-    }
-    localStorage.removeItem("paymentProcessed");
-    localStorage.removeItem("hotelName"); // Xóa thông tin khỏi localStorage
-    localStorage.removeItem("roomName"); // Xóa thông tin khỏi localStorage
-    localStorage.removeItem("contactInfo");
-    localStorage.removeItem("guestInfo");
-    localStorage.removeItem("note");
-    localStorage.removeItem("isBookingForOthers");
-    localStorage.removeItem("roomId");
-    localStorage.removeItem("price");
-    localStorage.removeItem("image"); // Xóa thông tin khỏi localStorage
   };
 
   const validateInfo = () => {
