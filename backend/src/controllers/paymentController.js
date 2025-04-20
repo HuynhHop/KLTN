@@ -115,23 +115,25 @@ class PaymentController {
                 // res.status(200).json({RspCode: '00', Message: 'Success'})
                 return res.redirect(
                   // `http://localhost:3000/payment-success?transactionId=${vnp_Params['vnp_TransactionNo']}`
-                  `http://localhost:3000/payment-success`
+                  `http://localhost:3000/checkout?success=true`
                 );
               } else {
                 //that bai
                 //paymentStatus = '2'
                 // Ở đây cập nhật trạng thái giao dịch thanh toán thất bại vào CSDL của bạn
-                res
-                  .status(200)
-                  .json({ RspCode: "09", Message: "Payment Failed" });
+                res.redirect(`http://localhost:3000/checkout?success=false`);
+                // res
+                //   .status(200)
+                //   .json({ RspCode: "09", Message: "Payment Failed" });
               }
             } else {
-              res
-                .status(200)
-                .json({
-                  RspCode: "02",
-                  Message: "This order has been updated to the payment status",
-                });
+              // res
+              //   .status(200)
+              //   .json({
+              //     RspCode: "02",
+              //     Message: "This order has been updated to the payment status",
+              //   });
+              res.redirect(`http://localhost:3000/checkout?success=false`);
             }
           } else {
             res.status(200).json({ RspCode: "04", Message: "Amount invalid" });

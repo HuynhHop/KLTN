@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
-import FacebookLogin from "react-facebook-login";
 import { jwtDecode } from "jwt-decode";
 import {
   Box,
@@ -98,43 +97,42 @@ const Login = () => {
     }
   };
 
-  const handleFacebok = async (response) => {
-    try {
-      console.log("Facebook login data:", response);
-      const res = await fetch(`${apiUrl}/user/loginFacebook`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: response.userID,
-          TokenId: response.accessToken,
-        }),
-      });
+  // const handleFacebok = async (response) => {
+  //   try {
+  //     const res = await fetch(`${apiUrl}/user/loginFacebook`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         userId: response.userID,
+  //         TokenId: response.accessToken,
+  //       }),
+  //     });
 
-      const data = await res.json();
+  //     const data = await res.json();
 
-      if (res.ok) {
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("user", JSON.stringify(data.userData));
-        const decodedToken = jwtDecode(data.accessToken);
-        const userRole = decodedToken.role;
+  //     if (res.ok) {
+  //       localStorage.setItem("accessToken", data.accessToken);
+  //       localStorage.setItem("user", JSON.stringify(data.userData));
+  //       const decodedToken = jwtDecode(data.accessToken);
+  //       const userRole = decodedToken.role;
 
-        // Automatically navigate to home after 3 seconds
-        setTimeout(() => {
-          if (userRole === 1) {
-            navigate("/admin");
-          } else {
-            navigate("/home");
-          }
-        }, 3000);
-      } else {
-        setError(data.message || "Login failed");
-      }
-    } catch (error) {
-      setError("An error occurred");
-    }
-  };
+  //       // Automatically navigate to home after 3 seconds
+  //       setTimeout(() => {
+  //         if (userRole === 1) {
+  //           navigate("/admin");
+  //         } else {
+  //           navigate("/home");
+  //         }
+  //       }, 3000);
+  //     } else {
+  //       setError(data.message || "Login failed");
+  //     }
+  //   } catch (error) {
+  //     setError("An error occurred");
+  //   }
+  // };
 
   return (
     <Grid
@@ -246,17 +244,20 @@ const Login = () => {
                 }}
                 style={{ width: "100%" }} // Đặt chiều rộng của nút GoogleLogin
               />
-              <FacebookLogin
-                appId={clientId}
+              {/* <FacebookLogin
+                appId="clientId"
                 autoLoad={false}
-                fields="name,email,picture"
-                callback={handleFacebok}
-                scope="public_profile,user_friends,user_actions.books"
-                cssClass="my-facebook-button-class"
-                icon="fa-facebook" // Thay thế bằng icon của bạn
-                textButton="Login with Facebook" // Thay thế bằng văn bản nút của bạn
-                style={{ width: "100%" }} // Đặt chiều rộng của nút FacebookLogin
-              />
+                onSuccess={handleFacebok}
+                onFail={(error) => {
+                  console.error("Facebook login failed:", error);
+                  setError("Facebook login failed");
+                }}
+                render={({ onClick }) => (
+                  <button onClick={onClick} className="btn-facebook">
+                    Đăng nhập với Facebook
+                  </button>
+                )}
+              /> */}
             </Box>
             <Box sx={{ textAlign: "center", fontSize: "0.9rem", mt: 2 }}>
               <Link href="#" variant="body2" sx={{ color: "#4CAF50" }}>

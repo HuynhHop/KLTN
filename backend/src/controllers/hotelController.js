@@ -72,19 +72,22 @@ class HotelController {
   async getAllHotel(req, res) {
     try {
       const hotels = await Hotel.find();
-      res.json(hotels);
+      res.json({ success: true, data: hotels });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ success: false, message: err.message });
     }
   }
 
   async getHotelById(req, res) {
     try {
       const hotel = await Hotel.findById(req.params.id);
-      if (!hotel) return res.status(404).json({ message: "Hotel not found" });
-      res.json(hotel);
+      if (!hotel)
+        return res
+          .status(404)
+          .json({ success: false, message: "Hotel not found" });
+      res.json({ success: true, data: hotel });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ success: false, message: err.message });
     }
   }
 

@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema(
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     serviceType: {
       type: String,
-      enum: ["tour", "hotel", "flight"],
+      enum: ["Tour", "Hotel", "Flight"],
       required: true,
     },
     serviceId: {
@@ -14,13 +14,36 @@ const orderSchema = new mongoose.Schema(
       required: true,
       refPath: "serviceType",
     },
+    hotelName: { type: String, required: true }, // Tên khách sạn
+    roomName: { type: String, required: true }, // Tên loại phòng
     quantity: { type: Number, default: 1 },
     totalPrice: Number,
+    bookingDate: { type: Date, default: Date.now }, // Thêm ngày đặt chỗ
     status: {
       type: String,
-      enum: ["pending", "confirmed", "paid", "cancelled", "refunded"],
-      default: "pending",
+      enum: [
+        "booking_pending", // Đặt chỗ đang chờ
+        "reserved", // Đã giữ chỗ
+        "pending", // Đang chờ thanh toán
+        "confirmed", // Đã xác nhận
+        "paid", // Đã thanh toán
+        "cancelled", // Đã hủy
+        "refunded", // Đã hoàn tiền
+      ],
+      default: "booking_pending",
     },
+    contactInfo: {
+      fullName: String,
+      email: String,
+      phone: String,
+    },
+    guestInfo: {
+      fullName: String,
+      email: String,
+      phone: String,
+    },
+    note: { type: String }, // Ghi chú của khách hàng
+    imageRoom: { type: String }, // Hình ảnh phòng đã đặt
   },
   { timestamps: true }
 );

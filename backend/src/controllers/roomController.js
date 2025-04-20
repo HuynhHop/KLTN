@@ -42,7 +42,9 @@ class RoomController {
   async createRoom(req, res) {
     try {
       let roomData = req.body;
-      roomData.policies = JSON.parse(roomData.policies);
+      if (roomData.policies) {
+        roomData.policies = JSON.parse(roomData.policies);
+      }
       if (roomData.amenities) {
         roomData.amenities =
           typeof roomData.amenities === "string"
@@ -51,6 +53,9 @@ class RoomController {
             ? amenities
             : [];
       }
+      // Lấy URL ảnh từ Cloudinary đã upload sẵn
+      const imageUrls = req.files.map((file) => file.path);
+      roomData.images = imageUrls;
       const room = new Room(roomData);
       await room.save();
       res.status(201).json({ success: true, data: room });
@@ -62,7 +67,9 @@ class RoomController {
   async updateRoom(req, res) {
     try {
       let roomData = req.body;
-      roomData.policies = JSON.parse(roomData.policies);
+      if (roomData.policies) {
+        roomData.policies = JSON.parse(roomData.policies);
+      }
       if (roomData.amenities) {
         roomData.amenities =
           typeof roomData.amenities === "string"
@@ -71,6 +78,9 @@ class RoomController {
             ? amenities
             : [];
       }
+      // Lấy URL ảnh từ Cloudinary đã upload sẵn
+      const imageUrls = req.files.map((file) => file.path);
+      roomData.images = imageUrls;
       const room = await Room.findByIdAndUpdate(req.params.id, roomData, {
         new: true,
       });

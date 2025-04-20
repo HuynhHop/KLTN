@@ -49,13 +49,22 @@ router.delete("/hotels/:id", hotelController.deleteHotel);
 router.get("/rooms/", roomController.getAllRooms);
 router.get("/rooms/:id", roomController.getRoomById);
 router.get("/rooms/hotel/:hotelId", roomController.getRoomsByHotelId);
-router.post("/rooms/create", roomController.createRoom);
-router.put("/rooms/:id", roomController.updateRoom);
+router.post(
+  "/rooms/create",
+  imageUpload.array("images", 15),
+  roomController.createRoom
+);
+router.put(
+  "/rooms/:id",
+  imageUpload.array("images", 15),
+  roomController.updateRoom
+);
 router.delete("/rooms/:id", roomController.deleteRoom);
 
+router.post("/orders/create", orderController.createOrder);
 router.get("/orders", orderController.getAllOrder);
 router.get("/orders/user/:userId", orderController.getByUser);
-router.put("/orders/:id/status", orderController.updateStatusOrder);
+router.put("/orders/:id/status", orderController.updateStatus);
 
 router.post("/flights/create", flightController.createFlight);
 router.put("/flights/:id", flightController.updateFlight);

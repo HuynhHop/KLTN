@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../css/Propose.css";
 import RoomDetailModal from "./RoomDetailModal";
 
 const Propose = (hotelId) => {
+  const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -239,7 +241,12 @@ const Propose = (hotelId) => {
             </p>
             <p className="final-price">{room.price}</p>
             <p className="total-price">Giá cuối cùng {room.price}</p>
-            <button className="book-btn">Đặt phòng</button>
+            <button
+              className="book-btn"
+              onClick={() => navigate(`/checkout?id=${room._id}`)}
+            >
+              Đặt phòng
+            </button>
             <p className="cashback">Hoàn {room.cashback} vào Cash</p>
           </div>
         </div>

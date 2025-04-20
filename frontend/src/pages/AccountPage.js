@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import AccountManagement from "../components/AccountManagement.js";
 import BookingHistory from "../components/BookingHistory";
 import FlightHistory from "../components/FlightHistory";
@@ -7,6 +8,16 @@ import "../css/AccountPage.css";
 
 const AccountPage = () => {
   const [activeTab, setActiveTab] = useState("account");
+  const location = useLocation();
+
+  useEffect(() => {
+    // Lấy giá trị tab từ query parameter
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab");
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [location.search]);
 
   const renderTabContent = () => {
     switch (activeTab) {
