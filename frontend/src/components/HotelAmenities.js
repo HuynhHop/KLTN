@@ -16,6 +16,7 @@ import {
   FaBroom,
   FaLuggageCart,
   FaBuilding,
+  FaServicestack,
 } from "react-icons/fa";
 import "../css/HotelAmenities.css";
 
@@ -56,7 +57,7 @@ const HotelAmenities = ({ amenities, openModal }) => {
       <ul>
         {topAmenities.map((amenity, index) => (
           <li key={index}>
-            {iconMap[amenity] || "❓"} {amenity}
+            {iconMap[amenity] || <FaServicestack />} {amenity}
           </li>
         ))}
       </ul>
@@ -67,7 +68,7 @@ const HotelAmenities = ({ amenities, openModal }) => {
             <ul>
               {amenities.map((amenity, index) => (
                 <li key={index}>
-                  {iconMap[amenity] || "❓"} {amenity}
+                  {iconMap[amenity] || <FaServicestack />} {amenity}
                 </li>
               ))}
             </ul>

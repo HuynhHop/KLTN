@@ -20,6 +20,21 @@ class OrderController {
     }
   }
 
+  async getOrderById(req, res) {
+    try {
+      const { id } = req.params; // Lấy orderId từ URL
+      const order = await Order.findById(id).populate("user serviceId"); // Tìm order theo id và populate các trường liên quan
+      if (!order) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Order not found" });
+      }
+      res.json({ success: true, data: order });
+    } catch (err) {
+      res.status(500).json({ success: false, message: err.message });
+    }
+  }
+
   async createOrder(req, res) {
     try {
       const {
@@ -46,7 +61,7 @@ class OrderController {
         totalPrice,
         contactInfo,
         guestInfo,
-        status: "booking_pending", // Mặc định là trạng thái đặt chỗ
+        status: "Paid", // Mặc định là trạng thái đặt chỗ
         note: note || "", // Ghi chú của khách hàng
         imageRoom: imageRoom || "", // Hình ảnh phòng đã đặt
       });
@@ -64,13 +79,11 @@ class OrderController {
       const { status } = req.body;
 
       const validStatuses = [
-        "booking_pending",
-        "reserved",
-        "pending",
-        "confirmed",
-        "paid",
-        "cancelled",
-        "refunded",
+        "Reserved", // Đã giữ chỗ
+        "Pending", // Đang chờ thanh toán
+        "Paid", // Đã thanh toán
+        "Cancelled", // Đã hủy
+        "Refunded", // Đã hoàn tiền
       ];
       if (!validStatuses.includes(status)) {
         return res.status(400).json({ message: "Invalid status" });

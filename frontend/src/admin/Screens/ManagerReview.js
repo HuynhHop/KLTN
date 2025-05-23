@@ -2,10 +2,10 @@ import React from "react";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import "../Style/managerlesson.scss";
-import Contenttable from "../Components/Tourtable";
+import Reviewtable from "../Components/Reviewtable";
 import { Link } from "react-router-dom";
 
-const ManagerContent = () => {
+const ManagerReview = () => {
   return (
     <div className="product">
       <Sidebar />
@@ -13,19 +13,19 @@ const ManagerContent = () => {
         <Navbar />
         <div className="productList">
           <div className="datatableTitle">
-            <span>Manager Content</span>
-            <Link
-              to="/admin/contents/contentId/new"
+            <span>Manager Review</span>
+            {/* <Link
+              to="/admin/reviews/reviewId/new"
               style={{ textDecoration: "none" }}
             >
-              <span className="link">Add New Content</span>
-            </Link>
+              <span className="link">Add New Review</span>
+            </Link> */}
           </div>
-          <Contenttable />
+          <Reviewtable />
         </div>
       </div>
     </div>
   );
 };
 
-export default ManagerContent;
+export default ManagerReview;

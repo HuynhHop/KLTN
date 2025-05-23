@@ -5,56 +5,35 @@ import Paper from "@mui/material/Paper";
 import { Link } from "react-router-dom";
 import "../Style/lessontable.scss";
 
-const Airlinetable = () => {
+const Reviewtable = () => {
   const { darkMode } = useContext(DarkModeContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("accessToken");
-
   useEffect(() => {}, []);
 
   const handleDelete = async (id) => {};
 
   // Cấu hình cột cho DataGrid
   const columns = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "registrationDate", headerName: "Registration Date", width: 200 },
-    { field: "expirationDate", headerName: "Expiration Date", width: 200 },
-    {
-      field: "isRenewal",
-      headerName: "Renewal",
-      width: 150,
-      renderCell: (params) => {
-        return (
-          <div
-            className={`cellWithStatus ${params.row.isRenewal} ? 'true' : 'false'`}
-          >
-            {params.row.isRenewal ? "True" : "False"}
-          </div>
-        );
-      },
-    },
-    {
-      field: "packageInfo",
-      headerName: "Package Information",
-      width: 200,
-      renderCell: (params) => {
-        const { packageName } = params.row.packageInfo || {};
-        return <div>{packageName}</div>;
-      },
-    },
+    { field: "hotelId", headerName: "Hotel ID", width: 100 },
+    { field: "user", headerName: "Customer", width: 200 },
+    { field: "rating", headerName: "Rating", width: 70 },
+    { field: "comment", headerName: "Comment", width: 250 },
+    { field: "createdAt", headerName: "Create Time", width: 130 },
+    { field: "updatedAt", headerName: "Update Time", width: 130 },
   ];
 
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 170,
       renderCell: (params) => {
         return (
           <div className="cellAction">
             <Link
-              to={`/admin/airlines/${params.row.id}/edit`}
+              to={`/admin/lessons/${params.row.id}/edit`}
               style={{ textDecoration: "none" }}
             >
               <div className="viewButton">Edit</div>
@@ -92,4 +71,4 @@ const Airlinetable = () => {
   );
 };
 
-export default Airlinetable;
+export default Reviewtable;

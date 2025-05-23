@@ -2,10 +2,10 @@ import React from "react";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import "../Style/managerlesson.scss";
-import Tourtable from "../Components/Tourtable";
 import { Link } from "react-router-dom";
+import Homestable from "../Components/Homestable";
 
-const ManagerTour = () => {
+const ManagerHomeStay = () => {
   return (
     <div className="product">
       <Sidebar />
@@ -13,19 +13,19 @@ const ManagerTour = () => {
         <Navbar />
         <div className="productList">
           <div className="datatableTitle">
-            <span>Manager Tour</span>
+            <span>Manager HomeStay</span>
             <Link
-              to="/admin/tours/tourId/new"
+              to="/admin/homes/homesId/new"
               style={{ textDecoration: "none" }}
             >
-              <span className="link">Add New Tour</span>
+              <span className="link">Add New HomeStay</span>
             </Link>
           </div>
-          <Tourtable />
+          <Homestable />
         </div>
       </div>
     </div>
   );
 };
 
-export default ManagerTour;
+export default ManagerHomeStay;

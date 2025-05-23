@@ -6,14 +6,21 @@ import "../Style/new.scss";
 import { DriveFolderUploadOutlined } from "@mui/icons-material";
 
 const New = ({ inputs, title }) => {
-  const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState('');
+  const [files, setFiles] = useState([]); // Dùng cho nhiều ảnh
   const [formData, setFormData] = useState({});
   const token = localStorage.getItem("accessToken");
   const apiUrl = process.env.REACT_APP_API_URL;
-  const { userId, lessonId, courseId, packageinforId } = useParams();
+  const { userId, hotelId, roomId, voucherId } = useParams();
 
-  const resourceType = userId ? "user" : lessonId ? "lesson" : courseId ? "course" : packageinforId ? "packageinfo" : "";
+  const resourceType = userId
+    ? "user"
+    : hotelId
+    ? "hotel"
+    : roomId
+    ? "room"
+    : voucherId
+    ? "voucher"
+    : "";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,66 +30,122 @@ const New = ({ inputs, title }) => {
     }));
   };
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    if (resourceType === "lesson") {
-      setFileName(selectedFile ? selectedFile.name : "");
-    }
+  const handleAvatarChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(selectedFiles);
+  };
+
+  const handleImagesChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setFiles((prevFiles) =>
+      prevFiles.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const processedFormData = { ...formData };
+
+    if (
+      processedFormData["policies.cancellationPolicy"] ||
+      processedFormData["policies.paymentPolicy"]
+    ) {
+      processedFormData["policies"] = JSON.stringify({
+        cancellationPolicy:
+          processedFormData["policies.cancellationPolicy"] || "",
+        paymentPolicy: processedFormData["policies.paymentPolicy"] || "",
+      });
+      delete processedFormData["policies.cancellationPolicy"];
+      delete processedFormData["policies.paymentPolicy"];
+    }
+
+    if (
+      processedFormData["contact.phone"] ||
+      processedFormData["contact.email"]
+    ) {
+      processedFormData["contact"] = JSON.stringify({
+        phone: processedFormData["contact.phone"] || "",
+        email: processedFormData["contact.email"] || "",
+      });
+      delete processedFormData["contact.phone"];
+      delete processedFormData["contact.email"];
+    }
+
+    if (
+      processedFormData["location.lat"] ||
+      processedFormData["location.lng"]
+    ) {
+      processedFormData["location"] = JSON.stringify({
+        lat: Number(processedFormData["location.lat"]) || 0,
+        lng: Number(processedFormData["location.lng"]) || 0,
+      });
+      delete processedFormData["location.lat"];
+      delete processedFormData["location.lng"];
+    }
+
+    if (processedFormData["amenities"]) {
+      processedFormData["amenities"] = processedFormData["amenities"]
+        .split(",")
+        .map((item) => item.trim());
+    }
+
     const data = new FormData();
 
     // Add form data fields to FormData object
-    Object.keys(formData).forEach((key) => {
-      data.append(key, formData[key]);
+    Object.keys(processedFormData).forEach((key) => {
+      data.append(key, processedFormData[key]);
     });
 
-    if (file) {
-      data.append(resourceType === "user" ? "avatar" : "excelFile", file);
+    // Add files to FormData
+    if (files.length > 0) {
+      if (resourceType === "user") {
+        data.append("avatar", files[0]); // Chỉ 1 ảnh cho User
+      } else {
+        files.forEach((file) => data.append("images", file)); // Nhiều ảnh cho Hotel và Room
+      }
     }
-    data.forEach((value, key) => {
-      console.log(key, value);
-    });
 
     try {
       let response;
 
       // Send request based on resourceType
       if (resourceType === "user") {
-        response = await fetch(`${apiUrl}/user/register`, {
+        response = await fetch(`${apiUrl}/user/createAccount`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
           body: data,
         });
-      } else if (resourceType === "lesson") {
-        response = await fetch(`${apiUrl}/lesson/create`, {
+      } else if (resourceType === "hotel") {
+        response = await fetch(`${apiUrl}/hotels`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
           body: data,
         });
-      } else if (resourceType === "course") {
-        response = await fetch(`${apiUrl}/course/create`, {
+      } else if (resourceType === "room") {
+        response = await fetch(`${apiUrl}/rooms`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
           body: data,
         });
-      } else if (resourceType === "packageinfo") {
-        response = await fetch(`${apiUrl}/packageinfo/create`, {
+      } else if (resourceType === "voucher") {
+        response = await fetch(`${apiUrl}/vouchers`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-          body: data,
+          body: JSON.stringify(formData), // Voucher không cần ảnh
         });
       }
 
@@ -99,7 +162,6 @@ const New = ({ inputs, title }) => {
     }
   };
 
-
   return (
     <div className="new">
       <Sidebar />
@@ -110,67 +172,73 @@ const New = ({ inputs, title }) => {
         </div>
         <div className="bottom">
           <div className="left">
-          {resourceType === "user" && (
+            {resourceType === "user" && (
               <img
-                src={file ? URL.createObjectURL(file) : "/assets/person/DefaultProfile.jpg"}
-                alt="user image"
+                src={
+                  files.length > 0
+                    ? URL.createObjectURL(files[0])
+                    : "/assets/person/DefaultProfile.jpg"
+                }
+                alt="user avatar"
                 className="image"
               />
+            )}
+
+            {(resourceType === "hotel" || resourceType === "room") && (
+              <div className="imagePreviewList">
+                {files.map((file, index) => (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(file)}
+                    alt={`preview ${index}`}
+                    className="previewImage"
+                    onClick={() => handleRemoveImage(index)}
+                    title="Click to remove"
+                  />
+                ))}
+              </div>
             )}
           </div>
           <div className="right">
             <form onSubmit={handleSubmit}>
-              {/* <div className="formInput">
-                <label htmlFor="file">
-                  Image: <DriveFolderUploadOutlined className="icon" />
-                </label>
-                <input
-                  type="file"
-                  id="file"
-                  style={{ display: "none" }}
-                  onChange={(e) => setFile(e.target.files[0])}
-                /> 
-                </div>*/}
-                {resourceType === "user" && (
+              {(resourceType === "hotel" || resourceType === "room") && (
+                <div className="formInput">
+                  <label htmlFor="files">
+                    Images: <DriveFolderUploadOutlined className="icon" />
+                  </label>
+                  <input
+                    type="file"
+                    id="files"
+                    multiple
+                    style={{ display: "none" }}
+                    onChange={handleImagesChange}
+                  />
+                </div>
+              )}
+              {resourceType === "user" && (
                 <div className="formInput">
                   <label htmlFor="file">
-                    Image: <DriveFolderUploadOutlined className="icon" />
+                    Avatar: <DriveFolderUploadOutlined className="icon" />
                   </label>
                   <input
                     type="file"
                     id="file"
                     style={{ display: "none" }}
-                    onChange={handleFileChange}
+                    onChange={handleAvatarChange}
                   />
-                  </div>
-                )}
-                {resourceType === "lesson" && (
-                  <div className="formInput">
-                    <label htmlFor="excelFile">
-                      Excel File: <DriveFolderUploadOutlined className="icon" />
-                    </label>
-                    <input
-                      type="file"
-                      id="excelFile"
-                      accept=".xls,.xlsx"
-                      style={{ display: "none" }}
-                      onChange={handleFileChange}
-                    />
-                    {fileName && <p>Selected File: {fileName}</p>} {/* Hiển thị tên file */}
-                  </div>
-                )}
-                
-                {inputs.map((input) => (
-                  <div className="formInput" key={input.id}>
-                    <label>{input.label}</label>
-                    <input
-                      type={input.type}
-                      name={input.name}
-                      placeholder={input.placeholder}
-                      onChange={handleChange}
-                    />
-                  </div>
-                ))}
+                </div>
+              )}
+              {inputs.map((input) => (
+                <div className="formInput" key={input.id}>
+                  <label>{input.label}</label>
+                  <input
+                    type={input.type}
+                    name={input.name}
+                    placeholder={input.placeholder}
+                    onChange={handleChange}
+                  />
+                </div>
+              ))}
 
               <button type="submit">Send</button>
             </form>

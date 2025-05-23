@@ -7,11 +7,13 @@ import "../Style/manageruser.scss";
 const Customers = () => {
   return (
     <div className="customers">
-      <Sidebar />
-      <div className="customersContainer">
-        <Navbar />
-        <Datatable />
-      </div>
+      <>
+        <Sidebar />
+        <div className="customersContainer">
+          <Navbar />
+          <Datatable />
+        </div>
+      </>
     </div>
   );
 };

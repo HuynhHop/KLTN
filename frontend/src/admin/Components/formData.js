@@ -25,7 +25,7 @@ export const userInputs = [
     label: "Phone",
     name: "phone",
     type: "text",
-    placeholder: "Enter your phone",
+    placeholder: "Enter your phone number",
   },
   {
     id: 5,
@@ -34,50 +34,246 @@ export const userInputs = [
     type: "password",
     placeholder: "Enter your password",
   },
-];
-
-export const tourInputs = [
   {
-    id: 1,
-    label: "Package Name",
-    name: "packageName",
-    type: "text",
-    placeholder: "Enter Package Name",
-  },
-  {
-    id: 2,
-    label: "Description",
-    name: "description",
-    type: "text",
-    placeholder: "Enter Description",
-  },
-  {
-    id: 3,
-    label: "Price",
-    name: "price",
+    id: 6,
+    label: "Role",
+    name: "role",
     type: "number",
-    placeholder: "Enter Price",
-  },
-  {
-    id: 4,
-    label: "Time Duration",
-    name: "timeDuration",
-    type: "number",
-    placeholder: "Enter Time Duration",
-  },
-];
-
-export const orderInputs = [
-  {
-    id: 1,
-    label: "Title",
-    name: "title",
-    type: "text",
-    placeholder: "Enter Title",
+    placeholder: "Enter role (e.g., 1 for Admin, 2 for Staff, 3 for Customer)",
   },
 ];
 
 export const hotelInputs = [
+  {
+    id: 1,
+    label: "Hotel Name",
+    name: "name",
+    type: "text",
+    placeholder: "Enter hotel name",
+  },
+  {
+    id: 2,
+    label: "Address",
+    name: "address",
+    type: "text",
+    placeholder: "Enter hotel address",
+  },
+  {
+    id: 3,
+    label: "Province",
+    name: "province",
+    type: "text",
+    placeholder: "Enter province",
+  },
+  {
+    id: 4,
+    label: "District",
+    name: "district",
+    type: "text",
+    placeholder: "Enter district",
+  },
+  {
+    id: 5,
+    label: "Price Per Night",
+    name: "pricePerNight",
+    type: "number",
+    placeholder: "Enter price per night",
+  },
+  {
+    id: 6,
+    label: "Star Rating",
+    name: "starRating",
+    type: "number",
+    placeholder: "Enter star rating (1-5)",
+  },
+  {
+    id: 7,
+    label: "Check-In Time",
+    name: "checkInTime",
+    type: "text",
+    placeholder: "Enter check-in time (e.g., 14:00)",
+  },
+  {
+    id: 8,
+    label: "Check-Out Time",
+    name: "checkOutTime",
+    type: "text",
+    placeholder: "Enter check-out time (e.g., 12:00)",
+  },
+  {
+    id: 9,
+    label: "Payment Policy",
+    name: "policies.paymentPolicy",
+    type: "text",
+    placeholder: "Enter payment Policy",
+  },
+  {
+    id: 10,
+    label: "Cancellation Policy",
+    name: "policies.cancellationPolicy",
+    type: "text",
+    placeholder: "Enter cancellation Policy",
+  },
+  {
+    id: 11,
+    label: "Contact Phone",
+    name: "contact.phone",
+    type: "text",
+    placeholder: "Enter contact phone",
+  },
+  {
+    id: 12,
+    label: "Contact Email",
+    name: "contact.email",
+    type: "email",
+    placeholder: "Enter contact email",
+  },
+  {
+    id: 13,
+    label: "Description",
+    name: "description",
+    type: "text",
+    placeholder: "Enter hotel description",
+  },
+  {
+    id: 14,
+    label: "Latitude",
+    name: "location.lat",
+    type: "number",
+    placeholder: "Enter latitude",
+  },
+  {
+    id: 15,
+    label: "Longitude",
+    name: "location.lng",
+    type: "number",
+    placeholder: "Enter longitude",
+  },
+  {
+    id: 16,
+    label: "Amenities",
+    name: "amenities",
+    type: "text",
+    placeholder: "Enter amenities (comma-separated)",
+  },
+];
+
+export const roomInputs = [
+  {
+    id: 1,
+    label: "Room Name",
+    name: "name",
+    type: "text",
+    placeholder: "Enter room name",
+  },
+  {
+    id: 2,
+    label: "People",
+    name: "people",
+    type: "number",
+    placeholder: "Enter number of people",
+  },
+  {
+    id: 3,
+    label: "Max People",
+    name: "maxPeople",
+    type: "number",
+    placeholder: "Enter maximum number of people",
+  },
+  {
+    id: 4,
+    label: "Standard People",
+    name: "standardPeople",
+    type: "number",
+    placeholder: "Enter standard number of people",
+  },
+  {
+    id: 5,
+    label: "Area",
+    name: "area",
+    type: "text",
+    placeholder: "Enter room area (e.g., 30m²)",
+  },
+  {
+    id: 6,
+    label: "View",
+    name: "view",
+    type: "text",
+    placeholder: "Enter room view (e.g., Sea View)",
+  },
+  {
+    id: 7,
+    label: "Beds",
+    name: "beds",
+    type: "text",
+    placeholder: "Enter bed type (e.g., 2 Queen Beds)",
+  },
+  {
+    id: 8,
+    label: "Price",
+    name: "price",
+    type: "text",
+    placeholder: "Enter room price",
+  },
+  {
+    id: 9,
+    label: "Cashback",
+    name: "cashback",
+    type: "number",
+    placeholder: "Enter cashback amount",
+  },
+  {
+    id: 10,
+    label: "Children Policy",
+    name: "childrenPolicy",
+    type: "text",
+    placeholder: "Enter children policy",
+  },
+  {
+    id: 11,
+    label: "Amenities",
+    name: "amenities",
+    type: "text",
+    placeholder: "Enter amenities (comma-separated)",
+  },
+  {
+    id: 12,
+    label: "Breakfast Policy",
+    name: "policies.breakfast",
+    type: "text",
+    placeholder: "Enter breakfast policy",
+  },
+  {
+    id: 13,
+    label: "Confirmation Policy",
+    name: "policies.confirmation",
+    type: "text",
+    placeholder: "Enter confirmation policy",
+  },
+  {
+    id: 14,
+    label: "Invoice Policy",
+    name: "policies.invoice",
+    type: "text",
+    placeholder: "Enter invoice policy",
+  },
+  {
+    id: 15,
+    label: "Extra Policy",
+    name: "policies.extra",
+    type: "text",
+    placeholder: "Enter extra policy",
+  },
+  {
+    id: 16,
+    label: "Cancellation Policy",
+    name: "policies.cancellation",
+    type: "text",
+    placeholder: "Enter cancellation policy",
+  },
+];
+
+export const homesInputs = [
   {
     id: 1,
     label: "Title",
@@ -111,7 +307,7 @@ export const airlineInputs = [
   },
 ];
 
-export const saleInputs = [
+export const reviewInputs = [
   {
     id: 1,
     label: "Title",
@@ -128,24 +324,52 @@ export const saleInputs = [
   },
 ];
 
-export const vouchersInputs = [
+export const voucherInputs = [
   {
     id: 1,
-    label: "Title",
-    name: "title",
+    label: "Voucher Code",
+    name: "code",
     type: "text",
-    placeholder: "Enter Title",
+    placeholder: "Enter voucher code",
   },
   {
     id: 2,
-    label: "Description",
-    name: "description",
+    label: "Discount Type",
+    name: "discountType",
     type: "text",
-    placeholder: "Enter Description",
+    placeholder: "Enter discount type (percent or amount)",
+  },
+  {
+    id: 3,
+    label: "Discount Value",
+    name: "discountValue",
+    type: "number",
+    placeholder: "Enter discount value",
+  },
+  {
+    id: 4,
+    label: "Apply To",
+    name: "applyTo",
+    type: "text",
+    placeholder: "Enter apply to (e.g., tour, hotel, flight)",
+  },
+  {
+    id: 5,
+    label: "Service ID",
+    name: "serviceId",
+    type: "text",
+    placeholder: "Enter service ID",
+  },
+  {
+    id: 6,
+    label: "Expires At",
+    name: "expiresAt",
+    type: "date",
+    placeholder: "Enter expiration date",
   },
 ];
 
-export const contentInputs = [
+export const notificationInputs = [
   {
     id: 1,
     label: "Title",

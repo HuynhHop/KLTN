@@ -53,7 +53,7 @@ const Hoteltable = () => {
   // Cấu hình cột cho DataGrid
   const columns = [
     { field: "id", headerName: "ID", width: 100 },
-    { field: "name", headerName: "Hotel Name", width: 200 },
+    { field: "name", headerName: "HomeStay", width: 200 },
     {
       field: "address",
       headerName: "Address",

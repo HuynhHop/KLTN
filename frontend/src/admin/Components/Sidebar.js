@@ -69,10 +69,10 @@ const Sidebar = () => {
             </li>
           </Link>
 
-          <Link to="/admin/tours" style={{ textDecoration: "none" }}>
+          <Link to="/admin/homes" style={{ textDecoration: "none" }}>
             <li>
               <TourIcon className="icon" />
-              <span>Tours</span>
+              <span>HomeStay</span>
             </li>
           </Link>
 
@@ -97,28 +97,28 @@ const Sidebar = () => {
             </li>
           </Link>
 
-          <Link to="/admin/" style={{ textDecoration: "none" }}>
+          <Link to="/admin/rooms" style={{ textDecoration: "none" }}>
             <li>
               <LoyaltyIcon className="icon" />
-              <span>Sales</span>
+              <span>Room</span>
             </li>
           </Link>
 
-          <Link to="/admin/" style={{ textDecoration: "none" }}>
+          <Link to="/admin/vouchers" style={{ textDecoration: "none" }}>
             <li>
               <DiscountOutlinedIcon className="icon" />
               <span>Vouchers</span>
             </li>
           </Link>
 
-          <Link to="/admin/" style={{ textDecoration: "none" }}>
+          <Link to="/admin/reviews" style={{ textDecoration: "none" }}>
             <li>
               <DnsOutlinedIcon className="icon" />
-              <span>Contents</span>
+              <span>Review</span>
             </li>
           </Link>
 
-          <Link to="/admin/" style={{ textDecoration: "none" }}>
+          <Link to="/admin/notifications" style={{ textDecoration: "none" }}>
             <li>
               <NotificationsActiveOutlinedIcon className="icon" />
               <span>Notifications</span>

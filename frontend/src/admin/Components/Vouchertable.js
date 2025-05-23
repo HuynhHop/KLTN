@@ -5,7 +5,7 @@ import Paper from "@mui/material/Paper";
 import { Link } from "react-router-dom";
 import "../Style/lessontable.scss";
 
-const Tourtable = () => {
+const Vouchertable = () => {
   const { darkMode } = useContext(DarkModeContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,21 +16,11 @@ const Tourtable = () => {
 
   // Cấu hình cột cho DataGrid
   const columns = [
-    { field: "id", headerName: "ID", width: 150 },
-    { field: "title", headerName: "Title", width: 250 },
-    { field: "excelFile", headerName: "Link File Excel", width: 250 },
-    {
-      field: "status",
-      headerName: "Status",
-      width: 150,
-      renderCell: (params) => {
-        return (
-          <div className={`cellWithStatus ${params.row.status}`}>
-            {params.row.status}
-          </div>
-        );
-      },
-    },
+    { field: "code", headerName: "GiftCode", width: 150 },
+    { field: "discountType", headerName: "Discount Type", width: 150 },
+    { field: "discountValue", headerName: "Discount Value", width: 150 },
+    { field: "applyTo", headerName: "Apply To", width: 200 },
+    { field: "expiresAt", headerName: "Create Time", width: 200 },
   ];
 
   const actionColumn = [
@@ -80,4 +70,4 @@ const Tourtable = () => {
   );
 };
 
-export default Tourtable;
+export default Vouchertable;

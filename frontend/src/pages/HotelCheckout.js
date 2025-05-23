@@ -102,6 +102,7 @@ const HotelCheckout = () => {
             }),
           });
           const data = await response.json();
+          console.log("Order created:", data);
           if (data.success) {
             alert("Đặt phòng thành công!");
             navigate("/account?tab=booking"); // Chuyển đến trang BookingHistory

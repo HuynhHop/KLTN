@@ -2,10 +2,10 @@ import React from "react";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import "../Style/managerlesson.scss";
-import Saletable from "../Components/Tourtable";
+import Reviewtable from "../Components/Reviewtable";
 import { Link } from "react-router-dom";
 
-const ManagerSale = () => {
+const ManagerNotification = () => {
   return (
     <div className="product">
       <Sidebar />
@@ -13,19 +13,19 @@ const ManagerSale = () => {
         <Navbar />
         <div className="productList">
           <div className="datatableTitle">
-            <span>Manager Sale</span>
+            <span>Manager Notification</span>
             <Link
-              to="/admin/sales/saleId/new"
+              to="/admin/notifications/notificationId/new"
               style={{ textDecoration: "none" }}
             >
-              <span className="link">Add New Sale</span>
+              <span className="link">Add New Notification</span>
             </Link>
           </div>
-          <Saletable />
+          <Reviewtable />
         </div>
       </div>
     </div>
   );
 };
 
-export default ManagerSale;
+export default ManagerNotification;

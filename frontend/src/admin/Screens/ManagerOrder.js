@@ -18,7 +18,7 @@ const ManagerOrder = () => {
               to="/admin/orders/orderId/new"
               style={{ textDecoration: "none" }}
             >
-              <span className="link">Add New Order</span>
+              {/* <span className="link">Add New Order</span> */}
             </Link>
           </div>
           <Ordertable />

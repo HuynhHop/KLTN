@@ -33,18 +33,18 @@ const Widget = ({ type }) => {
         navigateTo: "/admin/users",
       };
       break;
-    case "package":
+    case "orders":
       data = {
-        title: "PACKAGES",
+        title: "ORDERED",
         isMoney: false,
-        link: "View all packages",
+        link: "View all orders",
         icon: (
           <ShoppingCartOutlinedIcon
             className="icon"
             style={{ color: "goldenrod", backgroundColor: "#daa52033" }}
           />
         ),
-        navigateTo: "/admin/packages",
+        navigateTo: "/admin/orders",
       };
       break;
     case "earnings":

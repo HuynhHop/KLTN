@@ -5,7 +5,7 @@ import Paper from "@mui/material/Paper";
 import { Link } from "react-router-dom";
 import "../Style/lessontable.scss";
 
-const Hoteltable = () => {
+const Roomtable = () => {
   const { darkMode } = useContext(DarkModeContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,19 +15,19 @@ const Hoteltable = () => {
   useEffect(() => {
     const fetchHotels = async () => {
       try {
-        const response = await fetch(`${apiUrl}/hotels`);
+        const response = await fetch(`${apiUrl}/rooms`);
         const data = await response.json();
         if (data.success) {
-          const formattedData = data.data.map((hotel) => ({
-            id: hotel._id,
-            ...hotel,
+          const formattedData = data.data.map((room) => ({
+            id: room._id,
+            ...room,
           }));
           setData(formattedData);
         } else {
-          console.error("Failed to fetch hotels", data.message);
+          console.error("Failed to fetch rooms", data.message);
         }
       } catch (error) {
-        console.error("Error fetching hotels:", error);
+        console.error("Error fetching rooms:", error);
       } finally {
         setLoading(false);
       }
@@ -38,30 +38,24 @@ const Hoteltable = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`${apiUrl}/hotels/${id}`, {
+      const response = await fetch(`${apiUrl}/rooms/${id}`, {
         method: "DELETE",
       });
       const result = await response.json();
       if (result.success) {
-        setData((prevData) => prevData.filter((hotel) => hotel.id !== id));
+        setData((prevData) => prevData.filter((room) => room.id !== id));
       }
     } catch (error) {
-      console.error("Error deleting hotel:", error);
+      console.error("Error deleting room:", error);
     }
   };
 
   // Cấu hình cột cho DataGrid
   const columns = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "name", headerName: "Hotel Name", width: 200 },
-    {
-      field: "address",
-      headerName: "Address",
-      width: 250,
-      renderCell: (params) => {
-        return <div className="cellScroll">{params.row.address}</div>;
-      },
-    },
+    { field: "hotel", headerName: "Hotel ID", width: 100 },
+    { field: "name", headerName: "Room Name", width: 200 },
+    { field: "people", headerName: "Number people", width: 100 },
+    { field: "beds", headerName: "Bed", width: 150 },
     {
       field: "amenities",
       headerName: "Amenities",
@@ -76,7 +70,7 @@ const Hoteltable = () => {
         );
       },
     },
-    { field: "pricePerNight", headerName: "Price Per Night", width: 150 },
+    { field: "price", headerName: "Price", width: 100 },
   ];
 
   const actionColumn = [
@@ -88,10 +82,10 @@ const Hoteltable = () => {
         return (
           <div className="cellAction">
             <Link
-              to={`/admin/hotels/${params.row.id}`}
+              to={`/admin/rooms/${params.row.id}/edit`}
               style={{ textDecoration: "none" }}
             >
-              <div className="viewButton">View</div>
+              <div className="viewButton">Edit</div>
             </Link>
             <div
               className="deleteButton"
@@ -130,4 +124,4 @@ const Hoteltable = () => {
   );
 };
 
-export default Hoteltable;
+export default Roomtable;

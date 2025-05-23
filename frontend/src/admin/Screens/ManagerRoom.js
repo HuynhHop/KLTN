@@ -2,10 +2,10 @@ import React from "react";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import "../Style/managerlesson.scss";
-import Voucherstable from "../Components/Vouchertable";
+import Roomtable from "../Components/Roomtable";
 import { Link } from "react-router-dom";
 
-const ManagerVouchers = () => {
+const ManagerRoom = () => {
   return (
     <div className="product">
       <Sidebar />
@@ -13,19 +13,19 @@ const ManagerVouchers = () => {
         <Navbar />
         <div className="productList">
           <div className="datatableTitle">
-            <span>Manager Voucher</span>
+            <span>Manager Room</span>
             <Link
-              to="/admin/vouchers/vouchersId/new"
+              to="/admin/rooms/roomId/new"
               style={{ textDecoration: "none" }}
             >
-              <span className="link">Add New Vouchers</span>
+              <span className="link">Add New Room</span>
             </Link>
           </div>
-          <Voucherstable />
+          <Roomtable />
         </div>
       </div>
     </div>
   );
 };
 
-export default ManagerVouchers;
+export default ManagerRoom;
