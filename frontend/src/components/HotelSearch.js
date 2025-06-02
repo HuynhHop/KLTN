@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const HotelSearch = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
   const [minPrice, setMinPrice] = useState("");
@@ -10,7 +11,7 @@ const HotelSearch = () => {
 
   const handleSearch = async () => {
     try {
-      const res = await fetch("http://localhost:8080/v1/api/hotels/search", {
+      const res = await fetch(`${apiUrl}/hotels/search`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

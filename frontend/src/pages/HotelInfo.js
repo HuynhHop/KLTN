@@ -50,7 +50,7 @@ const HotelInfo = () => {
       <HotelHeader hotel={hotel.data} onBookClick={scrollToPropose} /> {/* 👈 */}
       <HotelImages images={hotel.data.images} />
       <div className="hotel-details">
-        <HotelReviews openModal={openModal} />
+        <HotelReviews hotelId={hotelId} openModal={openModal} />
         <HotelAmenities
           amenities={hotel.data.amenities}
           openModal={openModal}

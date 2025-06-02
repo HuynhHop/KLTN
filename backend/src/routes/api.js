@@ -19,11 +19,16 @@ const historyController = require("../controllers/historyController");
 const bookingController = require("../controllers/bookingController");
 const tourController = require("../controllers/tourController");
 const searchController = require("../controllers/searchController");
+const hotelCommentController = require("../controllers/HotelCommentController");
 
 const upload = multer({ dest: "uploads/" });
 const { imageUpload } = require("../config/cloudinary");
 
 const router = express.Router();
+
+router.post("/comments/:hotelId", hotelCommentController.create);
+router.get("/comments/:hotelId", hotelCommentController.getByHotel);
+router.delete("/comments/:id", hotelCommentController.delete);
 
 router.post("/hotels/search", searchController.searchHotels);
 

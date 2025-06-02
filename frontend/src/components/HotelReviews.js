@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import HotelReviews2 from "./HotelReviews2"; // Đảm bảo tên file là HotelReviews2.jsx
 
-const HotelReviews = () => {
+const HotelReviews = ({ hotelId }) => {
   const [showModal, setShowModal] = useState(false);
 
   const openModal = () => setShowModal(true);
@@ -21,7 +21,7 @@ const HotelReviews = () => {
       {showModal && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <HotelReviews2 closeModal={closeModal} />
+            <HotelReviews2 hotelId={hotelId} closeModal={closeModal} />
           </div>
         </div>
       )}
