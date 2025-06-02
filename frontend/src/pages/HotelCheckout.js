@@ -8,6 +8,8 @@ import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 const HotelCheckout = () => {
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get("id"); // Lấy roomId từ URL param
+  console.log("Room ID:", roomId); // Kiểm tra roomId
+
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
   const [room, setRoom] = useState(null);
@@ -39,7 +41,7 @@ const HotelCheckout = () => {
           setRoom(roomData.data);
           // Fetch thông tin khách sạn dựa trên hotelId từ room
           const hotelResponse = await fetch(
-            `${apiUrl}/hotels/${roomData.data.hotel}`
+            `${apiUrl}/hotels/${roomData.data.hotel._id}`
           );
           const hotelData = await hotelResponse.json();
           if (hotelData.success) {
@@ -79,6 +81,19 @@ const HotelCheckout = () => {
           const savedPrice = localStorage.getItem("price"); // Lấy hotelId từ localStorage
           const savedImage = localStorage.getItem("image"); // Lấy hình ảnh từ localStorage
 
+          console.log("Order request payload:", {
+          user: JSON.parse(localStorage.getItem("user"))._id,
+          serviceType: "Hotel",
+          serviceId: savedRoomId,
+          hotelName: savedHotelName,
+          roomName: savedRoomName,
+          quantity: 1,
+          totalPrice: Number(savedPrice.toString().replace(/\./g, "")),
+          contactInfo: savedContactInfo,
+          guestInfo: savedIsBookingForOthers === "true" && savedGuestInfo ? savedGuestInfo : savedContactInfo,
+          note: savedNote,
+          imageRoom: savedImage,
+        });
           // Gọi API tạo Order
           const response = await fetch(`${apiUrl}/orders/create`, {
             method: "POST",
@@ -92,7 +107,7 @@ const HotelCheckout = () => {
               hotelName: savedHotelName,
               roomName: savedRoomName,
               quantity: 1,
-              totalPrice: Number(savedPrice.replace(/\./g, "")),
+              totalPrice: Number(savedPrice.toString().replace(/\./g, "")),
               contactInfo: savedContactInfo,
               guestInfo: savedIsBookingForOthers
                 ? savedGuestInfo
@@ -174,7 +189,7 @@ const HotelCheckout = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: Number(room.price.replace(/\./g, "")),
+          amount: Number(room.price.toString().replace(/\./g, "")),
           bankCode: "",
           language: "vn",
         }),
@@ -435,7 +450,7 @@ const HotelCheckout = () => {
           <p>
             Giá gốc:{" "}
             <span className="strikethrough">
-              {(Number(room.price.replace(/\./g, "")) * 1.5).toLocaleString(
+              {(Number(room.price.toString().replace(/\./g, "")) * 1.5).toLocaleString(
                 "vi-VN"
               )}{" "}
               ₫
@@ -451,7 +466,7 @@ const HotelCheckout = () => {
           <h4>
             Tổng cộng:{" "}
             <span className="total-price">
-              {(Number(room.price.replace(/\./g, "")) + 200000).toLocaleString(
+              {(Number(room.price.toString().replace(/\./g, "")) + 200000).toLocaleString(
                 "vi-VN"
               )}{" "}
               ₫

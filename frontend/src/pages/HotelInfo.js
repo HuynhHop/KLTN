@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import HotelHeader from "../components/HotelHeader";
 import HotelImages from "../components/HotelImages";
@@ -12,63 +12,44 @@ import "../css/HotelInfoPage.css";
 
 const HotelInfo = () => {
   const [searchParams] = useSearchParams();
-  const hotelId = searchParams.get("id"); // Lấy hotelId từ query string
+  const hotelId = searchParams.get("id");
   const [hotel, setHotel] = useState(null);
-  // const [recommendedRooms, setRecommendedRooms] = useState([]);
   const [modalContent, setModalContent] = useState(null);
+  const proposeRef = useRef(null); // ✅ ref cho Propose
   const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    // Fetch hotel details
     const fetchHotelDetails = async () => {
       try {
         const response = await fetch(`${apiUrl}/hotels/${hotelId}`);
         const data = await response.json();
-        if (data) {
-          setHotel(data);
-        }
+        if (data) setHotel(data);
       } catch (error) {
         console.error("Error fetching hotel details:", error);
       }
     };
 
-    // const fetchRecommendedRooms = async () => {
-    //   try {
-    //     const response = await fetch(
-    //       `${apiUrl}/rooms/hotel/${hotelId}`
-    //     );
-    //     const data = await response.json();
-    //     if (data.success) {
-    //       setRecommendedRooms(data.data);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching recommended rooms:", error);
-    //   }
-    // };
-
-    if (hotelId) {
-      fetchHotelDetails();
-      // fetchRecommendedRooms();
-    }
+    if (hotelId) fetchHotelDetails();
   }, [hotelId, apiUrl]);
 
   const openModal = (content) => {
     setModalContent(content);
   };
 
-  // const closeModal = () => {
-  //   setModalContent(null);
-  // };
+  // ✅ Hàm scroll xuống Propose
+  const scrollToPropose = () => {
+    if (proposeRef.current) {
+      proposeRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
-  if (!hotel) {
-    return <p>Loading...</p>;
-  }
+  if (!hotel) return <p>Loading...</p>;
 
   return (
     <div className="hotel-container">
-      <HotelHeader hotel={hotel.data} />
+      <HotelHeader hotel={hotel.data} onBookClick={scrollToPropose} /> {/* 👈 */}
       <HotelImages images={hotel.data.images} />
       <div className="hotel-details">
-        {/* ✅ Thêm HotelReviews vào */}
         <HotelReviews openModal={openModal} />
         <HotelAmenities
           amenities={hotel.data.amenities}
@@ -77,20 +58,20 @@ const HotelInfo = () => {
         <HotelLocation location={hotel.data.location} openModal={openModal} />
       </div>
 
-      {/* ✅ Thêm danh sách phòng được đề xuất */}
-      <Propose
-        hotelId={hotelId}
-        openModal={(content) => setModalContent(content)}
-      />
+      {/* 👇 Gắn ref vào Propose */}
+      <div ref={proposeRef}>
+        <Propose
+          hotelId={hotelId}
+          openModal={(content) => setModalContent(content)}
+        />
+      </div>
+
       {modalContent && (
         <Modal
           content={modalContent}
           closeModal={() => setModalContent(null)}
         />
       )}
-
-      {/* ✅ Thêm HotelReview2 vào dưới cùng
-      <HotelReview2 openModal={openModal} />  Hiển thị đánh giá thứ hai */}
     </div>
   );
 };

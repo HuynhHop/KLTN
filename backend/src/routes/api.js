@@ -18,11 +18,14 @@ const BlogController = require("../controllers/BlogController");
 const historyController = require("../controllers/historyController");
 const bookingController = require("../controllers/bookingController");
 const tourController = require("../controllers/tourController");
+const searchController = require("../controllers/searchController");
 
 const upload = multer({ dest: "uploads/" });
 const { imageUpload } = require("../config/cloudinary");
 
 const router = express.Router();
+
+router.post("/hotels/search", searchController.searchHotels);
 
 router.post(
   "/hotels/create",
@@ -46,19 +49,22 @@ router.put(
 );
 router.delete("/hotels/:id", hotelController.deleteHotel);
 
-router.get("/rooms/", roomController.getAllRooms);
+router.get("/rooms", roomController.getAllRooms);
 router.get("/rooms/:id", roomController.getRoomById);
 router.get("/rooms/hotel/:hotelId", roomController.getRoomsByHotelId);
+
 router.post(
   "/rooms/create",
   imageUpload.array("images", 15),
   roomController.createRoom
 );
+
 router.put(
   "/rooms/:id",
   imageUpload.array("images", 15),
   roomController.updateRoom
 );
+
 router.delete("/rooms/:id", roomController.deleteRoom);
 
 router.post("/orders/create", orderController.createOrder);

@@ -1,3 +1,18 @@
+.propose-booking-time {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(255, 89, 0, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+.propose-list {
+  display: flex;
+  flex-direction: column;
+  gap: 50px; /* Khoảng cách giữa các phòng */
+}
 .propose-container {
     border: 1px solid #ccc;
     border-radius: 12px;

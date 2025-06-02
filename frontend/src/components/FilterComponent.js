@@ -5,8 +5,11 @@ const FilterComponent = ({ onFilterChange }) => {
   const [maxPrice, setMaxPrice] = useState("");
   const [starRating, setStarRating] = useState([]);
   const [amenities, setAmenities] = useState([]);
+  const [province, setProvince] = useState("");
+  const [district, setDistrict] = useState("");
+  const [hasFreeCancellation, setHasFreeCancellation] = useState(false);
 
-  const handleCheckboxChange = (value, setState, state) => {
+  const handleCheckboxChange = (value, state, setState) => {
     if (state.includes(value)) {
       setState(state.filter((item) => item !== value));
     } else {
@@ -18,8 +21,11 @@ const FilterComponent = ({ onFilterChange }) => {
     onFilterChange({
       minPrice,
       maxPrice,
-      starRating: starRating.join(","),
-      amenities: amenities.join(","),
+      starRating,
+      amenities,
+      province,
+      district,
+      freeCancellation: hasFreeCancellation,
     });
   };
 
@@ -27,14 +33,25 @@ const FilterComponent = ({ onFilterChange }) => {
     <div className="filter-container">
       <h3>Bộ lọc</h3>
 
+      {/* Tỉnh/Thành phố, Quận/Huyện */}
+      <div className="filter-category">
+        <input
+          type="text"
+          placeholder="Tỉnh/Thành phố"
+          value={province}
+          onChange={(e) => setProvince(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Quận/Huyện"
+          value={district}
+          onChange={(e) => setDistrict(e.target.value)}
+        />
+      </div>
+
       {/* Lọc theo giá */}
       <div className="filter-price">
         <label>Giá mỗi đêm</label>
-        <input type="range" min="0" max="5000000" />
-        <div className="price-range">
-          <span>Thấp nhất: 0₫</span>
-          <span>Cao nhất: Không giới hạn</span>
-        </div>
         <input
           type="number"
           placeholder="Thấp nhất"
@@ -49,58 +66,49 @@ const FilterComponent = ({ onFilterChange }) => {
         />
       </div>
 
-      {/* Bộ lọc phổ biến */}
+      {/* Tiện nghi */}
       <div className="filter-category">
-        <h4>Bộ lọc phổ biến</h4>
-        <label>
-          <input type="checkbox" /> Bao gồm bữa sáng
-        </label>
-        <label>
-          <input type="checkbox" /> Miễn phí hủy phòng
-        </label>
-        <label>
-          <input type="checkbox" /> Đánh giá tuyệt vời (9+)
-        </label>
-        <label>
-          <input type="checkbox" /> Vị trí trung tâm
-        </label>
-        <label>
-          <input type="checkbox" /> Miễn phí phụ thu trẻ em
-        </label>
+        <h4>Tiện nghi</h4>
+        {["Wifi", "Hồ bơi", "Bãi đậu xe", "Điều hòa", "Thang máy", "Nhà hàng"].map((item) => (
+          <label key={item}>
+            <input
+              type="checkbox"
+              checked={amenities.includes(item)}
+              onChange={() => handleCheckboxChange(item, amenities, setAmenities)}
+            />
+            {item}
+          </label>
+        ))}
       </div>
 
-      {/* Lọc theo loại phòng */}
-      <div className="filter-category">
-        <h4>Loại phòng</h4>
-        <label>
-          <input type="checkbox" /> Standard
-        </label>
-        <label>
-          <input type="checkbox" /> Deluxe
-        </label>
-        <label>
-          <input type="checkbox" /> Suite
-        </label>
-      </div>
-
-      {/* Lọc theo xếp hạng sao */}
+      {/* Hạng sao */}
       <div className="filter-category">
         <h4>Hạng khách sạn</h4>
+        {[5, 4, 3, 2, 1].map((star) => (
+          <label key={star}>
+            <input
+              type="checkbox"
+              checked={starRating.includes(star)}
+              onChange={() => handleCheckboxChange(star, starRating, setStarRating)}
+            />
+            {"⭐".repeat(star)} ({star} sao)
+          </label>
+        ))}
+      </div>
+
+      {/* Chính sách */}
+      <div className="filter-category">
+        <h4>Chính sách</h4>
         <label>
           <input
             type="checkbox"
-            onChange={() => handleCheckboxChange(5, setStarRating, starRating)}
-          />{" "}
-          ⭐⭐⭐⭐⭐ (5 sao)
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            onChange={() => handleCheckboxChange(4, setStarRating, starRating)}
-          />{" "}
-          ⭐⭐⭐⭐ (4 sao)
+            checked={hasFreeCancellation}
+            onChange={() => setHasFreeCancellation(!hasFreeCancellation)}
+          />
+          Miễn phí hủy phòng
         </label>
       </div>
+
       <button onClick={applyFilters}>Áp dụng</button>
     </div>
   );

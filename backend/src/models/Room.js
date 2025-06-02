@@ -11,10 +11,15 @@ const roomSchema = new mongoose.Schema(
     view: { type: String },
     beds: { type: String },
 
-    price: { type: String },
+    price: { type: Number }, 
+    discountedPrice: { type: Number }, 
+    finalPrice: { type: Number }, 
     cashback: { type: Number },
+    coupon: { type: String }, 
 
     childrenPolicy: { type: String },
+    recentBookedHoursAgo: { type: Number }, 
+
     images: [{ type: String }],
     amenities: [{ type: String }],
 

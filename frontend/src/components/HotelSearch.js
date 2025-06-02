@@ -1,17 +1,49 @@
-import React from "react";
-import "../css/SearchBox.css";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const HotelSearch = () => (
-  <div className="search-content">
-    <input type="text" placeholder="Địa điểm, khách sạn trong nước hoặc quốc tế" />
-    <input type="date" placeholder="Chọn ngày đi" />
-    <input type="date" placeholder="Chọn ngày về" />
-    <select>
-      <option>1 phòng, 1 người lớn, 1 trẻ em</option>
-      <option>2 phòng, 2 người lớn, 2 trẻ em</option>
-    </select>
-    <button className="search-button">🔍</button>
-  </div>
-);
+const HotelSearch = () => {
+  const [province, setProvince] = useState("");
+  const [district, setDistrict] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/v1/api/hotels/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          province,
+          district,
+          minPrice,
+          maxPrice,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (Array.isArray(data) && data.length > 0) {
+        // Nếu trả về mảng thì truyền data luôn
+        navigate("/resultHotel", { state: { results: data } });
+      } else {
+        console.error("Search failed or no results", data);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+    }
+  };
+  return (
+    <div className="search-content">
+      <input type="text" placeholder="Tỉnh/Thành" value={province} onChange={(e) => setProvince(e.target.value)} />
+      <input type="text" placeholder="Quận/Huyện" value={district} onChange={(e) => setDistrict(e.target.value)} />
+      <input type="number" placeholder="Giá thấp nhất" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
+      <input type="number" placeholder="Giá cao nhất" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+      <button onClick={handleSearch}>🔍</button>
+    </div>
+  );
+};
 
 export default HotelSearch;
