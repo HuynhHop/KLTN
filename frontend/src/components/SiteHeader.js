@@ -78,8 +78,8 @@ const Header = () => {
                   <div onClick={() => handleNavigate("/account")}>
                     Tài khoản
                   </div>
-                  <div onClick={() => handleNavigate("/favorites")}>
-                    Yêu Thích
+                  <div onClick={() => handleNavigate("/account?tab=favorite")}>
+                    Yêu Thích 
                   </div>
                   <div onClick={() => handleNavigate("/orders")}>
                     Đơn hàng của tôi

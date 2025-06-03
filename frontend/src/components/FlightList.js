@@ -1,51 +1,83 @@
-import React, { useState } from "react";
-import "../css/FlightList.css"; 
-
-const flights = [
-  { id: 1, airline: "Vietravel Airlines", departure: "Tân Sơn Nhất", destination: "Nội Bài", departureDate: "17/02/2025", originalPrice: "558.000 ₫", discountedPrice: "508.000 ₫", taxPrice: "1.241.040 ₫" },
-  { id: 2, airline: "Bamboo Airways", departure: "Tân Sơn Nhất", destination: "Cam Ranh", departureDate: "18/02/2025", originalPrice: "149.000 ₫", discountedPrice: "99.000 ₫", taxPrice: "746.000 ₫" },
-  { id: 3, airline: "Vietravel Airlines", departure: "Đà Nẵng", destination: "Nội Bài", departureDate: "17/02/2025", originalPrice: "108.000 ₫", discountedPrice: "58.000 ₫", taxPrice: "722.640 ₫" },
-  { id: 4, airline: "Vietravel Airlines", departure: "Phú Quốc", destination: "Tân Sơn Nhất", departureDate: "17/02/2025", originalPrice: "358.000 ₫", discountedPrice: "308.000 ₫", taxPrice: "992.640 ₫" },
-];
-
-const departures = [...new Set(flights.map((flight) => flight.departure))];
+import React, { useState, useEffect } from "react";
+import "../css/FlightList.css";
 
 const FlightList = () => {
+  const [flights, setFlights] = useState([]);
   const [selectedDeparture, setSelectedDeparture] = useState("");
+  const [showAll, setShowAll] = useState(false);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
-  const filteredFlights = selectedDeparture ? flights.filter((flight) => flight.departure === selectedDeparture) : flights;
+  useEffect(() => {
+    fetch(`${apiUrl}/flights`)
+      .then((res) => res.json())
+      .then((data) => setFlights(data))
+      .catch((err) => console.error("Lỗi khi lấy chuyến bay:", err));
+  }, []);
+
+  const filteredFlights = selectedDeparture
+    ? flights.filter((flight) => flight.departure === selectedDeparture)
+    : flights;
+
+  const departures = [...new Set(flights.map((f) => f.departure))];
+  const flightsToShow = showAll ? filteredFlights : filteredFlights.slice(0, 8);
 
   return (
     <div className="flight-container">
-      <h2 className="flight-title">✈️ Tìm chuyến bay giá rẻ</h2>
+      <h2 className="flight-title">✈️ Tìm chuyến bay giá tốt</h2>
 
       <div className="flight-filter">
-        <select value={selectedDeparture} onChange={(e) => setSelectedDeparture(e.target.value)}>
+        <select
+          value={selectedDeparture}
+          onChange={(e) => setSelectedDeparture(e.target.value)}
+        >
           <option value="">Tất cả điểm xuất phát</option>
           {departures.map((departure, index) => (
-            <option key={index} value={departure}>{departure}</option>
+            <option key={index} value={departure}>
+              {departure}
+            </option>
           ))}
         </select>
-        <button onClick={() => setSelectedDeparture("")}>Reset</button>
+        <button onClick={() => setSelectedDeparture("")}>Đặt lại</button>
       </div>
 
       <div className="flight-grid">
-        {filteredFlights.length > 0 ? (
-          filteredFlights.map((flight) => (
-            <div key={flight.id} className="flight-card">
-              <h3>{flight.airline}</h3>
-              <p className="flight-route">{flight.departure} ➝ {flight.destination}</p>
-              <p className="flight-date">📅 {flight.departureDate}</p>
-              <p className="flight-original">{flight.originalPrice}</p>
-              <p className="flight-discount">{flight.discountedPrice}</p>
-              <p className="flight-tax">Giá sau thuế: {flight.taxPrice}</p>
-              <button className="flight-book">Đặt vé</button>
+        {flightsToShow.length > 0 ? (
+          flightsToShow.map((flight) => (
+            <div key={flight._id} className="flight-card">
+              {/* <img src={flight.image} alt={flight.airline} className="flight-img" /> */}
+              <div className="flight-info">
+                <h3>{flight.airline}</h3>
+                <p className="flight-route">
+                  {flight.departure} ➝ {flight.destination}
+                </p>
+                <p className="flight-date">
+                  🕓 {new Date(flight.departureTime).toLocaleDateString()} -{" "}
+                  {new Date(flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
+                <p className="flight-price">
+                  <span>Giá gốc: </span>
+                  <strong>{flight.originalPrice.toLocaleString()} ₫</strong>
+                </p>
+                <p className="flight-price-final">
+                  <span>Giá sau thuế: </span>
+                  <strong>{flight.taxPrice.toLocaleString()} ₫</strong>
+                </p>
+                <button className="flight-book">Đặt vé ngay</button>
+              </div>
             </div>
           ))
         ) : (
-          <p className="flight-empty">Không tìm thấy chuyến bay phù hợp.</p>
+          <p className="flight-empty">Không có chuyến bay phù hợp.</p>
         )}
       </div>
+
+      {filteredFlights.length > 6 && (
+        <div className="flight-show-more">
+          <button onClick={() => setShowAll(!showAll)}>
+            {showAll ? "Ẩn bớt" : "Xem tất cả"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

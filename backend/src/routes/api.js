@@ -20,11 +20,17 @@ const bookingController = require("../controllers/bookingController");
 const tourController = require("../controllers/tourController");
 const searchController = require("../controllers/searchController");
 const hotelCommentController = require("../controllers/HotelCommentController");
+const favoriteController = require("../controllers/favoriteController");
 
 const upload = multer({ dest: "uploads/" });
 const { imageUpload } = require("../config/cloudinary");
 
 const router = express.Router();
+
+router.post("/favorites", favoriteController.add);
+router.delete("/favorites", favoriteController.remove);
+router.get("/favorites/:userId", favoriteController.getUserFavorites);
+router.get("/favorites", favoriteController.isFavorite);
 
 router.post("/comments/:hotelId", hotelCommentController.create);
 router.get("/comments/:hotelId", hotelCommentController.getByHotel);
@@ -81,6 +87,8 @@ router.put("/orders/:id/status", orderController.updateStatus);
 router.post("/flights/create", flightController.createFlight);
 router.put("/flights/:id", flightController.updateFlight);
 router.delete("/flights/:id", flightController.deleteFlight);
+router.get("/flights", flightController.getFlights);
+router.get("/flights/:id", flightController.getFlightById);
 
 router.post("/vouchers", voucherController.createVoucher);
 router.get("/vouchers/apply", voucherController.applyVoucher);

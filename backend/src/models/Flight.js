@@ -9,7 +9,8 @@ const flightSchema = new mongoose.Schema({
   destination: String,
   departureTime: Date,
   arrivalTime: Date,
-  price: Number,
+  originalPrice: Number,    
+  taxPrice: Number,         
   seatsAvailable: Number,
 });
 

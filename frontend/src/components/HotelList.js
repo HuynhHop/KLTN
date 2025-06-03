@@ -1,142 +1,3 @@
-// import React, { useState } from "react";
-// import hotel1 from "../assets/hotel1.jpg";
-// import hotel2 from "../assets/hotel2.jpg";
-// import hotel3 from "../assets/hotel3.jpeg";
-// import hotel4 from "../assets/hotel4.jpg";
-
-// // Danh sách khách sạn
-// const hotels = [
-//   { id: 1, name: "Mayfair Suites", province: "Hồ Chí Minh", rating: 9.0, price: 876604, discount: "-15%", img: hotel1 },
-//   { id: 2, name: "Ruby Star Hotel Truong Dinh", province: "Hồ Chí Minh", rating: 7.6, price: 634206, discount: "-5%", img: hotel2 },
-//   { id: 3, name: "Khách Sạn Cap Town Sài Gòn", province: "Hồ Chí Minh", rating: 8.6, price: 1004160, discount: "-9%", img: hotel3 },
-//   { id: 4, name: "Khách sạn The Odys Boutique", province: "Hà Nội", rating: 8.8, price: 1882553, discount: "-53%", img: hotel4 },
-// ];
-
-// const HotelList = () => {
-//   const [selectedProvince, setSelectedProvince] = useState("");
-
-//   const filteredHotels = selectedProvince
-//     ? hotels.filter((hotel) => hotel.province === selectedProvince)
-//     : hotels;
-
-//   return (
-//     <div style={{ 
-//         padding: "30px", 
-//         background: "#f7f9fc", 
-//         minHeight: "100vh",
-//         display: "flex", 
-//         flexDirection: "column", 
-//         alignItems: "start", // Căn trái tất cả nội dung
-//         maxWidth: "1300px", // Đảm bảo nội dung không quá rộng
-//         margin: "0 auto" // Căn giữa trang
-//       }}>
-//         <h2>Khách sạn với giá cực sốc</h2>
-//       {/* Bộ lọc tỉnh thành bằng button */}
-//       <div style={{ display: "flex", justifyContent: "left", gap: "20px", marginBottom: "20px", width: "fit-content" }}>
-//         <button
-//           onClick={() => setSelectedProvince("")}
-//           style={{
-//             padding: "10px 20px",
-//             background: selectedProvince === "" ? "#007BFF" : "#ddd",
-//             color: selectedProvince === "" ? "white" : "black",
-//             border: "none",
-//             borderRadius: "20px",
-//             cursor: "pointer",
-//           }}
-//         >
-//           Tất cả
-//         </button>
-//         <button
-//           onClick={() => setSelectedProvince("Hồ Chí Minh")}
-//           style={{
-//             padding: "10px 20px",
-//             background: selectedProvince === "Hồ Chí Minh" ? "#007BFF" : "#ddd",
-//             color: selectedProvince === "Hồ Chí Minh" ? "white" : "black",
-//             border: "none",
-//             borderRadius: "20px",
-//             cursor: "pointer",
-//           }}
-//         >
-//           Hồ Chí Minh
-//         </button>
-//         <button
-//           onClick={() => setSelectedProvince("Hà Nội")}
-//           style={{
-//             padding: "10px 20px",
-//             background: selectedProvince === "Hà Nội" ? "#007BFF" : "#ddd",
-//             color: selectedProvince === "Hà Nội" ? "white" : "black",
-//             border: "none",
-//             borderRadius: "20px",
-//             cursor: "pointer",
-//           }}
-//         >
-//           Hà Nội
-//         </button>
-//       </div>
-
-//       {/* Danh sách khách sạn */}
-//       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "start", gap: "20px" }}>
-//         {filteredHotels.map((hotel) => (
-//           <div
-//             key={hotel.id}
-//             style={{
-//               width: "280px",
-//               borderRadius: "10px",
-//               overflow: "hidden",
-//               boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.1)",
-//               background: "white",
-//             }}
-//           >
-//             {/* Hình ảnh full frame */}
-//             <img src={hotel.img} alt={hotel.name} style={{ width: "100%", height: "180px", objectFit: "cover" }} />
-
-//             {/* Thông tin khách sạn */}
-//             <div style={{ padding: "15px" }}>
-//               <h3
-//                 style={{
-//                     margin: "5px 0",
-//                     fontSize: "18px",
-//                     textAlign: "left",
-//                     whiteSpace: "nowrap",
-//                     overflow: "hidden",
-//                     textOverflow: "ellipsis",
-//                 }}
-//                 title={hotel.name} // Hiển thị tên đầy đủ khi hover
-//               >
-//                 {hotel.name}
-//               </h3>
-
-//               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-//                 <p style={{ margin: "5px 0", color: "#555", fontSize: "14px" }}>{hotel.province}</p>
-//                 <p style={{ margin: "5px 0", fontSize: "14px", color: "#f39c12" }}>⭐ {hotel.rating}</p>
-//               </div>
-
-//               <p style={{ margin: "5px 0", fontSize: "16px" }}>
-//                 <del style={{ color: "#888" }}>{(hotel.price * 1.2).toLocaleString()} đ</del>{" "}
-//                 <b style={{ color: "#e74c3c" }}>{hotel.price.toLocaleString()} đ</b>
-//               </p>
-
-//               <span
-//                 style={{
-//                   display: "inline-block",
-//                   background: "#e74c3c",
-//                   color: "white",
-//                   padding: "3px 10px",
-//                   borderRadius: "5px",
-//                   fontSize: "14px",
-//                 }}
-//               >
-//                 {hotel.discount}
-//               </span>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default HotelList;
 import React, { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
 import {
@@ -146,7 +7,8 @@ import {
   FaUtensils,
   FaCar,
   FaDumbbell,
-  FaSpa
+  FaSpa,
+  FaHeart
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -168,7 +30,12 @@ const HotelList = () => {
   const [selectedProvince, setSelectedProvince] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [favoriteHotelIds, setFavoriteHotelIds] = useState([]);
   const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?._id;
 
   const fetchHotels = async (province) => {
     try {
@@ -188,10 +55,57 @@ const HotelList = () => {
     }
   };
 
+  const fetchFavorites = async () => {
+    if (!userId) return;
+    try {
+      const res = await fetch(`${apiUrl}/favorites/${userId}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.favoriteHotels)) {
+        setFavoriteHotelIds(data.favoriteHotels.map((hotel) => hotel._id));
+      } else {
+        setFavoriteHotelIds([]);
+        console.warn("API favorites trả về không đúng định dạng:", data);
+      }
+    } catch (err) {
+      console.error("Error fetching favorites:", err);
+    }
+  };
+
+  const toggleFavorite = async (hotelId) => {
+    if (!userId) return alert("Vui lòng đăng nhập để sử dụng chức năng yêu thích.");
+    const isFavorite = favoriteHotelIds.includes(hotelId);
+
+    try {
+      const endpoint = `${apiUrl}/favorites`;
+      const method = isFavorite ? "DELETE" : "POST";
+
+      const res = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, hotelId })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setFavoriteHotelIds((prev) =>
+          isFavorite ? prev.filter((id) => id !== hotelId) : [...prev, hotelId]
+        );
+      } else {
+        console.error("Lỗi cập nhật yêu thích:", data.message);
+      }
+    } catch (err) {
+      console.error("Error toggling favorite:", err);
+    }
+  };
+
   useEffect(() => {
     fetchHotels(selectedProvince);
-    setShowAll(false); // reset khi chuyển tỉnh
+    setShowAll(false);
   }, [selectedProvince]);
+
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
 
   const displayedHotels = showAll ? hotels : hotels.slice(0, 8);
 
@@ -207,7 +121,7 @@ const HotelList = () => {
     >
       <h2 style={{ marginBottom: "20px" }}>Khách sạn nổi bật</h2>
 
-      {/* Bộ lọc tỉnh thành */}
+      {/* Bộ lọc tỉnh */}
       <div
         style={{
           display: "flex",
@@ -252,100 +166,134 @@ const HotelList = () => {
         <CircularProgress />
       ) : (
         <>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "25px",
+              marginLeft: "25px"
+            }}
+          >
             {displayedHotels.length > 0 ? (
-              displayedHotels.map((hotel) => (
-                <div
-                  key={hotel._id}
-                  onClick={() => navigate(`/hotelInfo?id=${hotel._id}`)}
-                  style={{
-                    width: "280px",
-                    borderRadius: "12px",
-                    overflow: "hidden",
-                    boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-                    background: "white",
-                    transition: "transform 0.3s",
-                    cursor: "pointer"
-                  }}
-                >
-                  <img
-                    src={
-                      hotel.images[0] ||
-                      "https://via.placeholder.com/280x180?text=No+Image"
-                    }
-                    alt={hotel.name}
-                    style={{ width: "100%", height: "180px", objectFit: "cover" }}
-                  />
-                  <div style={{ padding: "15px" }}>
-                    <h3
-                      style={{
-                        margin: "5px 0",
-                        fontSize: "18px",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis"
-                      }}
-                      title={hotel.name}
-                    >
-                      {hotel.name}
-                    </h3>
+              displayedHotels.map((hotel, index) => {
+                const isFavorite = favoriteHotelIds.includes(hotel._id);
+                return (
+                  <div
+                    key={hotel._id}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    style={{
+                      width: "280px",
+                      borderRadius: "12px",
+                      overflow: "hidden",
+                      boxShadow: hoveredIndex === index
+                        ? "0 8px 20px rgba(0,0,0,0.15)"
+                        : "0 5px 15px rgba(0,0,0,0.1)",
+                      background: "white",
+                      transition: "transform 0.3s, box-shadow 0.3s",
+                      transform: hoveredIndex === index ? "translateY(-5px)" : "translateY(0)",
+                      position: "relative",
+                      cursor: "pointer"
+                    }}
+                  >
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "8px"
+                        position: "absolute",
+                        top: 10,
+                        right: 10,
+                        zIndex: 2
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(hotel._id);
                       }}
                     >
-                      <span style={{ fontSize: "14px", color: "#666" }}>
-                        {hotel.province}
-                      </span>
-                      <span style={{ fontSize: "14px", color: "#f39c12" }}>
-                        ⭐ {hotel.starRating || "?"}
-                      </span>
+                      <FaHeart
+                        size={20}
+                        color={isFavorite ? "#e74c3c" : "#ccc"}
+                        style={{ cursor: "pointer" }}
+                      />
                     </div>
-
-                    {/* Tiện nghi */}
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: "6px",
-                        marginBottom: "10px"
-                      }}
-                    >
-                      {hotel.amenities?.slice(0, 3).map((amenity, idx) => (
-                        <span
-                          key={idx}
-                          title={amenity}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            fontSize: "13px",
-                            background: "#f0f0f0",
-                            padding: "4px 8px",
-                            borderRadius: "12px",
-                            gap: "4px"
-                          }}
-                        >
-                          {amenityIcons[amenity]} {amenity}
+                    <img
+                      src={
+                        hotel.images[0] ||
+                        "https://via.placeholder.com/280x180?text=No+Image"
+                      }
+                      alt={hotel.name}
+                      onClick={() => navigate(`/hotelInfo?id=${hotel._id}`)}
+                      style={{ width: "100%", height: "180px", objectFit: "cover" }}
+                    />
+                    <div style={{ padding: "15px" }}>
+                      <h3
+                        style={{
+                          margin: "5px 0",
+                          fontSize: "18px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                        title={hotel.name}
+                      >
+                        {hotel.name}
+                      </h3>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          marginBottom: "8px"
+                        }}
+                      >
+                        <span style={{ fontSize: "14px", color: "#666" }}>
+                          {hotel.province}
                         </span>
-                      ))}
-                    </div>
+                        <span style={{ fontSize: "14px", color: "#f39c12" }}>
+                          ⭐ {hotel.starRating || "?"}
+                        </span>
+                      </div>
 
-                    <p style={{ fontSize: "16px", margin: "5px 0" }}>
-                      <b style={{ color: "#e74c3c" }}>
-                        {hotel.pricePerNight.toLocaleString()} đ
-                      </b>
-                    </p>
+                      {/* Tiện nghi */}
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "6px",
+                          marginBottom: "10px"
+                        }}
+                      >
+                        {hotel.amenities?.slice(0, 3).map((amenity, idx) => (
+                          <span
+                            key={idx}
+                            title={amenity}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              fontSize: "13px",
+                              background: "#f0f0f0",
+                              padding: "4px 8px",
+                              borderRadius: "12px",
+                              gap: "4px"
+                            }}
+                          >
+                            {amenityIcons[amenity]} {amenity}
+                          </span>
+                        ))}
+                      </div>
+
+                      <p style={{ fontSize: "16px", margin: "5px 0" }}>
+                        <b style={{ color: "#e74c3c" }}>
+                          {hotel.pricePerNight.toLocaleString()} đ
+                        </b>
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <p>Không có khách sạn nào phù hợp.</p>
             )}
           </div>
 
-          {/* Nút xem chi tiết hoặc thu gọn */}
+          {/* Nút xem thêm */}
           {hotels.length > 8 && (
             <div style={{ textAlign: "center", marginTop: "30px" }}>
               <button
@@ -373,4 +321,3 @@ const HotelList = () => {
 };
 
 export default HotelList;
-

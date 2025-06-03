@@ -4,6 +4,7 @@ import AccountManagement from "../components/AccountManagement.js";
 import BookingHistory from "../components/BookingHistory";
 import FlightHistory from "../components/FlightHistory";
 import CancellationHistory from "../components/CancellationHistory";
+import FavoriteList from "../components/FavoriteList";
 import "../css/AccountPage.css";
 
 const AccountPage = () => {
@@ -27,6 +28,8 @@ const AccountPage = () => {
         return <BookingHistory />;
       case "flight":
         return <FlightHistory />;
+      case "favorite":
+        return <FavoriteList />;
       case "cancellation":
         return <CancellationHistory />;
       default:
@@ -54,6 +57,12 @@ const AccountPage = () => {
           onClick={() => setActiveTab("flight")}
         >
           Chuyến bay
+        </div>
+        <div
+          className={`tab ${activeTab === "favorite" ? "active" : ""}`}
+          onClick={() => setActiveTab("favorite")}
+        >
+          Yêu thích
         </div>
         <div
           className={`tab ${activeTab === "cancellation" ? "active" : ""}`}

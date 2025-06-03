@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const HotelListComponent = ({ hotels }) => {
+const HotelListComponent = ({ hotels, onRemoveFavorite, showFavoriteIcon }) => {
   const navigate = useNavigate();
 
   const sliderSettings = {
@@ -37,7 +37,18 @@ const HotelListComponent = ({ hotels }) => {
             </Slider>
           </div>
           <div className="hotel-info">
-            <h4 className="hotel-name">{hotel.name}</h4>
+            <div className="flex justify-between items-center">
+              <h4 className="hotel-name">{hotel.name}</h4>
+              {showFavoriteIcon && (
+                <button
+                  onClick={() => onRemoveFavorite(hotel._id)}
+                  className="text-red-500 text-xl"
+                  title="Xóa khỏi yêu thích"
+                >
+                  ❤️
+                </button>
+              )}
+            </div>
             <p className="hotel-location">{hotel.address}</p>
             <p className="hotel-rating">
               <span className="rating-badge">{hotel.starRating}</span> Tuyệt vời
@@ -48,9 +59,6 @@ const HotelListComponent = ({ hotels }) => {
               ))}
             </ul>
             <div className="hotel-pricing">
-              {/* <span className="original-price">
-                {hotel.pricePerNight.toLocaleString()}₫
-              </span> */}
               <span className="discounted-price">
                 {hotel.pricePerNight.toLocaleString()}₫
               </span>
