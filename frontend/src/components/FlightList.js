@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../css/FlightList.css";
 
 const FlightList = () => {
   const [flights, setFlights] = useState([]);
   const [selectedDeparture, setSelectedDeparture] = useState("");
   const [showAll, setShowAll] = useState(false);
+  const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
+
+  const handleBookClick = (departure, destination) => {
+  // Chuyển hướng sang /resultFlight và truyền điểm đi, điểm đến
+    navigate("/resultFlight", {
+      state: {
+        filters: {
+          departure,
+          destination,
+        },
+      },
+    });
+  };
 
   useEffect(() => {
     fetch(`${apiUrl}/flights`)
@@ -19,7 +33,7 @@ const FlightList = () => {
     : flights;
 
   const departures = [...new Set(flights.map((f) => f.departure))];
-  const flightsToShow = showAll ? filteredFlights : filteredFlights.slice(0, 8);
+  const flightsToShow = showAll ? filteredFlights : filteredFlights.slice(0, 6);
 
   return (
     <div className="flight-container">
@@ -62,7 +76,12 @@ const FlightList = () => {
                   <span>Giá sau thuế: </span>
                   <strong>{flight.taxPrice.toLocaleString()} ₫</strong>
                 </p>
-                <button className="flight-book">Đặt vé ngay</button>
+                <button
+                  className="flight-book"
+                  onClick={() => handleBookClick(flight.departure, flight.destination)}
+                >
+                  Đặt vé ngay
+                </button>
               </div>
             </div>
           ))

@@ -23,12 +23,12 @@ const SearchBox = () => {
           >
             <span className="discount">-300k</span> ✈️ Vé máy bay
           </button>
-          <button 
+          {/* <button 
             className={`tab ${activeTab === "villa" ? "active" : ""}`} 
             onClick={() => setActiveTab("villa")}
           >
             🏡 Biệt thự, Homestay
-          </button>
+          </button> */}
         </div>
 
         {activeTab === "hotel" && <HotelSearch />}

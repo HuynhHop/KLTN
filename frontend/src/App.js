@@ -15,6 +15,9 @@ import AdminLayout from "./admin/Config/AdminLayout";
 import HotelInfo from "./pages/HotelInfo";
 import HotelCheckout from "./pages/HotelCheckout";
 import AccountPage from "./pages/AccountPage";
+import FlightSearchResults from "./components/FlightSearchResults";
+import FlightCheckout from "./pages/FlightCheckout";
+import VoucherDetail from "./components/VoucherDetail";
 
 const theme = createTheme();
 
@@ -32,8 +35,11 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/home" element={<Home />} />
             <Route path="/resultHotel" element={<HotelSearchResults />} />
+            <Route path="/resultFlight" element={<FlightSearchResults />} />
             <Route path="/hotelInfo" element={<HotelInfo />} />
+            <Route path="/voucher/:id" element={<VoucherDetail />} />
             <Route path="/checkout" element={<HotelCheckout />} />
+            <Route path="/checkout-flight/:id" element={<FlightCheckout />} />
             <Route path="/account" element={<AccountPage />} />
           </Route>
         </Routes>
@@ -42,16 +48,3 @@ function App() {
   );
 }
 export default App;
-// // export default App
-// import SiteHeader from "./components/SiteHeader";
-
-// function App() {
-//   return (
-//     <div>
-//       <SiteHeader />
-//       {/* Các component khác */}
-//     </div>
-//   );
-// }
-
-// export default App;

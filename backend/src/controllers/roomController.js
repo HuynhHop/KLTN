@@ -111,6 +111,7 @@
 // module.exports = new RoomController();
 
 const Room = require("../models/Room");
+const updateHotelMinPrice = require("../util/updateHotelMinPrice");
 
 class RoomController {
   async getAllRooms(req, res) {
@@ -165,17 +166,21 @@ class RoomController {
         data.amenities = data.amenities.split(",").map((a) => a.trim());
       }
 
-      const images = req.files.map((file) => file.path);
+      // Kiểm tra files từ form-data (upload hình) hoặc giữ nguyên nếu là từ raw
+      const images = req.files?.map((file) => file.path) || data.images || [];
       data.images = images;
 
       const newRoom = new Room(data);
       await newRoom.save();
+
+      await updateHotelMinPrice(newRoom.hotel);
 
       res.status(201).json({ success: true, data: newRoom });
     } catch (err) {
       res.status(400).json({ success: false, message: err.message });
     }
   }
+
 
   async updateRoom(req, res) {
     try {
@@ -196,6 +201,7 @@ class RoomController {
         new: true,
       });
 
+      await updateHotelMinPrice(updatedRoom.hotel);
       if (!updatedRoom) {
         return res.status(404).json({ success: false, message: "Không tìm thấy phòng." });
       }
@@ -209,6 +215,7 @@ class RoomController {
   async deleteRoom(req, res) {
     try {
       const room = await Room.findByIdAndDelete(req.params.id);
+      await updateHotelMinPrice(room.hotel);
       if (!room) {
         return res.status(404).json({ success: false, message: "Phòng không tồn tại." });
       }

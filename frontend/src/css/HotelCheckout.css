@@ -177,7 +177,7 @@ textarea {
 }
 
 .strikethrough {
-  text-decoration: line-through;
+  text-decoration: none !important; 
   color: #aaa;
 }
 

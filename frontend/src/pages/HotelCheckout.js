@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "../css/HotelCheckout.css";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
-// import hotelImg from "../assets/hotel1.jpg";
-// import roomImg from "../assets/hotel2.jpg";
 
 const HotelCheckout = () => {
   const [searchParams] = useSearchParams();
@@ -78,7 +76,7 @@ const HotelCheckout = () => {
           const savedIsBookingForOthers =
             localStorage.getItem("isBookingForOthers");
           const savedRoomId = localStorage.getItem("roomId");
-          const savedPrice = localStorage.getItem("price"); // Lấy hotelId từ localStorage
+          const savedPrice = localStorage.getItem("finalPrice"); // Lấy hotelId từ localStorage
           const savedImage = localStorage.getItem("image"); // Lấy hình ảnh từ localStorage
 
           console.log("Order request payload:", {
@@ -189,9 +187,10 @@ const HotelCheckout = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: Number(room.price.toString().replace(/\./g, "")),
+          amount: Number(localStorage.getItem("finalPrice") || room.price),
           bankCode: "",
           language: "vn",
+          serviceType: "Hotel"
         }),
       });
 
@@ -244,32 +243,6 @@ const HotelCheckout = () => {
       <div className="left-side">
         {/* Hotel Summary */}
         <div className="hotel-summary">
-          {/* <img src={hotelImg} alt="Hotel" className="hotel-img" />
-          <div className="hotel-info">
-            <h2>Khách Sạn ibis Styles Vũng Tàu</h2>
-            <p className="hotel-address">
-              <FaMapMarkerAlt /> 117 Thùy Vân, TP Vũng Tàu, Bà Rịa Vũng Tàu
-            </p>
-
-            <div className="booking-summary">
-              <div>
-                <FaCalendarAlt /> <strong>Nhận phòng:</strong> 15:00, T6, 04
-                tháng 4
-              </div>
-              <div>
-                <FaCalendarAlt /> <strong>Trả phòng:</strong> 11:00, T7, 05
-                tháng 4
-              </div>
-              <div>
-                <strong>Số đêm:</strong> 01
-              </div>
-              <div>
-                <strong>Số phòng:</strong> 1 x Premium Twin
-              </div>
-              <div>
-                <strong>Đủ chỗ ngủ cho:</strong> 2 người lớn
-              </div>
-            </div> */}
           <img src={hotel.images[0]} alt="Hotel" className="hotel-img" />
           <div className="hotel-info">
             <h2>{hotel.name}</h2>
@@ -397,25 +370,6 @@ const HotelCheckout = () => {
         {/* Room Info */}
         <div className="room-info">
           <div className="discount-tag">Giảm giá 50%</div>
-          {/* <img src={roomImg} alt="Room" className="room-img" />
-          <h3>Premium Twin</h3>
-          <ul className="room-details">
-            <li>👥 2 người</li>
-            <li>🛏 2 Giường đơn</li>
-            <li>🌅 Hướng biển, Ban công</li>
-            <li>🚫 Không hỗ trợ hoàn huỷ</li>
-            <li style={{ color: "green" }}>✅ Giá đã bao gồm bữa sáng</li>
-            <li>⏳ Xác nhận trong 15 phút</li>
-          </ul>
-
-          <div className="included">
-            <h4>Ưu đãi bao gồm</h4>
-            <ul>
-              <li>Bữa sáng cho 2 người lớn và 1 trẻ dưới 12 tuổi</li>
-              <li>Wifi miễn phí, không tính phụ thu</li>
-              <li>Chỉ áp dụng với khách từ Việt Nam, Hàn, Nhật, Nga,...</li>
-            </ul>
-          </div> */}
           <img src={room.images[0]} alt="Room" className="room-img" />
           <h3>{room.name}</h3>
           <ul className="room-details">
@@ -433,42 +387,35 @@ const HotelCheckout = () => {
         </div>
         {/* Phần giá */}
         <div className="price-details">
-          {/* <h3>Chi tiết giá</h3>
-          <p>
-            Giá gốc: <span className="strikethrough">2.500.000 ₫</span>
-          </p>
-          <p>
-            Giảm giá: <span className="discounted">1.225.000 ₫</span>
-          </p>
-          <p>
-            Thuế và phí: <strong>200.000 ₫</strong>
-          </p>
-          <h4>
-            Tổng cộng: <span className="total-price">1.425.000 ₫</span>
-          </h4> */}
           <h3>Chi tiết giá</h3>
           <p>
             Giá gốc:{" "}
             <span className="strikethrough">
-              {(Number(room.price.toString().replace(/\./g, "")) * 1.5).toLocaleString(
+              {(Number(localStorage.getItem("price") || room.price).toLocaleString(
+                "vi-VN"
+              ))}{" "}
+              ₫
+            </span>
+          </p>
+          <p>
+            Giảm giá còn:{" "}
+            <span className="discounted">{Number(localStorage.getItem("discountedPrice"))} ₫</span>
+          </p>
+          <p>
+            Thuế và phí: {" "}
+            <span className="service-fee">
+              {(Number(room.serviceFee.toString().replace(/\./g, ""))).toLocaleString(
                 "vi-VN"
               )}{" "}
               ₫
             </span>
           </p>
-          <p>
-            Giảm giá:{" "}
-            <span className="discounted">{room.price.toLocaleString()} ₫</span>
-          </p>
-          <p>
-            Thuế và phí: <strong>200.000 ₫</strong>
-          </p>
           <h4>
             Tổng cộng:{" "}
             <span className="total-price">
-              {(Number(room.price.toString().replace(/\./g, "")) + 200000).toLocaleString(
+              {(Number(localStorage.getItem("finalPrice") || room.price).toLocaleString(
                 "vi-VN"
-              )}{" "}
+              ))}{" "}
               ₫
             </span>
           </h4>

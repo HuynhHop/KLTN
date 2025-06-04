@@ -21,6 +21,7 @@ const tourController = require("../controllers/tourController");
 const searchController = require("../controllers/searchController");
 const hotelCommentController = require("../controllers/HotelCommentController");
 const favoriteController = require("../controllers/favoriteController");
+const orderFlightController = require("../controllers/orderFlightController");
 
 const upload = multer({ dest: "uploads/" });
 const { imageUpload } = require("../config/cloudinary");
@@ -37,6 +38,7 @@ router.get("/comments/:hotelId", hotelCommentController.getByHotel);
 router.delete("/comments/:id", hotelCommentController.delete);
 
 router.post("/hotels/search", searchController.searchHotels);
+router.post("/flights2/search", searchController.searchFlights);
 
 router.post(
   "/hotels/create",
@@ -84,13 +86,24 @@ router.get("/orders/user/:userId", orderController.getByUser);
 router.get("/orders/:id", orderController.getOrderById);
 router.put("/orders/:id/status", orderController.updateStatus);
 
+router.post("/order-flight/", orderFlightController.create);
+router.get("/order-flight/user/:userId", orderFlightController.getUserOrders);
+router.get("/order-flight/:id", orderFlightController.getOrder);
+router.put("/order-flight/:id", orderFlightController.update);
+router.delete("/order-flight/:id", orderFlightController.delete);
+router.patch("/order-flight/:id/payment", orderFlightController.updatePaymentStatus);
+
 router.post("/flights/create", flightController.createFlight);
 router.put("/flights/:id", flightController.updateFlight);
 router.delete("/flights/:id", flightController.deleteFlight);
 router.get("/flights", flightController.getFlights);
 router.get("/flights/:id", flightController.getFlightById);
+router.post("/flights/search", flightController.searchFlights);
+
 
 router.post("/vouchers", voucherController.createVoucher);
+router.get("/vouchers", voucherController.getAll);
+router.get("/vouchers/:id", voucherController.getById);
 router.get("/vouchers/apply", voucherController.applyVoucher);
 
 router.post("/blogs/create", BlogController.create);

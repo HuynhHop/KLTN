@@ -19,6 +19,7 @@
 // }
 // module.exports = new FlightController();
 const Flight = require("../models/Flight");
+const { removeVietnameseTones } = require('../util/textUtils');
 
 class FlightController {
   // Tạo chuyến bay
@@ -81,6 +82,41 @@ class FlightController {
       res.status(500).json({ message: "Lỗi truy vấn chuyến bay", error: err });
     }
   }
+
+  // Thêm vào trong class FlightController
+  async searchFlights(req, res) {
+      try {
+        const { departure, destination, minTax, maxTax } = req.body;
+
+        // Lấy toàn bộ chuyến bay
+        const flights = await Flight.find();
+
+        const normalizedDeparture = removeVietnameseTones(departure || "");
+        const normalizedDestination = removeVietnameseTones(destination || "");
+
+        // Lọc thủ công
+        const filtered = flights.filter(flight => {
+          const matchDeparture = departure
+            ? removeVietnameseTones(flight.departure || "").includes(normalizedDeparture)
+            : true;
+
+          const matchDestination = destination
+            ? removeVietnameseTones(flight.destination || "").includes(normalizedDestination)
+            : true;
+
+          const matchTax =
+            (!minTax || flight.taxPrice >= parseFloat(minTax)) &&
+            (!maxTax || flight.taxPrice <= parseFloat(maxTax));
+
+          return matchDeparture && matchDestination && matchTax;
+        });
+
+        res.json(filtered);
+      } catch (err) {
+        res.status(500).json({ message: "Lỗi tìm kiếm chuyến bay", error: err });
+      }
+    }
+
 }
 
 module.exports = new FlightController();

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaBell, FaGift } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import "../css/SiteHeader.css"; // Import CSS
-import logo from "../assets/image.png"; // Logo
+import "../css/SiteHeader.css";
+import logo from "../assets/image.png";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,7 +11,6 @@ const Header = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Lấy thông tin người dùng từ localStorage
     const User = localStorage.getItem("user");
     if (User) {
       setUser(JSON.parse(User));
@@ -19,7 +18,6 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    // Xóa thông tin người dùng và token khỏi localStorage
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
     setUser(null);
@@ -27,8 +25,12 @@ const Header = () => {
   };
 
   const handleNavigate = (path) => {
-    setMenuOpen(false); // Đóng menu khi điều hướng
+    setMenuOpen(false);
     navigate(path);
+  };
+
+  const scrollToSection = (hash) => {
+    navigate(`/home${hash}`);
   };
 
   return (
@@ -40,34 +42,24 @@ const Header = () => {
             <img src={logo} alt="Logo" />
           </div>
           <nav className="nav-links">
-            <a href="/resultHotel" className="nav-item">
+            <div className="nav-item" onClick={() => scrollToSection("#hotelList")}>
               Khách sạn
-            </a>
-            <a href="#" className="nav-item">
+            </div>
+            <div className="nav-item" onClick={() => scrollToSection("#flightList")}>
               Vé máy bay
-            </a>
-            <a href="#" className="nav-item">
-              Biệt thự, HomeStay
-            </a>
+            </div>
           </nav>
         </div>
 
-        {/* Right Section: Icons & Buttons */}
+        {/* Right Section */}
         <div className="right-menu">
           <FaBell className="icon" />
           <FaGift className="icon" />
-          {/* <FaUser className="icon" />
-          <button className="btn login" onClick={() => navigate("/login")}>
-            Đăng nhập
-          </button>
-          <button className="btn signup" onClick={() => navigate("/signup")}>
-            Đăng ký
-          </button> */}
 
           {user ? (
             <div className="user-menu">
               <img
-                src={user.avatar || "https://via.placeholder.com/40"} // Avatar mặc định nếu không có
+                src={user.avatar || "https://via.placeholder.com/40"}
                 alt="User Avatar"
                 className="user-avatar"
                 onClick={() => setMenuOpen(!menuOpen)}
@@ -75,15 +67,9 @@ const Header = () => {
               <span className="user-name">{user.fullname || "Người dùng"}</span>
               {menuOpen && (
                 <div className="dropdown-menu">
-                  <div onClick={() => handleNavigate("/account")}>
-                    Tài khoản
-                  </div>
-                  <div onClick={() => handleNavigate("/account?tab=favorite")}>
-                    Yêu Thích 
-                  </div>
-                  <div onClick={() => handleNavigate("/orders")}>
-                    Đơn hàng của tôi
-                  </div>
+                  <div onClick={() => handleNavigate("/account")}>Tài khoản</div>
+                  <div onClick={() => handleNavigate("/account?tab=favorite")}>Yêu Thích</div>
+                  <div onClick={() => handleNavigate("/orders")}>Đơn hàng của tôi</div>
                   <div onClick={handleLogout}>Đăng xuất</div>
                 </div>
               )}
@@ -93,30 +79,24 @@ const Header = () => {
               <button className="btn login" onClick={() => navigate("/login")}>
                 Đăng nhập
               </button>
-              <button
-                className="btn signup"
-                onClick={() => navigate("/signup")}
-              >
+              <button className="btn signup" onClick={() => navigate("/signup")}>
                 Đăng ký
               </button>
             </>
           )}
-          <IoMenu
-            className="menu-icon"
-            onClick={() => setMenuOpen(!menuOpen)}
-          />
+          <IoMenu className="menu-icon" onClick={() => setMenuOpen(!menuOpen)} />
         </div>
       </div>
 
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="mobile-menu">
-          <a href="#" className="nav-item">
+          <div className="nav-item" onClick={() => scrollToSection("#hotelList")}>
             Khách sạn
-          </a>
-          <a href="#" className="nav-item">
+          </div>
+          <div className="nav-item" onClick={() => scrollToSection("#flightList")}>
             Vé máy bay
-          </a>
+          </div>
         </div>
       )}
     </header>
