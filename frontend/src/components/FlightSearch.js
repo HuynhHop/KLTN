@@ -27,7 +27,8 @@ const FlightSearch = () => {
       const data = await res.json();
 
       if (Array.isArray(data) && data.length > 0) {
-        navigate("/resultFlight", { state: { results: data } });
+        navigate("/resultFlight", { state: { filters: { departure, destination, minTax, maxTax } } });
+
       } else {
         console.error("Không tìm thấy chuyến bay phù hợp", data);
       }

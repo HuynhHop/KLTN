@@ -1,3 +1,19 @@
+.room-quantity {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+/* Đổi màu khi số lượng ít */
+.room-quantity.low {
+  color: #ff4757;
+}
+
+/* Đổi màu khi hết phòng */
+.room-quantity.out {
+  color: #ff0000;
+}
 .voucher-input {
   display: flex;
   flex-direction: column;
@@ -78,16 +94,18 @@
   /* Phần hiển thị giường đơn */
   .propose-bed {
     display: flex;
+    flex-direction: column; /* chuyển thành dọc */
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: #333;
     border-left: 1px solid #e0e0e0;
     border-right: 1px solid #e0e0e0;
-    padding: 0 50px;
-    text-align: center;
+    padding: 10px;
     min-width: 100px;
+    text-align: center;
+    gap: 8px;
   }
   
   .propose-image img {

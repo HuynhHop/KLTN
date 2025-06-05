@@ -37,10 +37,17 @@ const VoucherDetail = () => {
   };
 
   const handleApplyVoucher = () => {
-    // Logic áp dụng voucher
-    alert(`Voucher ${voucher.code} đã được áp dụng!`);
-  };
+    if (!voucher?.code) return;
 
+    navigator.clipboard.writeText(voucher.code)
+      .then(() => {
+        alert(`Voucher ${voucher.code} đã được sao chép vào CLIPBOARD !`);
+      })
+      .catch((err) => {
+        console.error("Lỗi khi sao chép:", err);
+        alert("Không thể sao chép mã voucher.");
+      });
+  };
   if (loading) {
     return (
       <div className="voucher-loading">

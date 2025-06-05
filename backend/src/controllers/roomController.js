@@ -170,6 +170,13 @@ class RoomController {
       const images = req.files?.map((file) => file.path) || data.images || [];
       data.images = images;
 
+      if (data.quantity && data.quantity < 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Số lượng phòng không thể âm" 
+        });
+      }
+      
       const newRoom = new Room(data);
       await newRoom.save();
 

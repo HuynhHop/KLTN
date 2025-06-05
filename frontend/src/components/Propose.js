@@ -187,7 +187,12 @@ const Propose = ({ hotelId }) => {
                 )}
               </div>
             </div>
-            <div className="propose-bed"><p>{room.beds}</p></div>
+            <div className="propose-bed">
+              <p>{room.beds}</p>
+              <p className={`room-quantity ${room.quantity === 0 ? 'out' : room.quantity < 5 ? 'low' : ''}`}>
+                {room.quantity === 0 ? 'Hết phòng' : `Còn lại: ${room.quantity} phòng`}
+              </p>
+            </div>
             <div className="propose-pricing">
               {voucher?.discountValue && (
                 <p className="old-price">
@@ -209,8 +214,9 @@ const Propose = ({ hotelId }) => {
                   localStorage.setItem("voucherType", voucher?.discountType || "");
                   navigate(`/checkout?id=${room._id}`);
                 }}
+                disabled={room.quantity === 0}
               >
-                Đặt phòng
+                {room.quantity === 0 ? 'Hết phòng' : 'Đặt phòng'}
               </button>
 
               <p className="cashback">Hoàn {room.cashback?.toLocaleString() || 0}₫ vào Cash</p>

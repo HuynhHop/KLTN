@@ -82,6 +82,7 @@ router.delete("/rooms/:id", roomController.deleteRoom);
 
 router.post("/orders/create", orderController.createOrder);
 router.get("/orders", orderController.getAllOrder);
+router.delete("/orders/:id", orderController.deleteOrder);
 router.get("/orders/user/:userId", orderController.getByUser);
 router.get("/orders/:id", orderController.getOrderById);
 router.put("/orders/:id/status", orderController.updateStatus);

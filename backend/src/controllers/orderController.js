@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+const Room = require("../models/Room");
 
 class OrderController {
   async getAllOrder(req, res) {
@@ -51,6 +52,27 @@ class OrderController {
         imageRoom,
       } = req.body;
 
+      if (serviceType === "Hotel") {
+        const room = await Room.findById(serviceId);
+        if (!room) {
+          return res.status(404).json({ 
+            success: false, 
+            message: "Không tìm thấy phòng" 
+          });
+        }
+
+        if (room.quantity < quantity) {
+          return res.status(400).json({ 
+            success: false, 
+            message: "Số lượng phòng không đủ" 
+          });
+        }
+
+        // Giảm số lượng phòng
+        room.quantity -= quantity;
+        await room.save();
+      }
+
       const newOrder = new Order({
         user,
         serviceType,
@@ -100,5 +122,39 @@ class OrderController {
       res.status(500).json({ message: err.message });
     }
   }
+
+  async deleteOrder(req, res) {
+    try {
+      const { id } = req.params;
+      const order = await Order.findById(id);
+
+      if (!order) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Không tìm thấy đơn hàng" 
+        });
+      }
+
+      // Nếu là đơn phòng khách sạn và đã thanh toán, hoàn trả số lượng phòng
+      if (order.serviceType === "Hotel" && order.status === "Paid") {
+        const room = await Room.findById(order.serviceId);
+        if (room) {
+          room.quantity += order.quantity;
+          await room.save();
+        }
+      }
+
+      // Xóa đơn hàng
+      await Order.findByIdAndDelete(id);
+
+      res.json({ 
+        success: true, 
+        message: "Xóa đơn hàng thành công" 
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, message: err.message });
+    }
+  }
+  
 }
 module.exports = new OrderController();
