@@ -106,10 +106,10 @@ router.get("/flights/:id", flightController.getFlightById);
 router.post("/flights/search", flightController.searchFlights);
 
 router.post("/vouchers/create", voucherController.createVoucher);
+router.get("/vouchers/apply", voucherController.applyVoucher);
 router.put("/vouchers/:id", voucherController.updateVoucher);
 router.get("/vouchers", voucherController.getAll);
 router.get("/vouchers/:id", voucherController.getById);
-router.get("/vouchers/apply", voucherController.applyVoucher);
 
 router.post("/blogs/create", BlogController.create);
 router.put("/blogs/:id", BlogController.update);

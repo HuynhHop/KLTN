@@ -31,16 +31,20 @@ class VoucherController {
     });
   }
   async applyVoucher(req, res) {
-    const { code, type, id } = req.query;
+    const { code, type } = req.query;
 
     try {
+      // const vouch = await Voucher.findOne({
+      //   code,
+      //   applyTo: type,
+      //   $or: [
+      //     { serviceId: null }, // áp dụng toàn bộ
+      //     { serviceId: id }, // hoặc chỉ áp dụng cho service cụ thể
+      //   ],
+      // });
       const vouch = await Voucher.findOne({
         code,
         applyTo: type,
-        $or: [
-          { serviceId: null }, // áp dụng toàn bộ
-          { serviceId: id }, // hoặc chỉ áp dụng cho service cụ thể
-        ],
       });
 
       if (!vouch || vouch.expiresAt < new Date()) {
