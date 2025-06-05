@@ -98,10 +98,15 @@ const Edit = ({ inputs, title }) => {
               .slice(0, 10);
           }
 
+          if (resourceType === "room") {
+            fetchedData.hotelId = fetchedData.hotel._id;
+          }
+
           if (fetchedData.images) {
             setExistingImages(fetchedData.images); // Lưu trữ ảnh từ database
           }
           setFormData(fetchedData);
+          console.log("Fetched data:", fetchedData);
         } else {
           setError("Failed to fetch resource data.");
         }
@@ -316,7 +321,7 @@ const Edit = ({ inputs, title }) => {
                     />
                   </div>
                 )}
-                {(resourceType === "user" || resourceType === "voucher") && (
+                {resourceType === "user" && (
                   <div className="formInput">
                     <label htmlFor="file">
                       Avatar: <DriveFolderUploadOutlined className="icon" />
@@ -329,10 +334,10 @@ const Edit = ({ inputs, title }) => {
                     />
                   </div>
                 )}
-                {resourceType === "flight" && (
+                {(resourceType === "flight" || resourceType === "voucher") && (
                   <div className="formInput">
                     <label htmlFor="file">
-                      Avatar: <DriveFolderUploadOutlined className="icon" />
+                      Image: <DriveFolderUploadOutlined className="icon" />
                     </label>
                     <input
                       type="file"

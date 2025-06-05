@@ -11,7 +11,7 @@ class HotelController {
         district,
         description,
         amenities,
-        pricePerNight,
+        // pricePerNight,
         location,
         starRating,
         checkInTime,
@@ -20,7 +20,7 @@ class HotelController {
         contact,
       } = req.body;
 
-      if (!name || !address || !pricePerNight || !req.files?.length) {
+      if (!name || !address || !req.files?.length) {
         return res.status(400).json({
           success: false,
           message: "Missing required fields",
@@ -50,7 +50,7 @@ class HotelController {
         district,
         description,
         amenities: amenitiesArray,
-        pricePerNight,
+        // pricePerNight,
         location: parsedLocation,
         starRating: starRating ? Number(starRating) : undefined,
         checkInTime,

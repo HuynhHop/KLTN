@@ -69,12 +69,12 @@ const Sidebar = () => {
             </li>
           </Link>
 
-          <Link to="/admin/homes" style={{ textDecoration: "none" }}>
+          {/* <Link to="/admin/homes" style={{ textDecoration: "none" }}>
             <li>
               <TourIcon className="icon" />
               <span>HomeStay</span>
             </li>
-          </Link>
+          </Link> */}
 
           <Link to="/admin/orders" style={{ textDecoration: "none" }}>
             <li>

@@ -12,7 +12,7 @@ class VoucherController {
   }
 
   async createVoucher(req, res) {
-    imageUpload.single("avatar")(req, res, async (err) => {
+    imageUpload.single("image")(req, res, async (err) => {
       if (err) {
         return res.status(500).json({
           success: false,
@@ -23,7 +23,7 @@ class VoucherController {
 
       // Nếu có file ảnh, lưu URL vào req.body
       if (req.file && req.file.path) {
-        req.body.avatar = req.file.path; // URL ảnh trên Cloudinary
+        req.body.image = req.file.path; // URL ảnh trên Cloudinary
       }
       const voucher = new Voucher(req.body);
       await voucher.save();
@@ -106,6 +106,24 @@ class VoucherController {
       });
     } catch (err) {
       res.status(400).json({ success: false, message: err.message });
+    }
+  }
+  async deleteVoucher(req, res) {
+    try {
+      const { id } = req.params;
+      const deletedVoucher = await Voucher.findByIdAndDelete(id);
+
+      if (!deletedVoucher) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Voucher not found" });
+      }
+
+      res
+        .status(200)
+        .json({ success: true, message: "Voucher deleted successfully" });
+    } catch (err) {
+      res.status(500).json({ success: false, message: err.message });
     }
   }
 }

@@ -200,9 +200,9 @@ const DetailHomeStay = () => {
             </div>
           </div>
         </div>
-        <div className="right">
+        {/* <div className="right">
           <Chart aspect={3 / 1} title="Orders Spending (Last 6 Months)" />
-        </div>
+        </div> */}
       </div>
     </div>
   );
