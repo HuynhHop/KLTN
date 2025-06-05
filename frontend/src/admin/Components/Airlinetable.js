@@ -10,46 +10,89 @@ const Airlinetable = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("accessToken");
+  const apiUrl = process.env.REACT_APP_API_URL;
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const fetchFlights = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/flights`);
+        const data = await response.json();
+        if (data) {
+          const formattedData = data.map((filght) => ({
+            id: filght._id,
+            ...filght,
+          }));
+          setData(formattedData);
+        } else {
+          console.error("Failed to fetch flights", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching flights:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleDelete = async (id) => {};
+    fetchFlights();
+  }, [apiUrl]);
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`${apiUrl}/flights/${id}`, {
+        method: "DELETE",
+      });
+      const result = await response.json();
+      if (result) {
+        setData((prevData) => prevData.filter((filght) => filght.id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting filght:", error);
+    }
+  };
 
   // Cấu hình cột cho DataGrid
   const columns = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "registrationDate", headerName: "Registration Date", width: 200 },
-    { field: "expirationDate", headerName: "Expiration Date", width: 200 },
+    { field: "airline", headerName: "Airline", width: 120 },
     {
-      field: "isRenewal",
-      headerName: "Renewal",
+      field: "flightNumber",
+      headerName: "Flight No.",
+      width: 70,
+    },
+    {
+      field: "departureTime",
+      headerName: "Departure Time",
       width: 150,
       renderCell: (params) => {
-        return (
-          <div
-            className={`cellWithStatus ${params.row.isRenewal} ? 'true' : 'false'`}
-          >
-            {params.row.isRenewal ? "True" : "False"}
-          </div>
+        const date = new Date(params.row.departureTime).toLocaleString(
+          "en-US",
+          { timeZone: "Asia/Ho_Chi_Minh", hour12: false }
         );
+        return <div>{date}</div>;
       },
     },
     {
-      field: "packageInfo",
-      headerName: "Package Information",
-      width: 200,
+      field: "arrivalTime",
+      headerName: "Arrival Time",
+      width: 150,
       renderCell: (params) => {
-        const { packageName } = params.row.packageInfo || {};
-        return <div>{packageName}</div>;
+        const date = new Date(params.row.arrivalTime).toLocaleString("en-US", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          hour12: false,
+        });
+        return <div>{date}</div>;
       },
     },
+    { field: "departure", headerName: "Departure", width: 100 },
+    { field: "destination", headerName: "Destination", width: 100 },
+    { field: "originalPrice", headerName: "Price", width: 100 },
+    { field: "seatsAvailable", headerName: "Seats", width: 70 },
   ];
 
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 120,
       renderCell: (params) => {
         return (
           <div className="cellAction">

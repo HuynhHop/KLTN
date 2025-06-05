@@ -76,7 +76,7 @@ const Hoteltable = () => {
         );
       },
     },
-    { field: "pricePerNight", headerName: "Price Per Night", width: 150 },
+    { field: "pricePerNight", headerName: "Price", width: 150 },
   ];
 
   const actionColumn = [

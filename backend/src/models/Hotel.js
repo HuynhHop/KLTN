@@ -16,8 +16,7 @@ const hotelSchema = new mongoose.Schema(
     images: [{ type: String }], // URLs từ Cloudinary
     amenities: [{ type: String }], // Tiện nghi "Wifi, Hồ bơi, Điều hòa,..."
     starRating: { type: Number, min: 1, max: 5 },
-    // pricePerNight: { type: Number, required: true },
-   pricePerNight: { type: Number},
+    pricePerNight: { type: Number },
     checkInTime: { type: String }, // "14:00"
     checkOutTime: { type: String }, // "12:00"
     policies: {

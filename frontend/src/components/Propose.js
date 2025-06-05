@@ -41,31 +41,44 @@ const Propose = ({ hotelId }) => {
         if (data.success) {
           const updatedRooms = data.data.map((room) => {
             const booking = bookings.find(
-              (b) => b.serviceType === "Hotel" && b.serviceId === room._id && b.status === "Paid"
+              (b) =>
+                b.serviceType === "Hotel" &&
+                b.serviceId === room._id &&
+                b.status === "Paid"
             );
 
             let timeAgoText = null;
             if (booking) {
               const diffMs = new Date() - new Date(booking.bookingDate);
               const diffMins = Math.floor(diffMs / 60000);
-              timeAgoText = diffMins < 60 ? `Đã đặt ${diffMins} phút trước` : `Đã đặt ${Math.floor(diffMins / 60)} giờ trước`;
+              timeAgoText =
+                diffMins < 60
+                  ? `Đã đặt ${diffMins} phút trước`
+                  : `Đã đặt ${Math.floor(diffMins / 60)} giờ trước`;
             }
 
             let discountedPrice = room.price;
-            if (voucher && (voucher.serviceId === null || voucher.serviceId === room._id)) {
+            if (
+              voucher &&
+              (voucher.serviceId === null || voucher.serviceId === room._id)
+            ) {
               if (voucher.discountType === "percent") {
-                discountedPrice = room.price - room.price * (voucher.discountValue / 100);
+                discountedPrice =
+                  room.price - room.price * (voucher.discountValue / 100);
               } else if (voucher.discountType === "amount") {
                 discountedPrice = room.price - voucher.discountValue;
               }
             }
-            const finalPrice = Math.max(discountedPrice + (room.serviceFee || 0), 0);
+            const finalPrice = Math.max(
+              discountedPrice + (room.serviceFee || 0),
+              0
+            );
 
             return {
               ...room,
               discountedPrice: Math.round(discountedPrice),
               finalPrice: Math.round(finalPrice),
-              timeAgoText
+              timeAgoText,
             };
           });
           setRooms(updatedRooms);
@@ -76,12 +89,14 @@ const Propose = ({ hotelId }) => {
     };
 
     if (hotelId) fetchRooms();
-  }, [hotelId, bookings, voucher]);
+  }, [hotelId, bookings, voucher, apiUrl]);
 
   const handleVoucherApply = async () => {
     try {
       setError(null);
-      const res = await fetch(`${apiUrl}/vouchers/apply?code=${voucherCode}&type=hotel`);
+      const res = await fetch(
+        `${apiUrl}/vouchers/apply?code=${voucherCode}&type=hotel`
+      );
       const data = await res.json();
       if (data && data._id) {
         setVoucher(data);
@@ -141,48 +156,80 @@ const Propose = ({ hotelId }) => {
         {error && <p className="voucher-error">{error}</p>}
       </div>
 
-
       <div className="propose-list">
         {rooms.map((room) => (
           <div key={room._id} className="propose-content">
             <div className="propose-image">
               <img src={room.images[0]} alt={room.name} />
-              <button onClick={() => openModal(room._id)}>Xem chi tiết phòng »</button>
-              {room.timeAgoText && <div className="propose-booking-time">{room.timeAgoText}</div>}
+              <button onClick={() => openModal(room._id)}>
+                Xem chi tiết phòng »
+              </button>
+              {room.timeAgoText && (
+                <div className="propose-booking-time">{room.timeAgoText}</div>
+              )}
             </div>
             <div className="propose-info">
               <h3>{room.name}</h3>
-              <p className="light-text">{room.people} | {room.area} | {room.view}</p>
+              <p className="light-text">
+                {room.people} | {room.area} | {room.view}
+              </p>
               <ul className="bullet-list">
                 <li>✅ Hoàn huỷ một phần</li>
                 <li>✅ Giá đã bao gồm bữa sáng</li>
                 <li>⚠️ Xác nhận trong 15 phút</li>
               </ul>
               <div className="propose-advantages">
-                <div className="advantage-frame" onClick={() => toggleDetails(room._id)}>
-                  <p><b>Ưu đãi bao gồm:</b> {room.policies?.extra || "Ăn sáng"}</p>
-                  <p><b>Thông tin bổ sung:</b> {room.policies?.cancellation || "Không hoàn tiền"}</p>
+                <div
+                  className="advantage-frame"
+                  onClick={() => toggleDetails(room._id)}
+                >
+                  <p>
+                    <b>Ưu đãi bao gồm:</b> {room.policies?.extra || "Ăn sáng"}
+                  </p>
+                  <p>
+                    <b>Thông tin bổ sung:</b>{" "}
+                    {room.policies?.cancellation || "Không hoàn tiền"}
+                  </p>
                 </div>
                 {expandedDetails[room._id] && (
                   <div className="room-details">
-                    <p><b>Chính sách hủy:</b> {room.policies?.cancellation}</p>
-                    <p><b>Bữa ăn:</b> {room.policies?.breakfast}</p>
-                    <p><b>Xác nhận:</b> {room.policies?.confirmation}</p>
-                    <p><b>Hóa đơn:</b> {room.policies?.invoice}</p>
-                    <p><b>Ưu đãi:</b> {room.policies?.extra}</p>
+                    <p>
+                      <b>Chính sách hủy:</b> {room.policies?.cancellation}
+                    </p>
+                    <p>
+                      <b>Bữa ăn:</b> {room.policies?.breakfast}
+                    </p>
+                    <p>
+                      <b>Xác nhận:</b> {room.policies?.confirmation}
+                    </p>
+                    <p>
+                      <b>Hóa đơn:</b> {room.policies?.invoice}
+                    </p>
+                    <p>
+                      <b>Ưu đãi:</b> {room.policies?.extra}
+                    </p>
                   </div>
                 )}
               </div>
               <div className="propose-amenities">
-                {room.amenities.slice(0, 3).map((item, i) => <span key={i}>{item}</span>)}
+                {room.amenities.slice(0, 3).map((item, i) => (
+                  <span key={i}>{item}</span>
+                ))}
                 {room.amenities.length > 3 && (
-                  <span className="more-amenities" onClick={() => toggleAmenities(room._id)}>
-                    {expandedAmenities[room._id] ? "Ẩn tiện ích" : `+ ${room.amenities.length - 3} tiện ích`}
+                  <span
+                    className="more-amenities"
+                    onClick={() => toggleAmenities(room._id)}
+                  >
+                    {expandedAmenities[room._id]
+                      ? "Ẩn tiện ích"
+                      : `+ ${room.amenities.length - 3} tiện ích`}
                   </span>
                 )}
                 {expandedAmenities[room._id] && (
                   <div className="full-amenities">
-                    {room.amenities.slice(3).map((item, i) => <span key={i}>{item}</span>)}
+                    {room.amenities.slice(3).map((item, i) => (
+                      <span key={i}>{item}</span>
+                    ))}
                   </div>
                 )}
               </div>
@@ -196,12 +243,20 @@ const Propose = ({ hotelId }) => {
             <div className="propose-pricing">
               {voucher?.discountValue && (
                 <p className="old-price">
-                  -{voucher.discountValue}{voucher.discountType === "percent" ? "%" : "₫"} <s>{room.price.toLocaleString()}₫</s>
+                  -{voucher.discountValue}
+                  {voucher.discountType === "percent" ? "%" : "₫"}{" "}
+                  <s>{room.price.toLocaleString()}₫</s>
                 </p>
               )}
-              <p className="discounted-price">{room.discountedPrice.toLocaleString()}₫</p>
-              <p className="coupon">Mã: <b>{voucher?.code || "Không có mã"}</b></p>
-              <p className="total-price">Giá cuối cùng: {room.finalPrice.toLocaleString()}₫</p>
+              <p className="discounted-price">
+                {room.discountedPrice.toLocaleString()}₫
+              </p>
+              <p className="coupon">
+                Mã: <b>{voucher?.code || "Không có mã"}</b>
+              </p>
+              <p className="total-price">
+                Giá cuối cùng: {room.finalPrice.toLocaleString()}₫
+              </p>
               <button
                 className="book-btn"
                 onClick={() => {
@@ -210,8 +265,14 @@ const Propose = ({ hotelId }) => {
                   localStorage.setItem("finalPrice", room.finalPrice);
                   localStorage.setItem("serviceFee", room.serviceFee);
                   localStorage.setItem("voucherCode", voucher?.code || "");
-                  localStorage.setItem("voucherValue", voucher?.discountValue || 0);
-                  localStorage.setItem("voucherType", voucher?.discountType || "");
+                  localStorage.setItem(
+                    "voucherValue",
+                    voucher?.discountValue || 0
+                  );
+                  localStorage.setItem(
+                    "voucherType",
+                    voucher?.discountType || ""
+                  );
                   navigate(`/checkout?id=${room._id}`);
                 }}
                 disabled={room.quantity === 0}
@@ -219,7 +280,9 @@ const Propose = ({ hotelId }) => {
                 {room.quantity === 0 ? 'Hết phòng' : 'Đặt phòng'}
               </button>
 
-              <p className="cashback">Hoàn {room.cashback?.toLocaleString() || 0}₫ vào Cash</p>
+              <p className="cashback">
+                Hoàn {room.cashback?.toLocaleString() || 0}₫ vào Cash
+              </p>
             </div>
           </div>
         ))}

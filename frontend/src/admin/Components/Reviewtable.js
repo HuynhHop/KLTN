@@ -10,34 +10,85 @@ const Reviewtable = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("accessToken");
-  useEffect(() => {}, []);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
-  const handleDelete = async (id) => {};
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/comments`);
+        const data = await response.json();
+        if (data.success) {
+          const formattedData = data.data.map((comment) => ({
+            id: comment._id,
+            ...comment,
+          }));
+          setData(formattedData);
+        } else {
+          console.error("Failed to fetch comments", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComments();
+  }, [apiUrl]);
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`${apiUrl}/comments/${id}`, {
+        method: "DELETE",
+      });
+      const result = await response.json();
+      if (result.success) {
+        setData((prevData) => prevData.filter((comment) => comment.id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
 
   // Cấu hình cột cho DataGrid
   const columns = [
-    { field: "hotelId", headerName: "Hotel ID", width: 100 },
-    { field: "user", headerName: "Customer", width: 200 },
-    { field: "rating", headerName: "Rating", width: 70 },
-    { field: "comment", headerName: "Comment", width: 250 },
-    { field: "createdAt", headerName: "Create Time", width: 130 },
-    { field: "updatedAt", headerName: "Update Time", width: 130 },
+    {
+      field: "hotelId",
+      headerName: "Hotel Name",
+      width: 200,
+      renderCell: (params) => {
+        return <div>{params.row.hotelId?.name || "N/A"}</div>;
+      },
+    },
+    { field: "name", headerName: "Customer", width: 150 },
+    { field: "rating", headerName: "Rating", width: 80 },
+    {
+      field: "content",
+      headerName: "Comment",
+      width: 200,
+      renderCell: (params) => {
+        return <div className="cellScroll">{params.row.content}</div>;
+      },
+    },
+    { field: "groupType", headerName: "Group Type", width: 100 },
+    { field: "roomType", headerName: "Room Type", width: 100 },
+    { field: "nights", headerName: "Nights", width: 100 },
   ];
 
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
-      width: 170,
+      width: 120,
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link
+            {/* <Link
               to={`/admin/lessons/${params.row.id}/edit`}
               style={{ textDecoration: "none" }}
             >
               <div className="viewButton">Edit</div>
-            </Link>
+            </Link> */}
             <div
               className="deleteButton"
               onClick={() => handleDelete(params.row.id)}

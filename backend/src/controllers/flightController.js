@@ -19,15 +19,30 @@
 // }
 // module.exports = new FlightController();
 const Flight = require("../models/Flight");
-const { removeVietnameseTones } = require('../util/textUtils');
+const { removeVietnameseTones } = require("../util/textUtils");
+const { imageUpload } = require("../config/cloudinary");
 
 class FlightController {
   // Tạo chuyến bay
   async createFlight(req, res) {
     try {
-      const flight = new Flight(req.body);
-      await flight.save();
-      res.status(201).json(flight);
+      imageUpload.single("image")(req, res, async (err) => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            message: "Error uploading image",
+            error: err.message,
+          });
+        }
+
+        // Nếu có file ảnh, lưu URL vào req.body
+        if (req.file && req.file.path) {
+          req.body.image = req.file.path; // URL ảnh trên Cloudinary
+        }
+        const flight = new Flight(req.body);
+        await flight.save();
+        res.status(201).json(flight);
+      });
     } catch (err) {
       res.status(500).json({ message: "Lỗi tạo chuyến bay", error: err });
     }
@@ -36,15 +51,30 @@ class FlightController {
   // Cập nhật chuyến bay
   async updateFlight(req, res) {
     try {
-      const flight = await Flight.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
+      imageUpload.single("image")(req, res, async (err) => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            message: "Error uploading image",
+            error: err.message,
+          });
+        }
+
+        // Nếu có file ảnh, lưu URL vào req.body
+        if (req.file && req.file.path) {
+          req.body.image = req.file.path; // URL ảnh trên Cloudinary
+        }
+
+        const flight = await Flight.findByIdAndUpdate(req.params.id, req.body, {
+          new: true,
+        });
+        if (!flight) {
+          return res.status(404).json({ message: "Không tìm thấy chuyến bay" });
+        }
+        res.status(200).json({ success: true, data: flight });
       });
-      if (!flight) {
-        return res.status(404).json({ message: "Không tìm thấy chuyến bay" });
-      }
-      res.json(flight);
     } catch (err) {
-      res.status(500).json({ message: "Lỗi cập nhật", error: err });
+      res.status(500).json({ message: "Lỗi cập nhật " + err, error: err });
     }
   }
 
@@ -53,7 +83,9 @@ class FlightController {
     try {
       const flight = await Flight.findByIdAndDelete(req.params.id);
       if (!flight) {
-        return res.status(404).json({ message: "Không tìm thấy chuyến bay để xóa" });
+        return res
+          .status(404)
+          .json({ message: "Không tìm thấy chuyến bay để xóa" });
       }
       res.json({ message: "Đã xóa chuyến bay" });
     } catch (err) {
@@ -67,7 +99,9 @@ class FlightController {
       const flights = await Flight.find({});
       res.json(flights);
     } catch (err) {
-      res.status(500).json({ message: "Lỗi lấy danh sách chuyến bay", error: err });
+      res
+        .status(500)
+        .json({ message: "Lỗi lấy danh sách chuyến bay", error: err });
     }
   }
 
@@ -85,38 +119,41 @@ class FlightController {
 
   // Thêm vào trong class FlightController
   async searchFlights(req, res) {
-      try {
-        const { departure, destination, minTax, maxTax } = req.body;
+    try {
+      const { departure, destination, minTax, maxTax } = req.body;
 
-        // Lấy toàn bộ chuyến bay
-        const flights = await Flight.find();
+      // Lấy toàn bộ chuyến bay
+      const flights = await Flight.find();
 
-        const normalizedDeparture = removeVietnameseTones(departure || "");
-        const normalizedDestination = removeVietnameseTones(destination || "");
+      const normalizedDeparture = removeVietnameseTones(departure || "");
+      const normalizedDestination = removeVietnameseTones(destination || "");
 
-        // Lọc thủ công
-        const filtered = flights.filter(flight => {
-          const matchDeparture = departure
-            ? removeVietnameseTones(flight.departure || "").includes(normalizedDeparture)
-            : true;
+      // Lọc thủ công
+      const filtered = flights.filter((flight) => {
+        const matchDeparture = departure
+          ? removeVietnameseTones(flight.departure || "").includes(
+              normalizedDeparture
+            )
+          : true;
 
-          const matchDestination = destination
-            ? removeVietnameseTones(flight.destination || "").includes(normalizedDestination)
-            : true;
+        const matchDestination = destination
+          ? removeVietnameseTones(flight.destination || "").includes(
+              normalizedDestination
+            )
+          : true;
 
-          const matchTax =
-            (!minTax || flight.taxPrice >= parseFloat(minTax)) &&
-            (!maxTax || flight.taxPrice <= parseFloat(maxTax));
+        const matchTax =
+          (!minTax || flight.taxPrice >= parseFloat(minTax)) &&
+          (!maxTax || flight.taxPrice <= parseFloat(maxTax));
 
-          return matchDeparture && matchDestination && matchTax;
-        });
+        return matchDeparture && matchDestination && matchTax;
+      });
 
-        res.json(filtered);
-      } catch (err) {
-        res.status(500).json({ message: "Lỗi tìm kiếm chuyến bay", error: err });
-      }
+      res.json(filtered);
+    } catch (err) {
+      res.status(500).json({ message: "Lỗi tìm kiếm chuyến bay", error: err });
     }
-
+  }
 }
 
 module.exports = new FlightController();

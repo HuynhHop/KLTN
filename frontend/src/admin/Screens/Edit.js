@@ -15,7 +15,7 @@ const Edit = ({ inputs, title }) => {
   const token = localStorage.getItem("accessToken");
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  const { userId, hotelId, roomId, voucherId } = useParams();
+  const { userId, hotelId, roomId, voucherId, airlineId } = useParams();
 
   const resourceType = userId
     ? "user"
@@ -25,9 +25,11 @@ const Edit = ({ inputs, title }) => {
     ? "room"
     : voucherId
     ? "voucher"
+    : airlineId
+    ? "flight"
     : "";
 
-  const resourceId = userId || hotelId || roomId || voucherId;
+  const resourceId = userId || hotelId || roomId || voucherId || airlineId;
 
   useEffect(() => {
     // Load thông tin từ database
@@ -42,6 +44,10 @@ const Edit = ({ inputs, title }) => {
           }
         );
         const data = await response.json();
+        if (resourceId === voucherId || resourceId === airlineId) {
+          data.success = true;
+          data.data = data;
+        }
         if (data.success) {
           const fetchedData = data.data;
 
@@ -75,11 +81,27 @@ const Edit = ({ inputs, title }) => {
             delete fetchedData.location;
           }
 
-          setFormData(fetchedData);
+          if (fetchedData.departureTime) {
+            fetchedData.departureTime = new Date(fetchedData.departureTime)
+              .toISOString()
+              .slice(0, 16);
+          }
+          if (fetchedData.arrivalTime) {
+            fetchedData.arrivalTime = new Date(fetchedData.arrivalTime)
+              .toISOString()
+              .slice(0, 16);
+          }
+
+          if (fetchedData.expiresAt) {
+            fetchedData.expiresAt = new Date(fetchedData.expiresAt)
+              .toISOString()
+              .slice(0, 10);
+          }
 
           if (fetchedData.images) {
             setExistingImages(fetchedData.images); // Lưu trữ ảnh từ database
           }
+          setFormData(fetchedData);
         } else {
           setError("Failed to fetch resource data.");
         }
@@ -121,6 +143,8 @@ const Edit = ({ inputs, title }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("Submitting...");
 
     const processedFormData = { ...formData };
 
@@ -177,7 +201,9 @@ const Edit = ({ inputs, title }) => {
     // Add files to FormData
     if (files.length > 0) {
       if (resourceType === "user") {
-        data.append("avatar", files[0]); // Chỉ 1 ảnh cho User
+        data.append("avatar", files[0]);
+      } else if (resourceType === "voucher" || resourceType === "flight") {
+        data.append("image", files[0]);
       } else {
         files.forEach((file) => data.append("images", file)); // Nhiều ảnh cho Hotel và Room
       }
@@ -198,10 +224,13 @@ const Edit = ({ inputs, title }) => {
       });
 
       const responseData = await response.json();
-
       if (response.ok) {
         alert("Resource updated successfully!");
-        navigate(`/admin/${resourceType}s`);
+        if (resourceType === "flight") {
+          navigate(`/admin/airlines`);
+        } else {
+          navigate(`/admin/${resourceType}s`);
+        }
       } else {
         alert(responseData.message || "Failed to update resource.");
       }
@@ -232,7 +261,17 @@ const Edit = ({ inputs, title }) => {
                 className="image"
               />
             )}
-
+            {(resourceType === "voucher" || resourceType === "flight") && (
+              <img
+                src={
+                  files.length > 0
+                    ? URL.createObjectURL(files[0])
+                    : formData.image
+                }
+                alt="image"
+                className="image"
+              />
+            )}
             {(resourceType === "hotel" || resourceType === "room") && (
               <div className="imagePreviewList">
                 {existingImages.map((image, index) => (
@@ -277,7 +316,20 @@ const Edit = ({ inputs, title }) => {
                     />
                   </div>
                 )}
-                {resourceType === "user" && (
+                {(resourceType === "user" || resourceType === "voucher") && (
+                  <div className="formInput">
+                    <label htmlFor="file">
+                      Avatar: <DriveFolderUploadOutlined className="icon" />
+                    </label>
+                    <input
+                      type="file"
+                      id="file"
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                    />
+                  </div>
+                )}
+                {resourceType === "flight" && (
                   <div className="formInput">
                     <label htmlFor="file">
                       Avatar: <DriveFolderUploadOutlined className="icon" />

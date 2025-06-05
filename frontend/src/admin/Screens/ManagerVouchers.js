@@ -15,7 +15,7 @@ const ManagerVouchers = () => {
           <div className="datatableTitle">
             <span>Manager Voucher</span>
             <Link
-              to="/admin/vouchers/vouchersId/new"
+              to="/admin/vouchers/voucherId/new"
               style={{ textDecoration: "none" }}
             >
               <span className="link">Add New Vouchers</span>

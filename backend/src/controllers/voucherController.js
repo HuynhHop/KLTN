@@ -1,4 +1,5 @@
 const Voucher = require("../models/Voucher");
+const { imageUpload } = require("../config/cloudinary");
 
 class VoucherController {
   async getAll(req, res) {
@@ -11,9 +12,23 @@ class VoucherController {
   }
 
   async createVoucher(req, res) {
-    const voucher = new Voucher(req.body);
-    await voucher.save();
-    res.json(voucher);
+    imageUpload.single("avatar")(req, res, async (err) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Error uploading image",
+          error: err.message,
+        });
+      }
+
+      // Nếu có file ảnh, lưu URL vào req.body
+      if (req.file && req.file.path) {
+        req.body.avatar = req.file.path; // URL ảnh trên Cloudinary
+      }
+      const voucher = new Voucher(req.body);
+      await voucher.save();
+      res.json(voucher);
+    });
   }
   async applyVoucher(req, res) {
     const { code, type, id } = req.query;
@@ -23,9 +38,9 @@ class VoucherController {
         code,
         applyTo: type,
         $or: [
-          { serviceId: null },       // áp dụng toàn bộ
-          { serviceId: id }          // hoặc chỉ áp dụng cho service cụ thể
-        ]
+          { serviceId: null }, // áp dụng toàn bộ
+          { serviceId: id }, // hoặc chỉ áp dụng cho service cụ thể
+        ],
       });
 
       if (!vouch || vouch.expiresAt < new Date()) {
@@ -55,5 +70,39 @@ class VoucherController {
     }
   }
 
+  async updateVoucher(req, res) {
+    try {
+      imageUpload.single("image")(req, res, async (err) => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            message: "Error uploading image",
+            error: err.message,
+          });
+        }
+
+        // Nếu có file ảnh, lưu URL vào req.body
+        if (req.file && req.file.path) {
+          req.body.image = req.file.path; // URL ảnh trên Cloudinary
+        }
+
+        const voucher = await Voucher.findByIdAndUpdate(
+          req.params.id,
+          req.body,
+          {
+            new: true,
+          }
+        );
+        if (!voucher) {
+          return res
+            .status(404)
+            .json({ message: "Không tìm thấy mã giảm giá" });
+        }
+        res.status(200).json({ success: true, data: voucher });
+      });
+    } catch (err) {
+      res.status(400).json({ success: false, message: err.message });
+    }
+  }
 }
 module.exports = new VoucherController();

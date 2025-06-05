@@ -115,7 +115,7 @@ const AdminLayout = () => {
           element={<Edit inputs={voucherInputs} title={"Edit Voucher"} />}
         />
         <Route
-          path="vouchers/:vouchersId/new"
+          path="vouchers/:voucherId/new"
           element={<New inputs={voucherInputs} title={"Add New Vouchers"} />}
         />
 

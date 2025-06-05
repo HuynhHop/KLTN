@@ -95,9 +95,9 @@ const DetailHotel = () => {
                 </div>
 
                 <div className="detailItem">
-                  <span className="itemkey">District:</span>
+                  <span className="itemkey">Province:</span>
                   <span className="itemValue">
-                    {hotelData?.district || "N/A"}
+                    {hotelData?.province || "N/A"}
                   </span>
                 </div>
 
@@ -200,9 +200,9 @@ const DetailHotel = () => {
             </div>
           </div>
         </div>
-        <div className="right">
+        {/* <div className="right">
           <Chart aspect={3 / 1} title="Orders Spending (Last 6 Months)" />
-        </div>
+        </div> */}
       </div>
     </div>
   );
