@@ -72,13 +72,13 @@ export const hotelInputs = [
     type: "text",
     placeholder: "Enter district",
   },
-  {
-    id: 5,
-    label: "Price Per Night",
-    name: "pricePerNight",
-    type: "number",
-    placeholder: "Enter price per night",
-  },
+  // {
+  //   id: 5,
+  //   label: "Price Per Night",
+  //   name: "pricePerNight",
+  //   type: "number",
+  //   placeholder: "Enter price per night",
+  // },
   {
     id: 6,
     label: "Star Rating",
@@ -224,10 +224,10 @@ export const roomInputs = [
   },
   {
     id: 10,
-    label: "Children Policy",
-    name: "childrenPolicy",
-    type: "text",
-    placeholder: "Enter children policy",
+    label: "Service Fee",
+    name: "serviceFee",
+    type: "number",
+    placeholder: "Enter Service Fee",
   },
   {
     id: 11,
@@ -271,6 +271,13 @@ export const roomInputs = [
     type: "text",
     placeholder: "Enter cancellation policy",
   },
+  {
+    id: 17,
+    label: "Children Policy",
+    name: "childrenPolicy",
+    type: "text",
+    placeholder: "Enter children policy",
+  },
 ];
 
 export const homesInputs = [
@@ -293,17 +300,64 @@ export const homesInputs = [
 export const airlineInputs = [
   {
     id: 1,
-    label: "Title",
-    name: "title",
+    label: "Airline",
+    name: "airline",
     type: "text",
-    placeholder: "Enter Title",
+    placeholder: "Enter airline name",
   },
   {
     id: 2,
-    label: "Description",
-    name: "description",
+    label: "Flight Number",
+    name: "flightNumber",
     type: "text",
-    placeholder: "Enter Description",
+    placeholder: "Enter flight number",
+  },
+  {
+    id: 3,
+    label: "Departure",
+    name: "departure",
+    type: "text",
+    placeholder: "Enter departure location",
+  },
+  {
+    id: 4,
+    label: "Destination",
+    name: "destination",
+    type: "text",
+    placeholder: "Enter destination location",
+  },
+  {
+    id: 5,
+    label: "Departure Time",
+    name: "departureTime",
+    type: "datetime-local",
+  },
+  {
+    id: 6,
+    label: "Arrival Time",
+    name: "arrivalTime",
+    type: "datetime-local",
+  },
+  {
+    id: 7,
+    label: "Original Price (VND)",
+    name: "originalPrice",
+    type: "number",
+    placeholder: "Enter original price",
+  },
+  {
+    id: 8,
+    label: "Tax Price (VND)",
+    name: "taxPrice",
+    type: "number",
+    placeholder: "Enter tax price",
+  },
+  {
+    id: 9,
+    label: "Seats Available",
+    name: "seatsAvailable",
+    type: "number",
+    placeholder: "Enter number of available seats",
   },
 ];
 
@@ -353,13 +407,13 @@ export const voucherInputs = [
     type: "text",
     placeholder: "Enter apply to (e.g., tour, hotel, flight)",
   },
-  {
-    id: 5,
-    label: "Service ID",
-    name: "serviceId",
-    type: "text",
-    placeholder: "Enter service ID",
-  },
+  // {
+  //   id: 5,
+  //   label: "Service ID",
+  //   name: "serviceId",
+  //   type: "text",
+  //   placeholder: "Enter service ID",
+  // },
   {
     id: 6,
     label: "Expires At",

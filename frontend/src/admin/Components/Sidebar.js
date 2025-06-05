@@ -42,19 +42,19 @@ const Sidebar = () => {
             </li>
           </Link>
 
-          <Link to="/admin/" style={{ textDecoration: "none" }}>
+          {/* <Link to="/admin/" style={{ textDecoration: "none" }}>
             <li>
               <ManageAccountsOutlinedIcon className="icon" />
               <span>Profile</span>
             </li>
-          </Link>
+          </Link> */}
 
-          <Link to="/admin/" style={{ textDecoration: "none" }}>
+          {/* <Link to="/admin/" style={{ textDecoration: "none" }}>
             <li>
               <CalendarMonthOutlinedIcon className="icon" />
               <span>Calendar</span>
             </li>
-          </Link>
+          </Link> */}
 
           <li onClick={handleLogout}>
             <ExitToAppOutlinedIcon className="icon" />
@@ -114,16 +114,16 @@ const Sidebar = () => {
           <Link to="/admin/reviews" style={{ textDecoration: "none" }}>
             <li>
               <DnsOutlinedIcon className="icon" />
-              <span>Review</span>
+              <span>Hotel Comments</span>
             </li>
           </Link>
 
-          <Link to="/admin/notifications" style={{ textDecoration: "none" }}>
+          {/* <Link to="/admin/notifications" style={{ textDecoration: "none" }}>
             <li>
               <NotificationsActiveOutlinedIcon className="icon" />
               <span>Notifications</span>
             </li>
-          </Link>
+          </Link> */}
         </ul>
       </div>
     </div>

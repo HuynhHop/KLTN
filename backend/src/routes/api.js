@@ -35,6 +35,7 @@ router.get("/favorites", favoriteController.isFavorite);
 
 router.post("/comments/:hotelId", hotelCommentController.create);
 router.get("/comments/:hotelId", hotelCommentController.getByHotel);
+router.get("/comments", hotelCommentController.getAllComments);
 router.delete("/comments/:id", hotelCommentController.delete);
 
 router.post("/hotels/search", searchController.searchHotels);
@@ -91,7 +92,10 @@ router.get("/order-flight/user/:userId", orderFlightController.getUserOrders);
 router.get("/order-flight/:id", orderFlightController.getOrder);
 router.put("/order-flight/:id", orderFlightController.update);
 router.delete("/order-flight/:id", orderFlightController.delete);
-router.patch("/order-flight/:id/payment", orderFlightController.updatePaymentStatus);
+router.patch(
+  "/order-flight/:id/payment",
+  orderFlightController.updatePaymentStatus
+);
 
 router.post("/flights/create", flightController.createFlight);
 router.put("/flights/:id", flightController.updateFlight);
@@ -100,8 +104,8 @@ router.get("/flights", flightController.getFlights);
 router.get("/flights/:id", flightController.getFlightById);
 router.post("/flights/search", flightController.searchFlights);
 
-
-router.post("/vouchers", voucherController.createVoucher);
+router.post("/vouchers/create", voucherController.createVoucher);
+router.put("/vouchers/:id", voucherController.updateVoucher);
 router.get("/vouchers", voucherController.getAll);
 router.get("/vouchers/:id", voucherController.getById);
 router.get("/vouchers/apply", voucherController.applyVoucher);

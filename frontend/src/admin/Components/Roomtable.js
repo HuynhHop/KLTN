@@ -13,7 +13,7 @@ const Roomtable = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    const fetchHotels = async () => {
+    const fetchRooms = async () => {
       try {
         const response = await fetch(`${apiUrl}/rooms`);
         const data = await response.json();
@@ -33,7 +33,7 @@ const Roomtable = () => {
       }
     };
 
-    fetchHotels();
+    fetchRooms();
   }, [apiUrl]);
 
   const handleDelete = async (id) => {
@@ -52,9 +52,16 @@ const Roomtable = () => {
 
   // Cấu hình cột cho DataGrid
   const columns = [
-    { field: "hotel", headerName: "Hotel ID", width: 100 },
+    {
+      field: "hotel",
+      headerName: "Hotel Name",
+      width: 200,
+      renderCell: (params) => {
+        return <div>{params.row.hotel?.name || "N/A"}</div>;
+      },
+    },
     { field: "name", headerName: "Room Name", width: 200 },
-    { field: "people", headerName: "Number people", width: 100 },
+    { field: "people", headerName: "People", width: 80 },
     { field: "beds", headerName: "Bed", width: 150 },
     {
       field: "amenities",
@@ -70,7 +77,7 @@ const Roomtable = () => {
         );
       },
     },
-    { field: "price", headerName: "Price", width: 100 },
+    { field: "price", headerName: "Price", width: 80 },
   ];
 
   const actionColumn = [

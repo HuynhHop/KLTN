@@ -30,10 +30,21 @@ class HotelCommentController {
         return res.status(400).json({ message: "Thiếu hotelId trong URL" });
       }
 
-      const comments = await HotelComment.find({ hotelId }).sort({ createdAt: -1 });
+      const comments = await HotelComment.find({ hotelId }).sort({
+        createdAt: -1,
+      });
       res.status(200).json(comments);
     } catch (error) {
       res.status(500).json({ message: "Lỗi khi lấy comments", error });
+    }
+  }
+
+  async getAllComments(req, res) {
+    try {
+      const comments = await HotelComment.find().populate("hotelId");
+      res.status(200).json({ success: true, data: comments });
+    } catch (err) {
+      res.status(500).json({ success: false, message: err.message });
     }
   }
 
@@ -42,7 +53,9 @@ class HotelCommentController {
       const commentId = req.params.id;
 
       if (!commentId) {
-        return res.status(400).json({ message: "Thiếu id bình luận trong URL" });
+        return res
+          .status(400)
+          .json({ message: "Thiếu id bình luận trong URL" });
       }
 
       const comment = await HotelComment.findById(commentId);
@@ -57,7 +70,6 @@ class HotelCommentController {
       res.status(500).json({ message: "Lỗi khi xóa", error });
     }
   }
-
 }
 
 module.exports = new HotelCommentController();
