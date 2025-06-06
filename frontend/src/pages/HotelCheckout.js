@@ -9,6 +9,11 @@ const HotelCheckout = () => {
   const roomId = searchParams.get("id"); // Lấy roomId từ URL param
   console.log("Room ID:", roomId); // Kiểm tra roomId
   const hasProcessedRef = useRef(false);
+  const MAX_CASH_PER_HOTEL_BOOKING = 200000;
+  const [useCash, setUseCash] = useState(false);
+  const [cashAmount, setCashAmount] = useState(0);
+  const [maxCashAvailable, setMaxCashAvailable] = useState(0);
+  const [cashInfo, setCashInfo] = useState(null);
 
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -30,6 +35,26 @@ const HotelCheckout = () => {
   });
   const [note, setNote] = useState("");
   const [isBookingForOthers, setIsBookingForOthers] = useState(false);
+
+  useEffect(() => {
+    const fetchCashInfo = async () => {
+      try {
+        const userId = JSON.parse(localStorage.getItem("user"))?._id;
+        if (userId) {
+          const response = await fetch(`${apiUrl}/cash/${userId}/info`);
+          const data = await response.json();
+          if (data.success) {
+            setCashInfo(data.data);
+            setMaxCashAvailable(data.data.money);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching cash info:", error);
+      }
+    };
+
+    fetchCashInfo();
+  }, [apiUrl]);
 
   // Fetch thông tin phòng và khách sạn
   useEffect(() => {
@@ -78,7 +103,7 @@ const HotelCheckout = () => {
           const savedIsBookingForOthers =
             localStorage.getItem("isBookingForOthers");
           const savedRoomId = localStorage.getItem("roomId");
-          const savedPrice = localStorage.getItem("finalPrice"); // Lấy hotelId từ localStorage
+          const savedPrice = localStorage.getItem("amountToPay"); // Lấy hotelId từ localStorage
           const savedImage = localStorage.getItem("image"); // Lấy hình ảnh từ localStorage
 
           console.log("Order request payload:", {
@@ -169,6 +194,10 @@ const HotelCheckout = () => {
         alert("Vui lòng điền đầy đủ thông tin trước khi thanh toán!");
         return;
       }
+      const cashToUse = useCash 
+      ? Math.min(cashAmount, maxCashAvailable, finalPrice, MAX_CASH_PER_HOTEL_BOOKING) 
+      : 0;
+      const amountToPay = finalPrice - cashToUse;
       // localStorage.setItem("paymentProcessed", "false"); // Lưu giá phòng vào localStorage
       localStorage.setItem("hotelName", hotel.name); // Lưu tên khách sạn vào localStorage
       localStorage.setItem("roomName", room.name); // Lưu tên loại phòng vào localStorage
@@ -179,13 +208,16 @@ const HotelCheckout = () => {
       localStorage.setItem("roomId", roomId);
       localStorage.setItem("price", room.price);
       localStorage.setItem("image", room.images[0]);
+      localStorage.setItem("finalPrice", finalPrice.toString());
+      localStorage.setItem("amountToPay", amountToPay.toString());
+
       const response = await fetch(`${apiUrl}/payment/create_payment_url`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: Number(localStorage.getItem("finalPrice") || room.price),
+          amount: Number(localStorage.getItem("amountToPay")),
           bankCode: "",
           language: "vn",
           serviceType: "Hotel"
@@ -235,6 +267,8 @@ const HotelCheckout = () => {
   if (!room || !hotel) {
     return <p>Đang tải thông tin...</p>;
   }
+
+  const finalPrice = Number(localStorage.getItem("finalPrice") || room.price);
 
   return (
     <div className="checkout-container">
@@ -384,39 +418,78 @@ const HotelCheckout = () => {
           </ul>
         </div>
         {/* Phần giá */}
+        {cashInfo && cashInfo.money > 0 && (
+          <div className="cash-payment-section">
+            <label>
+              <input
+                type="checkbox"
+                checked={useCash}
+                onChange={(e) => setUseCash(e.target.checked)}
+              />
+              Sử dụng ví Cash (Có {cashInfo.money.toLocaleString()}₫)
+            </label>
+
+            {useCash && (
+              <div className="cash-amount-selector">
+                <input
+                  type="range"
+                  min="0"
+                  max={Math.min(maxCashAvailable, finalPrice, MAX_CASH_PER_HOTEL_BOOKING)}
+                  value={cashAmount}
+                  onChange={(e) => setCashAmount(Number(e.target.value))}
+                />
+                <div>
+                  Sử dụng: {cashAmount.toLocaleString()}₫ / 
+                  Tối đa: {Math.min(maxCashAvailable, finalPrice, MAX_CASH_PER_HOTEL_BOOKING).toLocaleString()}₫
+                </div>
+                <div>
+                  Sau khi sử dụng cash: 
+                  <strong> {(finalPrice - cashAmount).toLocaleString()}₫</strong>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <div className="price-details">
           <h3>Chi tiết giá</h3>
           <p>
             Giá gốc:{" "}
             <span className="strikethrough">
-              {(Number(localStorage.getItem("price") || room.price).toLocaleString(
-                "vi-VN"
-              ))}{" "}
-              ₫
+              {Number(localStorage.getItem("price") || room.price).toLocaleString("vi-VN")}₫
             </span>
           </p>
           <p>
             Giảm giá còn:{" "}
-            <span className="discounted">{Number(localStorage.getItem("discountedPrice"))} ₫</span>
+            <span className="discounted">
+              {Number(localStorage.getItem("discountedPrice")).toLocaleString("vi-VN")}₫
+            </span>
           </p>
+          {useCash && (
+            <p>
+              Sử dụng Cash:{" "}
+              <span className="cash-used">
+                -{cashAmount.toLocaleString("vi-VN")}₫
+              </span>
+            </p>
+          )}
           <p>
-            Thuế và phí: {" "}
+            Thuế và phí:{" "}
             <span className="service-fee">
-              {(Number(room.serviceFee.toString().replace(/\./g, ""))).toLocaleString(
-                "vi-VN"
-              )}{" "}
-              ₫
+              {Number(room.serviceFee.toString().replace(/\./g, "")).toLocaleString("vi-VN")}₫
             </span>
           </p>
           <h4>
             Tổng cộng:{" "}
             <span className="total-price">
-              {(Number(localStorage.getItem("finalPrice") || room.price).toLocaleString(
-                "vi-VN"
-              ))}{" "}
-              ₫
+              {(finalPrice - (useCash ? cashAmount : 0)).toLocaleString("vi-VN")}₫
             </span>
           </h4>
+          {room.cashback > 0 && (
+            <p className="cashback-info">
+              Nhận ngay {calculateCashback(room.cashback, cashInfo?.level).toLocaleString("vi-VN")}₫ 
+              vào ví Cash sau khi đặt phòng thành công!
+            </p>
+          )}
         </div>
 
         {/* Nút thanh toán */}
@@ -427,5 +500,18 @@ const HotelCheckout = () => {
     </div>
   );
 };
+
+function calculateCashback(baseCashback, level) {
+  switch (level) {
+    case "silver":
+      return Math.round(baseCashback * 1.1);
+    case "gold":
+      return Math.round(baseCashback * 1.2);
+    case "diamond":
+      return Math.round(baseCashback * 1.5);
+    default:
+      return baseCashback;
+  }
+}
 
 export default HotelCheckout;
