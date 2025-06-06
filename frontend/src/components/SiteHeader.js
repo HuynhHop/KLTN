@@ -69,6 +69,7 @@ const Header = () => {
                 <div className="dropdown-menu">
                   <div onClick={() => handleNavigate("/account")}>Tài khoản</div>
                   <div onClick={() => handleNavigate("/account?tab=favorite")}>Yêu Thích</div>
+                  <div onClick={() => handleNavigate("/account?tab=cash")}>Cash</div>
                   <div onClick={() => handleNavigate("/orders")}>Đơn hàng của tôi</div>
                   <div onClick={handleLogout}>Đăng xuất</div>
                 </div>

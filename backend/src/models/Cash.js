@@ -10,7 +10,7 @@ const cashSchema = new Schema({
   },
   money: {
     type: Number,
-    default: 0,
+    default: 1000000, // Số dư khởi tạo
     min: 0
   },
   level: {
