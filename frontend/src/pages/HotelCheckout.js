@@ -105,6 +105,7 @@ const HotelCheckout = () => {
           const savedRoomId = localStorage.getItem("roomId");
           const savedPrice = localStorage.getItem("amountToPay"); // Lấy hotelId từ localStorage
           const savedImage = localStorage.getItem("image"); // Lấy hình ảnh từ localStorage
+          const cashToUse = Number(localStorage.getItem("cashToUse") || 0); // Lấy số tiền cash đã sử dụng từ localStorageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 
           console.log("Order request payload:", {
           user: JSON.parse(localStorage.getItem("user"))._id,
@@ -139,6 +140,7 @@ const HotelCheckout = () => {
                 : savedContactInfo,
               note: savedNote,
               imageRoom: savedImage,
+              cashUsed: cashToUse, // Sử dụng cash nếu có
             }),
           });
           const data = await response.json();
@@ -210,6 +212,7 @@ const HotelCheckout = () => {
       localStorage.setItem("image", room.images[0]);
       localStorage.setItem("finalPrice", finalPrice.toString());
       localStorage.setItem("amountToPay", amountToPay.toString());
+      localStorage.setItem("cashToUse", cashToUse.toString()); 
 
       const response = await fetch(`${apiUrl}/payment/create_payment_url`, {
         method: "POST",

@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const Room = require("../models/Room");
+const Cash = require("../models/Cash");
 
 class OrderController {
   async getAllOrder(req, res) {
@@ -50,6 +51,7 @@ class OrderController {
         guestInfo,
         note,
         imageRoom,
+        cashUsed = 0 // Thêm trường cashUsed, mặc định là 0
       } = req.body;
 
       if (serviceType === "Hotel") {
@@ -73,6 +75,20 @@ class OrderController {
         await room.save();
       }
 
+      // Trừ tiền từ ví Cash nếu có sử dụng
+      if (cashUsed > 0) {
+        const cash = await Cash.findOne({ user });
+        if (!cash || cash.money < cashUsed) {
+          return res.status(400).json({
+            success: false,
+            message: "Số dư ví Cash không đủ"
+          });
+        }
+        
+        cash.money -= cashUsed;
+        await cash.save();
+      }
+
       const newOrder = new Order({
         user,
         serviceType,
@@ -83,11 +99,51 @@ class OrderController {
         totalPrice,
         contactInfo,
         guestInfo,
-        status: "Paid", // Mặc định là trạng thái đặt chỗ
-        note: note || "", // Ghi chú của khách hàng
-        imageRoom: imageRoom || "", // Hình ảnh phòng đã đặt
+        status: "Paid",
+        note: note || "",
+        imageRoom: imageRoom || "",
+        cashUsed // Lưu số tiền đã sử dụng từ Cash vào order
       });
       await newOrder.save();
+
+      // Xử lý cashback (phần này giữ nguyên nhưng thêm kiểm tra cashUsed)
+      if (serviceType === "Hotel" && (!cashUsed || cashUsed < totalPrice)) {
+        const room = await Room.findById(serviceId);
+        if (room && room.cashback) {
+          const cashbackValue = room.cashback * quantity;
+
+          // Tìm hoặc tạo cash
+          const cash = await Cash.findOne({ user });
+          if (cash) {
+            // Tính toán cashback dựa trên level
+            let actualCashback = cashbackValue;
+            switch (cash.level) {
+              case "silver":
+                actualCashback *= 1.1;
+                break;
+              case "gold":
+                actualCashback *= 1.2;
+                break;
+              case "diamond":
+                actualCashback *= 1.5;
+                break;
+            }
+
+            cash.money += Math.round(actualCashback);
+            cash.totalSpent += quantity;
+            cash.updateLevel();
+            await cash.save();
+          } else {
+            const newCash = new Cash({
+              user,
+              money: Math.round(cashbackValue),
+              totalSpent: quantity
+            });
+            newCash.updateLevel();
+            await newCash.save();
+          }
+        }
+      }
 
       res.status(201).json({ success: true, data: newOrder });
     } catch (err) {

@@ -39,12 +39,12 @@ cashSchema.pre("save", function(next) {
 });
 
 // Tính toán level dựa trên totalSpent
-cashSchema.methods.updateLevel = function() {
-  if (this.totalSpent >= 10000000) { // 10 triệu
+cashSchema.methods.updateLevel = function () {
+  if (this.totalSpent >= 15) {
     this.level = "diamond";
-  } else if (this.totalSpent >= 5000000) { // 5 triệu
+  } else if (this.totalSpent >= 10) {
     this.level = "gold";
-  } else if (this.totalSpent >= 2000000) { // 2 triệu
+  } else if (this.totalSpent >= 5) {
     this.level = "silver";
   } else {
     this.level = "bronze";
