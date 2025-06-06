@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import "../Style/new.scss";
@@ -8,9 +8,10 @@ import { DriveFolderUploadOutlined } from "@mui/icons-material";
 const New = ({ inputs, title }) => {
   const [files, setFiles] = useState([]); // Dùng cho nhiều ảnh
   const [formData, setFormData] = useState({});
+  const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
   const apiUrl = process.env.REACT_APP_API_URL;
-  const { userId, hotelId, roomId, voucherId } = useParams();
+  const { userId, hotelId, roomId, voucherId, airlineId } = useParams();
 
   const resourceType = userId
     ? "user"
@@ -20,6 +21,8 @@ const New = ({ inputs, title }) => {
     ? "room"
     : voucherId
     ? "voucher"
+    : airlineId
+    ? "flight"
     : "";
 
   const handleChange = (e) => {
@@ -94,6 +97,9 @@ const New = ({ inputs, title }) => {
         .map((item) => item.trim());
     }
 
+    if (resourceType === "room") {
+      processedFormData["hotel"] = processedFormData["hotelId"];
+    }
     const data = new FormData();
 
     // Add form data fields to FormData object
@@ -105,6 +111,8 @@ const New = ({ inputs, title }) => {
     if (files.length > 0) {
       if (resourceType === "user") {
         data.append("avatar", files[0]); // Chỉ 1 ảnh cho User
+      } else if (resourceType === "voucher" || resourceType === "flight") {
+        data.append("image", files[0]);
       } else {
         files.forEach((file) => data.append("images", file)); // Nhiều ảnh cho Hotel và Room
       }
@@ -123,7 +131,7 @@ const New = ({ inputs, title }) => {
           body: data,
         });
       } else if (resourceType === "hotel") {
-        response = await fetch(`${apiUrl}/hotels`, {
+        response = await fetch(`${apiUrl}/hotels/create`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -131,7 +139,7 @@ const New = ({ inputs, title }) => {
           body: data,
         });
       } else if (resourceType === "room") {
-        response = await fetch(`${apiUrl}/rooms`, {
+        response = await fetch(`${apiUrl}/rooms/create`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -139,13 +147,20 @@ const New = ({ inputs, title }) => {
           body: data,
         });
       } else if (resourceType === "voucher") {
-        response = await fetch(`${apiUrl}/vouchers`, {
+        response = await fetch(`${apiUrl}/vouchers/create`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData), // Voucher không cần ảnh
+          body: data,
+        });
+      } else if (resourceType === "flight") {
+        response = await fetch(`${apiUrl}/flights/create`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: data,
         });
       }
 
@@ -153,6 +168,11 @@ const New = ({ inputs, title }) => {
 
       if (response.ok) {
         alert("Resource created successfully!");
+        if (resourceType === "flight") {
+          navigate(`/admin/airlines`);
+        } else {
+          navigate(`/admin/${resourceType}s`);
+        }
       } else {
         alert(responseData.message || "Failed to create resource");
       }
@@ -172,7 +192,9 @@ const New = ({ inputs, title }) => {
         </div>
         <div className="bottom">
           <div className="left">
-            {resourceType === "user" && (
+            {(resourceType === "user" ||
+              resourceType === "flight" ||
+              resourceType === "voucher") && (
               <img
                 src={
                   files.length > 0
@@ -215,7 +237,9 @@ const New = ({ inputs, title }) => {
                   />
                 </div>
               )}
-              {resourceType === "user" && (
+              {(resourceType === "user" ||
+                resourceType === "flight" ||
+                resourceType === "voucher") && (
                 <div className="formInput">
                   <label htmlFor="file">
                     Avatar: <DriveFolderUploadOutlined className="icon" />

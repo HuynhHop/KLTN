@@ -118,6 +118,7 @@ router.get("/vouchers/apply", voucherController.applyVoucher);
 router.put("/vouchers/:id", voucherController.updateVoucher);
 router.get("/vouchers", voucherController.getAll);
 router.get("/vouchers/:id", voucherController.getById);
+router.delete("/vouchers/:id", voucherController.deleteVoucher);
 
 router.post("/blogs/create", BlogController.create);
 router.put("/blogs/:id", BlogController.update);

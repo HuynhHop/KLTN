@@ -72,13 +72,13 @@ export const hotelInputs = [
     type: "text",
     placeholder: "Enter district",
   },
-  // {
-  //   id: 5,
-  //   label: "Price Per Night",
-  //   name: "pricePerNight",
-  //   type: "number",
-  //   placeholder: "Enter price per night",
-  // },
+  {
+    id: 5,
+    label: "Price Per Night",
+    name: "pricePerNight",
+    type: "number",
+    placeholder: "Enter price per night",
+  },
   {
     id: 6,
     label: "Star Rating",
@@ -139,14 +139,14 @@ export const hotelInputs = [
     id: 14,
     label: "Latitude",
     name: "location.lat",
-    type: "number",
+    type: "text",
     placeholder: "Enter latitude",
   },
   {
     id: 15,
     label: "Longitude",
     name: "location.lng",
-    type: "number",
+    type: "text",
     placeholder: "Enter longitude",
   },
   {
@@ -159,6 +159,13 @@ export const hotelInputs = [
 ];
 
 export const roomInputs = [
+  {
+    id: 0,
+    label: "Hotel ID",
+    name: "hotelId",
+    type: "text",
+    placeholder: "Enter hotel ID",
+  },
   {
     id: 1,
     label: "Room Name",
@@ -277,6 +284,13 @@ export const roomInputs = [
     name: "childrenPolicy",
     type: "text",
     placeholder: "Enter children policy",
+  },
+  {
+    id: 18,
+    label: "Vacant Room",
+    name: "quantity",
+    type: "number",
+    placeholder: "Enter Number of Vacant Rooms",
   },
 ];
 

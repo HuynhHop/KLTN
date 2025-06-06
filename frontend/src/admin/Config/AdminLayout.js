@@ -84,9 +84,7 @@ const AdminLayout = () => {
         />
         <Route
           path="rooms/:roomId/new"
-          element={
-            <New inputs={roomInputs} title={"Add New Hotel & Service"} />
-          }
+          element={<New inputs={roomInputs} title={"Add New Room For Hotel"} />}
         />
 
         <Route path="airlines" element={<ManagerAirline />} />
