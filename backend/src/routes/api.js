@@ -22,11 +22,19 @@ const searchController = require("../controllers/searchController");
 const hotelCommentController = require("../controllers/HotelCommentController");
 const favoriteController = require("../controllers/favoriteController");
 const orderFlightController = require("../controllers/orderFlightController");
+const cashController = require("../controllers/cashController");
 
 const upload = multer({ dest: "uploads/" });
 const { imageUpload } = require("../config/cloudinary");
 
 const router = express.Router();
+
+router.get("/cash/:userId", cashController.getOrCreateCash);
+router.put("/cash/:userId", cashController.updateCash);
+router.post("/cash/:userId/use", cashController.useCashForPayment);
+router.post("/cash/:userId/cashback", cashController.addCashback);
+router.post("/cash/:userId/spent", cashController.updateTotalSpent);
+router.get("/cash/:userId/info", cashController.getCashInfo);
 
 router.post("/favorites", favoriteController.add);
 router.delete("/favorites", favoriteController.remove);

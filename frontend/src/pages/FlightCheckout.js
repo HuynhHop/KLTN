@@ -2,8 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../css/HotelCheckout.css";
 import { FaPlane } from "react-icons/fa";
+import { useRef } from "react";
 
 const FlightCheckout = () => {
+  const hasProcessedRef = useRef(false);
+  
   const { id } = useParams();
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -128,22 +131,18 @@ const FlightCheckout = () => {
   );
 
   useEffect(() => {
-    const checkPaymentStatus = () => {
-      const params = new URLSearchParams(window.location.search);
-      const success = params.get("success");
+    const params = new URLSearchParams(window.location.search);
+    const success = params.get("success");
 
-      if (!localStorage.getItem("paymentProcessed")) {
-        if (success === "true") {
-          handlePaymentReturn(true);
-          localStorage.setItem("paymentProcessed", "true");
-        } else if (success === "false") {
-          handlePaymentReturn(false);
-          localStorage.setItem("paymentProcessed", "true");
-        }
-      }
-    };
+    if (hasProcessedRef.current) return;
 
-    checkPaymentStatus();
+    if (success === "true") {
+      handlePaymentReturn(true);
+      hasProcessedRef.current = true;
+    } else if (success === "false") {
+      handlePaymentReturn(false);
+      hasProcessedRef.current = true;
+    }
   }, [handlePaymentReturn]);
 
   const handleConfirmPayment = async () => {

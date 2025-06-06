@@ -16,6 +16,41 @@ const Propose = ({ hotelId }) => {
   const [error, setError] = useState(null);
   const apiUrl = process.env.REACT_APP_API_URL;
   const userId = localStorage.getItem("userId");
+  const [userLevel, setUserLevel] = useState();
+
+  useEffect(() => {
+    const fetchUserLevel = async () => {
+      try {
+        const user = localStorage.getItem("user");
+        const userData = user ? JSON.parse(user) : null;
+        const userId = userData?._id || null;
+        if (userId) {
+          const res = await fetch(`${apiUrl}/cash/${userId}/info`);
+          const data = await res.json();
+          if (data.success) {
+            setUserLevel(data.data.level);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user level:", error);
+      }
+    };
+
+    fetchUserLevel();
+  }, [apiUrl]);
+
+  const calculateCashback = (baseCashback) => {
+    switch (userLevel) {
+      case "silver":
+        return Math.round(baseCashback * 1.1);
+      case "gold":
+        return Math.round(baseCashback * 1.2);
+      case "diamond":
+        return Math.round(baseCashback * 1.5);
+      default:
+        return baseCashback;
+    }
+  };
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -135,6 +170,22 @@ const Propose = ({ hotelId }) => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedRoom(null);
+  };
+
+  const renderCashbackInfo = (room) => {
+    const baseCashback = room.cashback || 0;
+    const actualCashback = calculateCashback(baseCashback);
+    
+    return (
+      <p className="cashback">
+        Hoàn {actualCashback.toLocaleString()}₫ vào Cash
+        {userLevel !== "bronze" && (
+          <span className="level-bonus">
+            (Ưu đãi {userLevel} +{Math.round((actualCashback/baseCashback - 1)*100)}%)
+          </span>
+        )}
+      </p>
+    );
   };
 
   return (
@@ -281,7 +332,7 @@ const Propose = ({ hotelId }) => {
               </button>
 
               <p className="cashback">
-                Hoàn {room.cashback?.toLocaleString() || 0}₫ vào Cash
+                {renderCashbackInfo(room)}
               </p>
             </div>
           </div>

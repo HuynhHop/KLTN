@@ -2,11 +2,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "../css/HotelCheckout.css";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { useRef } from "react";
 
 const HotelCheckout = () => {
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get("id"); // Lấy roomId từ URL param
   console.log("Room ID:", roomId); // Kiểm tra roomId
+  const hasProcessedRef = useRef(false);
 
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -147,23 +149,18 @@ const HotelCheckout = () => {
   );
 
   useEffect(() => {
-    const checkPaymentStatus = () => {
-      const params = new URLSearchParams(window.location.search);
-      const success = params.get("success"); // Lấy trạng thái thanh toán từ URL
+    const params = new URLSearchParams(window.location.search);
+    const success = params.get("success");
 
-      // Kiểm tra nếu thanh toán đã được xử lý
-      if (!localStorage.getItem("paymentProcessed")) {
-        if (success === "true") {
-          handlePaymentReturn(true); // Thanh toán thành công
-          localStorage.setItem("paymentProcessed", "true"); // Đánh dấu đã xử lý
-        } else if (success === "false") {
-          handlePaymentReturn(false); // Thanh toán thất bại
-          localStorage.setItem("paymentProcessed", "true"); // Đánh dấu đã xử lý
-        }
-      }
-    };
+    if (hasProcessedRef.current) return;
 
-    checkPaymentStatus();
+    if (success === "true") {
+      handlePaymentReturn(true);
+      hasProcessedRef.current = true;
+    } else if (success === "false") {
+      handlePaymentReturn(false);
+      hasProcessedRef.current = true;
+    }
   }, [handlePaymentReturn]);
 
   const handleConfirmPayment = async () => {
@@ -172,6 +169,7 @@ const HotelCheckout = () => {
         alert("Vui lòng điền đầy đủ thông tin trước khi thanh toán!");
         return;
       }
+      // localStorage.setItem("paymentProcessed", "false"); // Lưu giá phòng vào localStorage
       localStorage.setItem("hotelName", hotel.name); // Lưu tên khách sạn vào localStorage
       localStorage.setItem("roomName", room.name); // Lưu tên loại phòng vào localStorage
       localStorage.setItem("contactInfo", JSON.stringify(contactInfo));

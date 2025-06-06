@@ -1,3 +1,8 @@
+.level-bonus {
+  font-size: 12px;
+  color: #e67e22;
+  margin-left: 5px;
+}
 .room-quantity {
   font-size: 14px;
   color: #666;
