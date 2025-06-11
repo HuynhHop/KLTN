@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Propose.css";
+import { FaInfoCircle } from "react-icons/fa";
 import RoomDetailModal from "./RoomDetailModal";
 
 const Propose = ({ hotelId }) => {
@@ -307,6 +308,13 @@ const Propose = ({ hotelId }) => {
               </p>
               <p className="total-price">
                 Giá cuối cùng: {room.finalPrice.toLocaleString()}₫
+                <span className="price-tooltip">
+                  <FaInfoCircle className="tooltip-icon" />
+                  <span className="tooltip-text">
+                    Giá cuối cùng = Giá đã giảm + Phí dịch vụ<br />
+                    ({room.discountedPrice.toLocaleString()}₫ + {room.serviceFee.toLocaleString()}₫)
+                  </span>
+                </span>
               </p>
               <button
                 className="book-btn"

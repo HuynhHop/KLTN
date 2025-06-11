@@ -128,12 +128,12 @@ const AccountManagement = () => {
         />
       </div>
       <button onClick={handleUpdateProfile}>Lưu lại</button>
-      <button
+      {/* <button
         className="disable-account"
         onClick={() => setShowConfirmDialog(true)}
       >
         Vô hiệu hóa tài khoản
-      </button>
+      </button> */}
 
       {showConfirmDialog && (
         <div className="confirm-dialog">

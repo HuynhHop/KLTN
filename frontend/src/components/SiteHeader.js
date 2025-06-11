@@ -4,6 +4,7 @@ import { IoMenu } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import "../css/SiteHeader.css";
 import logo from "../assets/image.png";
+import ChatBox from "./ChatBox";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -55,6 +56,9 @@ const Header = () => {
         <div className="right-menu">
           <FaBell className="icon" />
           <FaGift className="icon" />
+          <div className="icon">
+            <ChatBox />
+          </div>
 
           {user ? (
             <div className="user-menu">
