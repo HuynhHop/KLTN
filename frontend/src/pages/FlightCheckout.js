@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../css/HotelCheckout.css";
-import { FaPlane } from "react-icons/fa";
+import { FaPlane, FaMapMarkerAlt, FaCalendarAlt, FaUser, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useRef } from "react";
 
 const FlightCheckout = () => {
   const hasProcessedRef = useRef(false);
-  
   const { id } = useParams();
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -53,21 +52,13 @@ const FlightCheckout = () => {
     async (success) => {
       if (success) {
         try {
-          // const savedFlightNumber = localStorage.getItem("flightNumber");
-          // const savedAirline = localStorage.getItem("airline");
           const savedContactInfo = JSON.parse(localStorage.getItem("contactInfo"));
           const savedPassengerInfo = JSON.parse(localStorage.getItem("passengerInfo"));
           const savedNote = localStorage.getItem("note");
           const savedIsBookingForOthers = localStorage.getItem("isBookingForOthers");
           const savedFlightId = localStorage.getItem("flightId");
           const savedPrice = localStorage.getItem("price");
-          // const savedImage = localStorage.getItem("image");
-          // const savedDeparture = localStorage.getItem("departure");
-          // const savedDestination = localStorage.getItem("destination");
-          // const savedDepartureTime = localStorage.getItem("departureTime");
-          // const savedArrivalTime = localStorage.getItem("arrivalTime");
 
-          // Gọi API tạo Order
           const response = await fetch(`${apiUrl}/order-flight/`, {
             method: "POST",
             headers: {
@@ -75,25 +66,15 @@ const FlightCheckout = () => {
             },
             body: JSON.stringify({
               user: JSON.parse(localStorage.getItem("user"))._id,
-              // serviceType: "Flight",
               flight: savedFlightId,
-              // airline: savedAirline,
-              // flightNumber: savedFlightNumber,
-              // departure: savedDeparture,
-              // destination: savedDestination,
-              // departureTime: savedDepartureTime,
-              // arrivalTime: savedArrivalTime,
-              // quantity: 1,
               totalPrice: Number(savedPrice.toString().replace(/\./g, "")),
               contactInfo: savedContactInfo,
               passengerInfo: savedIsBookingForOthers === "true" ? savedPassengerInfo : savedContactInfo,
               note: savedNote,
-              // image: savedImage,
             }),
           });
           
           const data = await response.json();
-          console.log("Flight created:", data);
           if (data.success) {
             alert("Đặt vé thành công!");
             navigate("/account?tab=flight");
@@ -111,7 +92,6 @@ const FlightCheckout = () => {
         navigate(`/checkout-flight/${savedFlightId}`);
       }
       
-      // Clear localStorage
       localStorage.removeItem("paymentProcessed");
       localStorage.removeItem("flightNumber");
       localStorage.removeItem("airline");
@@ -175,7 +155,7 @@ const FlightCheckout = () => {
           amount: Number(((flight.originalPrice || 0) + (flight.taxPrice || 0)).toString().replace(/\./g, "")),
           bankCode: "",
           language: "vn",
-          serviceType: "Flight" // Thêm loại dịch vụ
+          serviceType: "Flight"
         }),
       });
 
@@ -194,12 +174,10 @@ const FlightCheckout = () => {
   const validateInfo = () => {
     const newErrors = { contactInfo: {}, passengerInfo: {} };
 
-    // Validate contact info
     if (!contactInfo.fullName) newErrors.contactInfo.fullName = "Bạn chưa nhập Họ và Tên";
     if (!contactInfo.email) newErrors.contactInfo.email = "Bạn chưa nhập Email";
     if (!contactInfo.phone) newErrors.contactInfo.phone = "Bạn chưa nhập Số điện thoại";
 
-    // Validate passenger info if booking for others
     if (isBookingForOthers) {
       if (!passengerInfo.fullName) newErrors.passengerInfo.fullName = "Bạn chưa nhập Họ và Tên";
       if (!passengerInfo.email) newErrors.passengerInfo.email = "Bạn chưa nhập Email";
@@ -214,174 +192,300 @@ const FlightCheckout = () => {
     );
   };
 
-  if (!flight) return <div>Đang tải thông tin chuyến bay...</div>;
+  if (!flight) return <div className="section-container">Đang tải thông tin chuyến bay...</div>;
+
+  const flightDuration = Math.floor((new Date(flight.arrivalTime) - new Date(flight.departureTime)) / (1000 * 60 * 60));
 
   return (
     <div className="checkout-container">
-      <div className="left-side">
-        {/* Flight Summary */}
-        <div className="flight-summary">
-          <img src={flight.image} alt="Flight" className="flight-img" />
-          <div className="flight-info">
-            <h2>{flight.airline} - {flight.flightNumber}</h2>
-            <div className="flight-details">
-              <div>
-                <FaPlane /> <strong>Khởi hành:</strong> {flight.departure} - {new Date(flight.departureTime).toLocaleString("vi-VN")}
+      <div className="checkout-content">
+        <div className="left-side">
+          {/* Flight Card */}
+          <div className="hotel-card">
+            <div className="hotel-image-container">
+              <img src={flight.image} alt={flight.airline} className="hotel-image" />
+            </div>
+            <div className="hotel-info">
+              <h2 className="hotel-name">{flight.airline} - {flight.flightNumber}</h2>
+              <div className="hotel-location">
+                <FaMapMarkerAlt className="location-icon" />
+                <span>{flight.departure} → {flight.destination}</span>
               </div>
-              <div>
-                <FaPlane /> <strong>Đến nơi:</strong> {flight.destination} - {new Date(flight.arrivalTime).toLocaleString("vi-VN")}
+              
+              <div className="booking-dates">
+                <div className="date-item">
+                  <FaCalendarAlt className="date-icon" />
+                  <div>
+                    <div className="date-label">KHỞI HÀNH</div>
+                    <div className="date-value">
+                      {new Date(flight.departureTime).toLocaleString("vi-VN", {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div className="date-item">
+                  <FaCalendarAlt className="date-icon" />
+                  <div>
+                    <div className="date-label">ĐẾN NƠI</div>
+                    <div className="date-value">
+                      {new Date(flight.arrivalTime).toLocaleString("vi-VN", {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="booking-summary">
+                <div className="summary-item">
+                  <span className="summary-label">Thời gian bay</span>
+                  <span className="summary-value">{flightDuration} giờ</span>
+                </div>
+                <div className="summary-item">
+                  <span className="summary-label">Hạng vé</span>
+                  <span className="summary-value">Phổ thông</span>
+                </div>
+                <div className="summary-item">
+                  <span className="summary-label">Hành lý</span>
+                  <span className="summary-value">7kg xách tay</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Contact Info */}
-        <div className="contact-section">
-          <h3>Thông tin liên hệ</h3>
-          <div className="form-grid">
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Họ và tên"
-              value={contactInfo.fullName}
-              onChange={handleContactChange}
-            />
-            {errors.contactInfo.fullName && (
-              <p className="error">{errors.contactInfo.fullName}</p>
-            )}
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={contactInfo.email}
-              onChange={handleContactChange}
-            />
-            {errors.contactInfo.email && (
-              <p className="error">{errors.contactInfo.email}</p>
-            )}
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Số điện thoại"
-              value={contactInfo.phone}
-              onChange={handleContactChange}
-            />
-            {errors.contactInfo.phone && (
-              <p className="error">{errors.contactInfo.phone}</p>
-            )}
-          </div>
-        </div>
-
-        <label className="checkbox">
-          <input
-            type="checkbox"
-            checked={isBookingForOthers}
-            onChange={(e) => setIsBookingForOthers(e.target.checked)}
-          />
-          Tôi đặt vé cho người khác
-        </label>
-
-        {isBookingForOthers && (
-          <div className="passenger-section">
-            <h3>Thông tin hành khách</h3>
+          {/* Contact Info */}
+          <div className="section-container">
+            <h3 className="section-title">
+              <FaUser /> Thông tin liên hệ
+            </h3>
             <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Họ và tên</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  className="form-input"
+                  value={contactInfo.fullName}
+                  onChange={handleContactChange}
+                />
+                {errors.contactInfo.fullName && (
+                  <div className="error-message">{errors.contactInfo.fullName}</div>
+                )}
+              </div>
+              <div className="form-group">
+                <label className="form-label">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="form-input"
+                  value={contactInfo.email}
+                  onChange={handleContactChange}
+                />
+                {errors.contactInfo.email && (
+                  <div className="error-message">{errors.contactInfo.email}</div>
+                )}
+              </div>
+              <div className="form-group">
+                <label className="form-label">Số điện thoại</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  className="form-input"
+                  value={contactInfo.phone}
+                  onChange={handleContactChange}
+                />
+                {errors.contactInfo.phone && (
+                  <div className="error-message">{errors.contactInfo.phone}</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Booking for others */}
+          <div className="section-container">
+            <div className="checkbox-container">
               <input
-                type="text"
-                name="fullName"
-                placeholder="Họ và tên"
-                value={passengerInfo.fullName}
-                onChange={handlePassengerChange}
+                type="checkbox"
+                id="bookingForOthers"
+                checked={isBookingForOthers}
+                onChange={(e) => setIsBookingForOthers(e.target.checked)}
               />
-              {errors.passengerInfo.fullName && (
-                <p className="error">{errors.passengerInfo.fullName}</p>
-              )}
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={passengerInfo.email}
-                onChange={handlePassengerChange}
+              <label htmlFor="bookingForOthers" className="checkbox-label">
+                Tôi đặt vé cho người khác
+              </label>
+            </div>
+
+            {isBookingForOthers && (
+              <>
+                <h3 className="section-title">
+                  <FaUser /> Thông tin hành khách
+                </h3>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label className="form-label">Họ và tên</label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      className="form-input"
+                      value={passengerInfo.fullName}
+                      onChange={handlePassengerChange}
+                    />
+                    {errors.passengerInfo.fullName && (
+                      <div className="error-message">{errors.passengerInfo.fullName}</div>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      className="form-input"
+                      value={passengerInfo.email}
+                      onChange={handlePassengerChange}
+                    />
+                    {errors.passengerInfo.email && (
+                      <div className="error-message">{errors.passengerInfo.email}</div>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Số điện thoại</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      className="form-input"
+                      value={passengerInfo.phone}
+                      onChange={handlePassengerChange}
+                    />
+                    {errors.passengerInfo.phone && (
+                      <div className="error-message">{errors.passengerInfo.phone}</div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Special Request */}
+          <div className="section-container">
+            <h3 className="section-title">
+              <FaEnvelope /> Yêu cầu đặc biệt
+            </h3>
+            <div className="form-group">
+              <textarea
+                className="form-textarea"
+                placeholder="Nhập yêu cầu của bạn..."
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
               />
-              {errors.passengerInfo.email && (
-                <p className="error">{errors.passengerInfo.email}</p>
-              )}
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Số điện thoại"
-                value={passengerInfo.phone}
-                onChange={handlePassengerChange}
-              />
-              {errors.passengerInfo.phone && (
-                <p className="error">{errors.passengerInfo.phone}</p>
-              )}
+              <p className="form-note">
+                * Lưu ý: Các yêu cầu đặc biệt phụ thuộc vào chính sách của hãng hàng không.
+              </p>
             </div>
           </div>
-        )}
-
-        <div className="special-request">
-          <h3>Yêu cầu đặc biệt</h3>
-          <textarea
-            placeholder="Nhập yêu cầu của bạn..."
-            rows="4"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-          />
-          <p className="note">
-            * Lưu ý: Các yêu cầu đặc biệt phụ thuộc vào chính sách của hãng hàng không.
-          </p>
-        </div>
-      </div>
-
-      <div className="right-side">
-        {/* Flight Info */}
-        <div className="flight-details-card">
-          <div className="flight-header">
-            <h3>Chi tiết chuyến bay</h3>
-          </div>
-          <div className="flight-route">
-            <div className="route-detail">
-              <strong>{flight.departure}</strong>
-              <span>{new Date(flight.departureTime).toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' })}</span>
-            </div>
-            <div className="route-separator">
-              <div className="route-line"></div>
-              <FaPlane className="plane-icon" />
-            </div>
-            <div className="route-detail">
-              <strong>{flight.destination}</strong>
-              <span>{new Date(flight.arrivalTime).toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' })}</span>
-            </div>
-          </div>
-          <div className="flight-info-details">
-            <p><strong>Hãng hàng không:</strong> {flight.airline}</p>
-            <p><strong>Số hiệu chuyến bay:</strong> {flight.flightNumber}</p>
-            <p><strong>Thời gian bay:</strong> {Math.floor((new Date(flight.arrivalTime) - new Date(flight.departureTime)) / (1000 * 60 * 60))} giờ</p>
-          </div>
-        </div>
-
-        {/* Price Details */}
-        <div className="price-details">
-          <h3>Chi tiết giá</h3>
-          <p>
-            <span>Giá vé</span>
-            <span>{(flight.originalPrice || 0).toLocaleString("vi-VN")}₫</span>
-          </p>
-          <p>
-            <span>Thuế & Phí</span>
-            <span>{(flight.taxPrice || 0).toLocaleString("vi-VN")}₫</span>
-          </p>
-          <p className="total-price">
-            <span>Tổng cộng</span>
-            <span>
-              {((flight.originalPrice || 0) + (flight.taxPrice || 0)).toLocaleString("vi-VN")}₫
-            </span>
-          </p>
         </div>
 
-        <button className="confirm-button" onClick={handleConfirmPayment}>
-          Xác nhận thanh toán
-        </button>
+        <div className="right-side">
+          {/* Flight Details */}
+          <div className="section-container">
+            <h3 className="section-title">
+              <FaPlane /> Chi tiết chuyến bay
+            </h3>
+            <div className="booking-dates">
+              <div className="date-item">
+                <FaMapMarkerAlt className="date-icon" />
+                <div>
+                  <div className="date-label">ĐIỂM ĐI</div>
+                  <div className="date-value">{flight.departure}</div>
+                </div>
+              </div>
+              <div className="date-item">
+                <FaMapMarkerAlt className="date-icon" />
+                <div>
+                  <div className="date-label">ĐIỂM ĐẾN</div>
+                  <div className="date-value">{flight.destination}</div>
+                </div>
+              </div>
+            </div>
+            <div className="booking-dates">
+              <div className="date-item">
+                <FaCalendarAlt className="date-icon" />
+                <div>
+                  <div className="date-label">KHỞI HÀNH</div>
+                  <div className="date-value">
+                    {new Date(flight.departureTime).toLocaleString("vi-VN", {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                </div>
+              </div>
+              <div className="date-item">
+                <FaCalendarAlt className="date-icon" />
+                <div>
+                  <div className="date-label">ĐẾN NƠI</div>
+                  <div className="date-value">
+                    {new Date(flight.arrivalTime).toLocaleString("vi-VN", {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="booking-summary">
+              <div className="summary-item">
+                <span className="summary-label">Hãng hàng không</span>
+                <span className="summary-value">{flight.airline}</span>
+              </div>
+              <div className="summary-item">
+                <span className="summary-label">Số hiệu chuyến bay</span>
+                <span className="summary-value">{flight.flightNumber}</span>
+              </div>
+              <div className="summary-item">
+                <span className="summary-label">Thời gian bay</span>
+                <span className="summary-value">{flightDuration} giờ</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Price Breakdown */}
+          <div className="section-container">
+            <h3 className="section-title">Chi tiết giá</h3>
+            <div className="price-item">
+              <span>Giá vé</span>
+              <span>{flight.originalPrice?.toLocaleString("vi-VN")}₫</span>
+            </div>
+            <div className="price-item">
+              <span>Thuế & Phí</span>
+              <span>{flight.taxPrice?.toLocaleString("vi-VN")}₫</span>
+            </div>
+            <div className="price-total">
+              <span>Tổng cộng</span>
+              <span className="total-amount">
+                {((flight.originalPrice || 0) + (flight.taxPrice || 0)).toLocaleString("vi-VN")}₫
+              </span>
+            </div>
+          </div>
+
+          <button className="payment-button" onClick={handleConfirmPayment}>
+            Xác nhận thanh toán
+          </button>
+        </div>
       </div>
     </div>
   );

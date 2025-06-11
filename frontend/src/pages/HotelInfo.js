@@ -55,7 +55,11 @@ const HotelInfo = () => {
           amenities={hotel.data.amenities}
           openModal={openModal}
         />
-        <HotelLocation location={hotel.data.location} openModal={openModal} />
+        <HotelLocation 
+          location={hotel.data.location} 
+          address={hotel.data.address} // Thêm dòng này
+          openModal={openModal} 
+        />
       </div>
 
       {/* 👇 Gắn ref vào Propose */}

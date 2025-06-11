@@ -274,234 +274,307 @@ const HotelCheckout = () => {
   const finalPrice = Number(localStorage.getItem("finalPrice") || room.price);
 
   return (
-    <div className="checkout-container">
-      <div className="left-side">
-        {/* Hotel Summary */}
-        <div className="hotel-summary">
-          <img src={hotel.images[0]} alt="Hotel" className="hotel-img" />
+  <div className="checkout-container">
+    <div className="checkout-content">
+      {/* Left Side - Booking Details */}
+      <div className="booking-details">
+        {/* Hotel Info Section */}
+        <div className="hotel-card">
+          <div className="hotel-image-container">
+            <img src={hotel.images[0]} alt="Hotel" className="hotel-image" />
+          </div>
           <div className="hotel-info">
-            <h2>{hotel.name}</h2>
-            <p className="hotel-address">
-              <FaMapMarkerAlt /> {hotel.address}
-            </p>
-
+            <h2 className="hotel-name">{hotel.name}</h2>
+            <div className="hotel-location">
+              <FaMapMarkerAlt className="location-icon" />
+              <span>{hotel.address}</span>
+            </div>
+            
+            <div className="booking-dates">
+              <div className="date-item">
+                <FaCalendarAlt className="date-icon" />
+                <div>
+                  <div className="date-label">Nhận phòng</div>
+                  <div className="date-value">15:00, T6, 04 tháng 4</div>
+                </div>
+              </div>
+              <div className="date-item">
+                <FaCalendarAlt className="date-icon" />
+                <div>
+                  <div className="date-label">Trả phòng</div>
+                  <div className="date-value">11:00, T7, 05 tháng 4</div>
+                </div>
+              </div>
+            </div>
+            
             <div className="booking-summary">
-              <div>
-                <FaCalendarAlt /> <strong>Nhận phòng:</strong> 15:00, T6, 04
-                tháng 4
+              <div className="summary-item">
+                <span className="summary-label">Số đêm:</span>
+                <span className="summary-value">01</span>
               </div>
-              <div>
-                <FaCalendarAlt /> <strong>Trả phòng:</strong> 11:00, T7, 05
-                tháng 4
+              <div className="summary-item">
+                <span className="summary-label">Loại phòng:</span>
+                <span className="summary-value">1 x {room.name}</span>
               </div>
-              <div>
-                <strong>Số đêm:</strong> 01
-              </div>
-              <div>
-                <strong>Số phòng:</strong> 1 x {room.name}
-              </div>
-              <div>
-                <strong>Đủ chỗ ngủ cho:</strong> {room.capacity} người lớn
+              <div className="summary-item">
+                <span className="summary-label">Sức chứa:</span>
+                <span className="summary-value">{room.capacity} người lớn</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Contact Info */}
-        <div className="contact-section">
+        {/* Contact Information */}
+        <div className="section-container">
+          <h3 className="section-title">Thông tin liên hệ</h3>
           <div className="form-grid">
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Họ và tên"
-              value={contactInfo.fullName}
-              onChange={handleContactChange}
-            />
-            {errors.contactInfo.fullName && (
-              <p className="error">{errors.contactInfo.fullName}</p>
-            )}
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={contactInfo.email}
-              onChange={handleContactChange}
-            />
-            {errors.contactInfo.email && (
-              <p className="error">{errors.contactInfo.email}</p>
-            )}
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Số điện thoại"
-              value={contactInfo.phone}
-              onChange={handleContactChange}
-            />
-            {errors.contactInfo.phone && (
-              <p className="error">{errors.contactInfo.phone}</p>
-            )}
-          </div>
-        </div>
-        <label className="checkbox">
-          <input
-            type="checkbox"
-            checked={isBookingForOthers}
-            onChange={(e) => setIsBookingForOthers(e.target.checked)}
-          />
-          Tôi đặt phòng giúp cho người khác
-        </label>
-
-        {isBookingForOthers && (
-          <div className="guest-section">
-            <h3>Thông tin khách nhận phòng</h3>
-            <div className="form-grid">
+            <div className="form-group">
+              <label className="form-label">Họ và tên</label>
               <input
                 type="text"
                 name="fullName"
-                placeholder="Họ và tên"
-                value={guestInfo.fullName}
-                onChange={handleGuestChange}
+                className="form-input"
+                value={contactInfo.fullName}
+                onChange={handleContactChange}
+                placeholder="Nhập họ tên"
               />
               {errors.contactInfo.fullName && (
-                <p className="error">{errors.contactInfo.fullName}</p>
+                <p className="error-message">{errors.contactInfo.fullName}</p>
               )}
+            </div>
+            <div className="form-group">
+              <label className="form-label">Email</label>
               <input
                 type="email"
                 name="email"
-                placeholder="Email"
-                value={guestInfo.email}
-                onChange={handleGuestChange}
+                className="form-input"
+                value={contactInfo.email}
+                onChange={handleContactChange}
+                placeholder="Nhập email"
               />
               {errors.contactInfo.email && (
-                <p className="error">{errors.contactInfo.email}</p>
+                <p className="error-message">{errors.contactInfo.email}</p>
               )}
+            </div>
+            <div className="form-group">
+              <label className="form-label">Số điện thoại</label>
               <input
                 type="tel"
                 name="phone"
-                placeholder="Số điện thoại"
-                value={guestInfo.phone}
-                onChange={handleGuestChange}
+                className="form-input"
+                value={contactInfo.phone}
+                onChange={handleContactChange}
+                placeholder="Nhập số điện thoại"
               />
               {errors.contactInfo.phone && (
-                <p className="error">{errors.contactInfo.phone}</p>
+                <p className="error-message">{errors.contactInfo.phone}</p>
               )}
             </div>
           </div>
-        )}
-        <div className="special-request">
-          <h3>Yêu cầu đặc biệt</h3>
-          <textarea
-            placeholder="Nhập yêu cầu của bạn..."
-            rows="4"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
+        </div>
+
+        {/* Guest Information */}
+        <div className="checkbox-container">
+          <input
+            type="checkbox"
+            id="bookingForOthers"
+            checked={isBookingForOthers}
+            onChange={(e) => setIsBookingForOthers(e.target.checked)}
           />
-          <p className="note">
-            * Lưu ý: Các yêu cầu phụ thuộc vào tình trạng phòng khách sạn.
-          </p>
+          <label htmlFor="bookingForOthers" className="checkbox-label">
+            Tôi đặt phòng giúp cho người khác
+          </label>
+        </div>
+
+        {isBookingForOthers && (
+          <div className="section-container">
+            <h3 className="section-title">Thông tin khách nhận phòng</h3>
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Họ và tên</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  className="form-input"
+                  value={guestInfo.fullName}
+                  onChange={handleGuestChange}
+                  placeholder="Nhập họ tên"
+                />
+                {errors.guestInfo.fullName && (
+                  <p className="error-message">{errors.guestInfo.fullName}</p>
+                )}
+              </div>
+              <div className="form-group">
+                <label className="form-label">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="form-input"
+                  value={guestInfo.email}
+                  onChange={handleGuestChange}
+                  placeholder="Nhập email"
+                />
+                {errors.guestInfo.email && (
+                  <p className="error-message">{errors.guestInfo.email}</p>
+                )}
+              </div>
+              <div className="form-group">
+                <label className="form-label">Số điện thoại</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  className="form-input"
+                  value={guestInfo.phone}
+                  onChange={handleGuestChange}
+                  placeholder="Nhập số điện thoại"
+                />
+                {errors.guestInfo.phone && (
+                  <p className="error-message">{errors.guestInfo.phone}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Special Requests */}
+        <div className="section-container">
+          <h3 className="section-title">Yêu cầu đặc biệt</h3>
+          <div className="form-group">
+            <textarea
+              className="form-textarea"
+              placeholder="Nhập yêu cầu của bạn..."
+              rows="4"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+            <p className="form-note">
+              * Lưu ý: Các yêu cầu phụ thuộc vào tình trạng phòng khách sạn.
+            </p>
+          </div>
         </div>
       </div>
-      <div className="right-side">
-        {/* Room Info */}
-        <div className="room-info">
-          <div className="discount-tag">Giảm giá 50%</div>
-          <img src={room.images[0]} alt="Room" className="room-img" />
-          <h3>{room.name}</h3>
-          <ul className="room-details">
-            <li> 👥 {room.capacity} Người</li>
-            <li> 🛏 {room.beds}</li>
-            <li> 🌅 {room.view}</li>
+
+      {/* Right Side - Payment Summary */}
+      <div className="payment-summary">
+        {/* Room Card */}
+        <div className="room-card">
+          <div className="room-image-container">
+            <img src={room.images[0]} alt="Room" className="room-image" />
+          </div>
+          <h3 className="room-title">{room.name}</h3>
+          <ul className="room-features">
+            <li className="feature-item">
+              <span className="feature-icon">👥</span>
+              <span>{room.capacity} Người</span>
+            </li>
+            <li className="feature-item">
+              <span className="feature-icon">🛏</span>
+              <span>{room.beds}</span>
+            </li>
+            <li className="feature-item">
+              <span className="feature-icon">🌅</span>
+              <span>{room.view}</span>
+            </li>
           </ul>
         </div>
-        <div className="included">
-          <h4>Ưu đãi bao gồm</h4>
-          <ul>
-            <li>{room.policies.breakfast}</li>
-            <li>{room.policies.extra}</li>
+
+        {/* Included Services */}
+        <div className="included-services">
+          <h4 className="services-title">Ưu đãi bao gồm</h4>
+          <ul className="services-list">
+            <li className="service-item">{room.policies.breakfast}</li>
+            <li className="service-item">{room.policies.extra}</li>
           </ul>
         </div>
-        {/* Phần giá */}
+
+        {/* Cash Payment Section */}
         {cashInfo && cashInfo.money > 0 && (
-          <div className="cash-payment-section">
-            <label>
+          <div className="cash-section">
+            <div className="cash-toggle">
               <input
                 type="checkbox"
+                id="useCash"
                 checked={useCash}
                 onChange={(e) => setUseCash(e.target.checked)}
               />
-              Sử dụng ví Cash (Có {cashInfo.money.toLocaleString()}₫)
-            </label>
+              <label htmlFor="useCash" className="cash-label">
+                Sử dụng ví Cash (Có {cashInfo.money.toLocaleString()}₫)
+              </label>
+            </div>
 
             {useCash && (
-              <div className="cash-amount-selector">
+              <div className="cash-controls">
                 <input
                   type="range"
                   min="0"
                   max={Math.min(maxCashAvailable, finalPrice, MAX_CASH_PER_HOTEL_BOOKING)}
                   value={cashAmount}
                   onChange={(e) => setCashAmount(Number(e.target.value))}
+                  className="cash-slider"
                 />
-                <div>
-                  Sử dụng: {cashAmount.toLocaleString()}₫ / 
-                  Tối đa: {Math.min(maxCashAvailable, finalPrice, MAX_CASH_PER_HOTEL_BOOKING).toLocaleString()}₫
+                <div className="cash-amount-info">
+                  <span>Sử dụng: {cashAmount.toLocaleString()}₫</span>
+                  <span>Tối đa: {Math.min(maxCashAvailable, finalPrice, MAX_CASH_PER_HOTEL_BOOKING).toLocaleString()}₫</span>
                 </div>
-                <div>
-                  Sau khi sử dụng cash: 
-                  <strong> {(finalPrice - cashAmount).toLocaleString()}₫</strong>
+                <div className="cash-remaining">
+                  Sau khi sử dụng cash: <strong>{(finalPrice - cashAmount).toLocaleString()}₫</strong>
                 </div>
               </div>
             )}
           </div>
         )}
-        <div className="price-details">
-          <h3>Chi tiết giá</h3>
-          <p>
-            Giá gốc:{" "}
-            <span className="strikethrough">
+
+        {/* Price Breakdown */}
+        <div className="price-breakdown">
+          <h3 className="price-title">Chi tiết giá</h3>
+          <div className="price-item">
+            <span>Giá gốc:</span>
+            <span className="original-price">
               {Number(localStorage.getItem("price") || room.price).toLocaleString("vi-VN")}₫
             </span>
-          </p>
-          <p>
-            Giảm giá còn:{" "}
-            <span className="discounted">
+          </div>
+          <div className="price-item">
+            <span>Giảm giá còn:</span>
+            <span className="discounted-price">
               {Number(localStorage.getItem("discountedPrice")).toLocaleString("vi-VN")}₫
             </span>
-          </p>
+          </div>
           {useCash && (
-            <p>
-              Sử dụng Cash:{" "}
+            <div className="price-item">
+              <span>Sử dụng Cash:</span>
               <span className="cash-used">
                 -{cashAmount.toLocaleString("vi-VN")}₫
               </span>
-            </p>
+            </div>
           )}
-          <p>
-            Thuế và phí:{" "}
+          <div className="price-item">
+            <span>Thuế và phí:</span>
             <span className="service-fee">
               {Number(room.serviceFee.toString().replace(/\./g, "")).toLocaleString("vi-VN")}₫
             </span>
-          </p>
-          <h4>
-            Tổng cộng:{" "}
-            <span className="total-price">
+          </div>
+          <div className="price-total">
+            <span>Tổng cộng:</span>
+            <span className="total-amount">
               {(finalPrice - (useCash ? cashAmount : 0)).toLocaleString("vi-VN")}₫
             </span>
-          </h4>
+          </div>
           {room.cashback > 0 && (
-            <p className="cashback-info">
+            <div className="cashback-notice">
               Nhận ngay {calculateCashback(room.cashback, cashInfo?.level).toLocaleString("vi-VN")}₫ 
               vào ví Cash sau khi đặt phòng thành công!
-            </p>
+            </div>
           )}
         </div>
 
-        {/* Nút thanh toán */}
-        <button className="confirm-button" onClick={handleConfirmPayment}>
+        {/* Payment Button */}
+        <button className="payment-button" onClick={handleConfirmPayment}>
           Xác nhận thanh toán
         </button>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 function calculateCashback(baseCashback, level) {

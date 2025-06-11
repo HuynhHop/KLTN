@@ -3,9 +3,9 @@ import React from "react";
 const HotelHeader = ({ hotel, onBookClick }) => {
   return (
     <div className="hotel-header">
-      <div className="hotel-badge">
+      {/* <div className="hotel-badge">
         <span className="badge exclusive">Giá độc quyền</span>
-      </div>
+      </div> */}
       <h1>{hotel.name}</h1>
       <p className="rating">
         <span className="rating-score">{hotel.starRating}⭐</span> Tuyệt

@@ -15,13 +15,13 @@ const SearchBox = () => {
             className={`tab ${activeTab === "hotel" ? "active" : ""}`} 
             onClick={() => setActiveTab("hotel")}
           >
-            <span className="discount">-400k</span> 🏨 Khách sạn
+             🏨 Khách sạn
           </button>
           <button 
             className={`tab ${activeTab === "flight" ? "active" : ""}`} 
             onClick={() => setActiveTab("flight")}
           >
-            <span className="discount">-300k</span> ✈️ Vé máy bay
+             ✈️ Vé máy bay
           </button>
           {/* <button 
             className={`tab ${activeTab === "villa" ? "active" : ""}`} 

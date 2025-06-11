@@ -1,379 +1,500 @@
-.cash-payment-section {
-  margin: 20px 0;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #eee;
+/* Base Styles */
+:root {
+  --primary-color: #7ba93b;
+  --primary-hover: #1d4ed8;
+  --secondary-color: #f8fafc;
+  --accent-color: #f97316;
+  --text-color: #334155;
+  --text-light: #64748b;
+  --border-color: #e2e8f0;
+  --error-color: #dc2626;
+  --success-color: #16a34a;
+  --discount-color: #ef4444;
+  --cash-color: #10b981;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
 }
 
-.cash-payment-section label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: bold;
-  margin-bottom: 10px;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.cash-amount-selector {
-  margin-top: 10px;
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: var(--text-color);
+  line-height: 1.5;
+  background-color: #f1f5f9;
 }
 
-.cash-amount-selector input[type="range"] {
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-.cash-used {
-  color: #27ae60;
-  font-weight: bold;
-}
-
-.cashback-info {
-  color: #e67e22;
-  font-size: 14px;
-  margin-top: 10px;
-  font-style: italic;
-}
-
+/* Layout */
 .checkout-container {
-  display: flex;
   max-width: 1200px;
-  margin: 40px auto;
-  gap: 24px;
-  font-family: Arial, sans-serif;
-  color: #333;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
-.left-side,
-.right-side {
-  background: #f5f3f3;
-  border-radius: 14px;
-  padding: 28px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+.checkout-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
 }
 
-.left-side {
-  flex: 2;
+/* Common Components */
+.section-container {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
 }
 
-.right-side {
-  flex: 1;
-  background: #fafafa;
-}
-
-/* Hotel Summary */
-.hotel-summary {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
-  align-items: center;
-}
-
-.hotel-img {
-  width: 120px;
-  height: 90px;
-  border-radius: 10px;
-  object-fit: cover;
-}
-
-.hotel-info h2 {
-  font-size: 18px;
-  margin-bottom: 4px;
+.section-title {
+  font-size: 1.25rem;
   font-weight: 600;
-}
-
-.hotel-address {
-  font-size: 13px;
-  color: #777;
+  margin-bottom: 1.25rem;
+  color: var(--text-color);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
+}
+
+/* Hotel Card */
+.hotel-card {
+  display: flex;
+  gap: 1.25rem;
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.hotel-image-container {
+  flex-shrink: 0;
+  width: 160px;
+  height: 120px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.hotel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.hotel-image:hover {
+  transform: scale(1.03);
+}
+
+.hotel-info {
+  flex: 1;
+}
+
+.hotel-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.hotel-location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-light);
+  margin-bottom: 1rem;
+}
+
+.location-icon {
+  color: var(--primary-color);
+}
+
+/* Booking Dates */
+.booking-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.date-item {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.date-icon {
+  color: var(--primary-color);
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+.date-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.date-value {
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 /* Booking Summary */
 .booking-summary {
-  font-size: 14px;
-  color: #444;
-  margin-top: 10px;
-  line-height: 1.7;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
 }
 
-/* Form Sections */
-.contact-section h3,
-.special-request h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
-  font-weight: 600;
+.summary-item {
+  display: flex;
+  flex-direction: column;
 }
 
+.summary-label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.summary-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Form Styles */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: 1rem;
 }
 
-.form-grid input,
-textarea {
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.form-input {
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.checkbox {
-  font-size: 13px;
-  margin-top: 12px;
-  color: #555;
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.special-request textarea {
-  margin-top: 10px;
-  min-height: 90px;
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  min-height: 100px;
   resize: vertical;
 }
 
-.note {
-  font-size: 12px;
-  color: #999;
-  margin-top: 5px;
+.form-note {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  margin-top: 0.5rem;
 }
 
-/* Right Side - Room Info */
-.room-info {
-  font-size: 14px;
-  color: #444;
+.error-message {
+  font-size: 0.75rem;
+  color: var(--error-color);
+  margin-top: 0.25rem;
 }
 
-.discount-tag {
-  background: #ff3b30;
-  color: white;
-  padding: 6px 12px;
-  font-size: 13px;
-  font-weight: 500;
-  display: inline-block;
-  border-radius: 6px;
-  margin-bottom: 12px;
-}
-
-.room-img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 14px;
-}
-
-.room-details {
-  list-style: none;
-  padding: 20px;
-  margin-bottom: 18px;
-  color: #555;
-  line-height: 1.8;
-}
-
-.included {
-  background: #f1f8ff;
-  padding: 14px;
-  border-radius: 10px;
-  font-size: 13px;
-  color: #333;
-  margin-top: 12px;
-}
-
-.included h4 {
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-/* Price Detail Styling */
-.price-details {
-  background: #fdfdfd;
-  border-radius: 12px;
-  padding: 18px 20px;
-  margin-top: 20px;
-  font-size: 14px;
-  color: #333;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-}
-
-.price-details h3 {
-  margin-bottom: 14px;
-  font-size: 16px;
-  color: #222;
-  font-weight: 600;
-}
-
-.price-details p {
-  margin: 8px 0;
+/* Checkbox */
+.checkbox-container {
   display: flex;
-  justify-content: space-between;
-  font-size: 14px;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
-.strikethrough {
-  text-decoration: none !important; 
-  color: #aaa;
-}
-
-.discounted {
-  color: #e53935;
-  font-weight: 600;
-}
-
-.total-price {
-  color: #0d6efd;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-/* Confirm Button */
-.confirm-button {
-  width: 100%;
-  margin-top: 18px;
-  padding: 14px;
-  font-size: 15px;
-  font-weight: 600;
-  background: linear-gradient(to right, #00c6ff, #ad2d2d);
-  color: white;
-  border: none;
-  border-radius: 10px;
+.checkbox-label {
+  font-size: 0.875rem;
+  margin-left: 0.5rem;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.confirm-button:hover {
-  background: linear-gradient(to right, #245188, #0053cc);
-  transform: translateY(-1px);
+/* Room Card */
+.room-card {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  position: relative;
 }
 
-.error {
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
-}
-/* Tên khách sạn */
-.hotel-name {
-  color: #2c3e50; /* Màu xanh đậm */
-  font-weight: bold;
-}
-
-/* Loại phòng */
-.room-name {
-  color: #8e44ad; /* Màu tím */
-  font-style: italic;
+.room-badge {
+  position: absolute;
+  top: -0.75rem;
+  right: 1.5rem;
+  background-color: var(--discount-color);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
 }
 
-/* Giá */
-.total-price {
-  color: #e74c3c; /* Màu đỏ */
-  font-weight: bold;
+.room-image-container {
+  width: 100%;
+  height: 180px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 1rem;
 }
 
-/* Ngày đặt */
-.booking-date {
-  color: #3498db; /* Màu xanh dương */
-}
-
-/* Ghi chú */
-.note {
-  color: #16a085; /* Màu xanh lá */
-  font-style: italic;
-}
-
-/* Trạng thái (sử dụng từ trước) */
-.status-pending {
-  color: orange;
-  font-weight: bold;
-}
-
-.status-confirmed {
-  color: green;
-  font-weight: bold;
-}
-
-.status-paid {
-  color: blue;
-  font-weight: bold;
-}
-
-.status-cancelled {
-  color: red;
-  font-weight: bold;
-}
-
-.status-default {
-  color: gray;
-  font-weight: bold;
-}
-.status-pending {
-  color: orange;
-  font-weight: bold;
-}
-
-.status-confirmed {
-  color: green;
-  font-weight: bold;
-}
-
-.status-paid {
-  color: blue;
-  font-weight: bold;
-}
-
-.status-cancelled {
-  color: red;
-  font-weight: bold;
-}
-
-.status-default {
-  color: gray;
-  font-weight: bold;
-}
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+.room-image {
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.room-image:hover {
+  transform: scale(1.03);
+}
+
+.room-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.room-features {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.feature-item {
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  gap: 0.5rem;
+  font-size: 0.875rem;
 }
 
-.modal {
+.feature-icon {
+  font-size: 1rem;
+}
+
+/* Included Services */
+.included-services {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.services-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.services-list {
+  list-style: none;
+}
+
+.service-item {
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.service-item:last-child {
+  border-bottom: none;
+}
+
+/* Cash Section */
+.cash-section {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.cash-toggle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cash-label {
+  font-size: 0.875rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.cash-controls {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.cash-slider {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  accent-color: var(--cash-color);
+}
+
+.cash-amount-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.cash-remaining {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Price Breakdown */
+.price-breakdown {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.price-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: var(--text-color);
+}
+
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.price-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 1rem 0 0;
+  margin-top: 0.5rem;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: var(--text-light);
+}
+
+.discounted-price {
+  color: var(--discount-color);
+  font-weight: 500;
+}
+
+.cash-used {
+  color: var(--cash-color);
+  font-weight: 500;
+}
+
+.total-amount {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.cashback-notice {
+  font-size: 0.75rem;
+  color: var(--cash-color);
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(16, 185, 129, 0.1);
+  border-radius: var(--radius-sm);
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.modal h2 {
-  margin-bottom: 10px;
-  color: #2ecc71;
-}
-
-.modal p {
-  margin-bottom: 20px;
-  font-size: 16px;
-  color: #333;
-}
-
-.modal button {
-  background: #2ecc71;
+/* Payment Button */
+.payment-button {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 16px;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
-.modal button:hover {
-  background: #27ae60;
+.payment-button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .checkout-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .hotel-card {
+    flex-direction: column;
+  }
+  
+  .hotel-image-container {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .booking-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .room-features {
+    grid-template-columns: 1fr 1fr;
+  }
 }
