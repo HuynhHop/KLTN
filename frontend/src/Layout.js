@@ -1,17 +1,22 @@
-import { Outlet, useLocation } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom";
 import SiteHeader from "./components/SiteHeader";
+// import Footer from "./components/Footer";
+
 function Layout() {
-  const location = useLocation()
-  const hideHeaderPaths = ["/login", "/signup"] // Các đường dẫn không hiển thị Header
+  const location = useLocation();
+  const hideHeaderPaths = ["/login", "/signup"];
+
+  const shouldShowHeaderAndFooter = !hideHeaderPaths.includes(location.pathname);
 
   return (
     <div>
-      {!hideHeaderPaths.includes(location.pathname) && <SiteHeader />}
+      {shouldShowHeaderAndFooter && <SiteHeader />}
       <div className="main-content">
         <Outlet />
       </div>
+      {/* {shouldShowHeaderAndFooter && <Footer />} */}
     </div>
-  )
+  );
 }
 
-export default Layout
+export default Layout;

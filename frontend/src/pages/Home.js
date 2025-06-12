@@ -4,6 +4,7 @@ import SearchBox from "../components/SearchBox";
 import VoucherCarousel from "../components/VoucherCarousel";
 import HotelList from "../components/HotelList";
 import FlightList from "../components/FlightList";
+import Footer from "../components/Footer";
 
 function Home() {
   const location = useLocation();
@@ -32,6 +33,8 @@ function Home() {
       <section id="flightList">
         <FlightList />
       </section>
+
+      <Footer />
     </div>
   );
 }

@@ -162,7 +162,15 @@ const HotelReviews2 = ({ hotelId, closeModal }) => {
                 </div>
                 <div className="rating">
                   {comment.rating} <FaStar color="crimson" />{" "}
-                  {comment.rating >= 9 ? "Tuyệt vời" : "Tốt"}
+                  {comment.rating >= 9
+                    ? "Tuyệt vời"
+                    : comment.rating >= 7
+                    ? "Tốt"
+                    : comment.rating >= 5
+                    ? "Tạm ổn"
+                    : comment.rating >= 3
+                    ? "Hơi tệ"
+                    : "Tệ"}
                 </div>
                 <p>{comment.content}</p>
               </div>
