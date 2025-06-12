@@ -1,6 +1,7 @@
 const Order = require("../models/Order");
 const Room = require("../models/Room");
 const Cash = require("../models/Cash");
+const { getIO } = require('../config/socket');
 
 class OrderController {
   async getAllOrder(req, res) {
@@ -152,32 +153,41 @@ class OrderController {
   }
 
   async updateStatus(req, res) {
-    try {
-      const { id } = req.params;
-      const { status } = req.body;
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
 
-      const validStatuses = [
-        "Reserved", // Đã giữ chỗ
-        "Pending", // Đang chờ thanh toán
-        "Paid", // Đã thanh toán
-        "Cancelled", // Đã hủy
-        "Refunded", // Đã hoàn tiền
-      ];
-      if (!validStatuses.includes(status)) {
-        return res.status(400).json({ message: "Invalid status" });
-      }
-
-      const updatedOrder = await Order.findByIdAndUpdate(
-        id,
-        { status },
-        { new: true }
-      );
-
-      res.json(updatedOrder);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+    const validStatuses = ["Reserved", "Pending", "Paid", "Cancelled", "Refunded", "Processing"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
     }
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    ).populate('user');
+
+    // Gửi thông báo real-time
+    console.log('Emitting orderStatusChanged event:', {
+      orderId: updatedOrder._id,
+      newStatus: status,
+      userId: updatedOrder.user._id,
+      message: `Yêu cầu hủy đơn #${updatedOrder._id} từ khách hàng ${updatedOrder.user.name || updatedOrder.user.email}`
+    });
+    const io = getIO();
+    io.emit('orderStatusChanged', {
+    orderId: updatedOrder._id,
+    newStatus: status,
+    userId: updatedOrder.user._id,
+    message: `Yêu cầu hủy đơn #${updatedOrder._id} từ khách hàng ${updatedOrder.user.name || updatedOrder.user.email}`
+  });
+
+    res.json(updatedOrder);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
+}
 
   async deleteOrder(req, res) {
     try {
@@ -185,27 +195,59 @@ class OrderController {
       const order = await Order.findById(id);
 
       if (!order) {
-        return res.status(404).json({ 
-          success: false, 
-          message: "Không tìm thấy đơn hàng" 
+        return res.status(404).json({
+          success: false,
+          message: "Không tìm thấy đơn hàng"
         });
       }
 
+      const { serviceType, status, user, serviceId, quantity, cashUsed } = order;
+
       // Nếu là đơn phòng khách sạn và đã thanh toán, hoàn trả số lượng phòng
-      if (order.serviceType === "Hotel" && order.status === "Paid") {
-        const room = await Room.findById(order.serviceId);
+      if (serviceType === "Hotel" && status === "Paid") {
+        const room = await Room.findById(serviceId);
         if (room) {
-          room.quantity += order.quantity;
+          room.quantity += quantity;
           await room.save();
+        }
+
+        // Trừ lại số tiền cashback đã cộng vào (nếu có)
+        const cash = await Cash.findOne({ user });
+        if (cash && room?.cashback) {
+          let cashbackValue = room.cashback * quantity;
+
+          // Tính toán theo level lúc cộng (giả sử không thay đổi giữa lúc cộng & lúc xóa)
+          let actualCashback = cashbackValue;
+          switch (cash.level) {
+            case "silver":
+              actualCashback *= 1.1;
+              break;
+            case "gold":
+              actualCashback *= 1.2;
+              break;
+            case "diamond":
+              actualCashback *= 1.5;
+              break;
+          }
+
+          cash.money -= Math.round(actualCashback);
+          if (cash.money < 0) cash.money = 0;
+
+          // Trừ số lần mua phòng ra khỏi totalSpent (giữ đồng bộ level)
+          cash.totalSpent -= quantity;
+          if (cash.totalSpent < 0) cash.totalSpent = 0;
+
+          cash.updateLevel();
+          await cash.save();
         }
       }
 
       // Xóa đơn hàng
       await Order.findByIdAndDelete(id);
 
-      res.json({ 
-        success: true, 
-        message: "Xóa đơn hàng thành công" 
+      res.json({
+        success: true,
+        message: "Xóa đơn hàng thành công"
       });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });

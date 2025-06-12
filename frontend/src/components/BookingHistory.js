@@ -1,45 +1,81 @@
 import React, { useEffect, useState } from "react";
+import { FaTimes } from "react-icons/fa";
 import "../css/BookingHistory.css";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookingHistory = () => {
   const [orders, setOrders] = useState([]);
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const userId = JSON.parse(localStorage.getItem("user"))._id;
-        const response = await fetch(`${apiUrl}/orders/user/${userId}`);
-        const data = await response.json();
-        if (data.success && Array.isArray(data.data)) {
-          setOrders(data.data);
-        } else {
-          setOrders([]);
-        }
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
-
     fetchOrders();
   }, [apiUrl]);
+
+  const fetchOrders = async () => {
+    try {
+      const userId = JSON.parse(localStorage.getItem("user"))._id;
+      const response = await fetch(`${apiUrl}/orders/user/${userId}`);
+      const data = await response.json();
+      if (data.success && Array.isArray(data.data)) {
+        // Lọc chỉ hiển thị các đơn có status khác "Cancelled"
+        const activeOrders = data.data.filter(order => order.status !== "Cancelled");
+        setOrders(activeOrders);
+      } else {
+        setOrders([]);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    try {
+      const response = await fetch(`${apiUrl}/orders/${orderId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: "Processing" }),
+      });
+
+      if (response.ok) {
+        // Hiển thị thông báo cho khách hàng
+        toast.success("Yêu cầu hủy đơn đã được gửi đến quản trị viên", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        fetchOrders();
+      } else {
+        toast.error("Hủy đơn không thành công");
+      }
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      toast.error("Đã xảy ra lỗi khi hủy đơn");
+    }
+  };
+
   const getStatusClass = (status) => {
     switch (status) {
-      case "booking_pending":
+      case "Pending":
         return "status-pending";
-      case "confirmed":
-        return "status-confirmed";
-      case "paid":
+      case "Paid":
         return "status-paid";
-      case "cancelled":
+      case "Cancelled":
         return "status-cancelled";
+      case "Reserved":
+        return "status-reserved";
+      case "Refunded":
+        return "status-refunded";
       default:
         return "status-default";
     }
   };
+
   return (
     <div className="booking-history">
       <h3>Danh sách đơn phòng</h3>
+      <ToastContainer />
       <p>Xem lại các đơn phòng đã đặt trước đây tại đây.</p>
       {Array.isArray(orders) && orders.length > 0 ? (
         orders.map((order) => (
@@ -63,7 +99,7 @@ const BookingHistory = () => {
               <p>
                 Giá:{" "}
                 <span className="total-price">
-                  {order.totalPrice.toLocaleString()} VND
+                  {order.totalPrice?.toLocaleString() || "0"} VND
                 </span>
               </p>
               <p>
@@ -82,6 +118,15 @@ const BookingHistory = () => {
                 Ghi chú:{" "}
                 <span className="note">{order.note || "Không có ghi chú"}</span>
               </p>
+              
+              {order.status === "Paid" && (
+                <button 
+                  className="cancel-button"
+                  onClick={() => handleCancelOrder(order._id)}
+                >
+                  <FaTimes /> Hủy đơn
+                </button>
+              )}
             </div>
           </div>
         ))

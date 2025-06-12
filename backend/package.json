@@ -47,6 +47,7 @@
     "qs": "^6.13.0",
     "request-promise-native": "^1.0.9",
     "sha256": "^0.2.0",
-    "slugify": "^1.6.6"
+    "slugify": "^1.6.6",
+    "socket.io": "^4.8.1"
   }
 }
