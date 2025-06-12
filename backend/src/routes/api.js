@@ -95,6 +95,7 @@ router.delete("/orders/:id", orderController.deleteOrder);
 router.get("/orders/user/:userId", orderController.getByUser);
 router.get("/orders/:id", orderController.getOrderById);
 router.put("/orders/:id/status", orderController.updateStatus);
+router.put("/orders/:id/approve-cancel", orderController.approveCancelRequest);
 
 router.post("/order-flight/", orderFlightController.create);
 router.get("/order-flight/user/:userId", orderFlightController.getUserOrders);

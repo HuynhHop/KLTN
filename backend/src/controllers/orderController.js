@@ -253,6 +253,38 @@ class OrderController {
       res.status(500).json({ success: false, message: err.message });
     }
   }
+  async approveCancelRequest(req, res) {
+    try {
+      const { id } = req.params;
+      const order = await Order.findById(id).populate('user');
+
+      if (!order) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Không tìm thấy đơn hàng" 
+        });
+      }
+
+      if (order.status !== "Processing") {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Chỉ có thể hủy đơn hàng đang ở trạng thái Processing" 
+        });
+      }
+
+      // Cập nhật trạng thái
+      order.status = "Cancelled";
+      await order.save();
+
+      res.json({ 
+        success: true, 
+        message: "Đã hủy đơn hàng thành công",
+        data: order
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, message: err.message });
+    }
+  }
   
 }
 module.exports = new OrderController();

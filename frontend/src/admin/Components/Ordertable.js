@@ -67,24 +67,56 @@ const Ordertable = () => {
     }
   };
 
-  // Cấu hình cột cho DataGrid
+  const handleApproveCancel = async (id) => {
+    try {
+      const response = await fetch(`${apiUrl}/orders/${id}/approve-cancel`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Cập nhật trạng thái trong local state
+        setData(data.map(item => 
+          item.id === id ? { ...item, status: "Cancelled" } : item
+        ));
+        alert("Đã hủy đơn hàng thành công!");
+      } else {
+        alert(result.message || "Không thể hủy đơn hàng");
+      }
+    } catch (error) {
+      console.error("Error approving cancel:", error);
+      alert("Có lỗi xảy ra khi xử lý yêu cầu hủy");
+    }
+  };
+
   const columns = [
     { field: "id", headerName: "ID", width: 120 },
     { field: "serviceType", headerName: "ServiceType", width: 120 },
     { field: "hotelName", headerName: "Hotel", width: 200 },
     { field: "roomName", headerName: "Room", width: 200 },
     { field: "totalPrice", headerName: "Price", width: 150 },
-    // { field: "contactInfo", headerName: "Contact Info", width: 150 },
-    // { field: "guestInfo", headerName: "Guest Info", width: 150 },
-    { field: "status", headerName: "Status", width: 120 },
-    // { field: "note", headerName: "Note", width: 200 },
+    { 
+      field: "status", 
+      headerName: "Status", 
+      width: 120,
+      renderCell: (params) => (
+        <div className={`status ${params.value}`}>
+          {params.value}
+        </div>
+      )
+    },
   ];
 
   const actionColumn = [
     {
       field: "action",
       headerName: "Action",
-      width: 150,
+      width: 200,
       renderCell: (params) => {
         return (
           <div className="cellAction">
@@ -94,12 +126,16 @@ const Ordertable = () => {
             >
               <div className="addButton">Detail</div>
             </Link>
-            {/* <Link
-              to={`/admin/orders/${params.row.id}/edit`}
-              style={{ textDecoration: "none" }}
-            >
-              <div className="viewButton">Edit</div>
-            </Link> */}
+            
+            {params.row.status === "Processing" && (
+              <div
+                className="approveButton"
+                onClick={() => handleApproveCancel(params.row.id)}
+              >
+                Approve
+              </div>
+            )}
+            
             <div
               className="deleteButton"
               onClick={() => handleDelete(params.row.id)}
