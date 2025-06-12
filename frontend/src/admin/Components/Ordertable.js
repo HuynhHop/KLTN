@@ -4,6 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { Link } from "react-router-dom";
 import "../Style/lessontable.scss";
+import { jwtDecode } from "jwt-decode";
 
 const Ordertable = () => {
   const { darkMode } = useContext(DarkModeContext);
@@ -13,6 +14,8 @@ const Ordertable = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("accessToken");
+  const decodedToken = jwtDecode(token);
+  const userRole = decodedToken.role;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,9 +84,11 @@ const Ordertable = () => {
 
       if (response.ok && result.success) {
         // Cập nhật trạng thái trong local state
-        setData(data.map(item => 
-          item.id === id ? { ...item, status: "Cancelled" } : item
-        ));
+        setData(
+          data.map((item) =>
+            item.id === id ? { ...item, status: "Cancelled" } : item
+          )
+        );
         alert("Đã hủy đơn hàng thành công!");
       } else {
         alert(result.message || "Không thể hủy đơn hàng");
@@ -95,20 +100,18 @@ const Ordertable = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "ID", width: 120 },
-    { field: "serviceType", headerName: "ServiceType", width: 120 },
-    { field: "hotelName", headerName: "Hotel", width: 200 },
-    { field: "roomName", headerName: "Room", width: 200 },
+    // { field: "id", headerName: "ID", width: 120 },
+    { field: "serviceType", headerName: "ServiceType", width: 150 },
+    { field: "hotelName", headerName: "Hotel", width: 220 },
+    { field: "roomName", headerName: "Room", width: 220 },
     { field: "totalPrice", headerName: "Price", width: 150 },
-    { 
-      field: "status", 
-      headerName: "Status", 
+    {
+      field: "status",
+      headerName: "Status",
       width: 120,
       renderCell: (params) => (
-        <div className={`status ${params.value}`}>
-          {params.value}
-        </div>
-      )
+        <div className={`cellWithStatus ${params.value}`}>{params.value}</div>
+      ),
     },
   ];
 
@@ -118,6 +121,9 @@ const Ordertable = () => {
       headerName: "Action",
       width: 200,
       renderCell: (params) => {
+        if (userRole === 2) {
+          return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
+        }
         return (
           <div className="cellAction">
             <Link
@@ -126,7 +132,7 @@ const Ordertable = () => {
             >
               <div className="addButton">Detail</div>
             </Link>
-            
+
             {params.row.status === "Processing" && (
               <div
                 className="approveButton"
@@ -135,13 +141,13 @@ const Ordertable = () => {
                 Approve
               </div>
             )}
-            
-            <div
+
+            {/* <div
               className="deleteButton"
               onClick={() => handleDelete(params.row.id)}
             >
               Delete
-            </div>
+            </div> */}
           </div>
         );
       },
@@ -155,8 +161,13 @@ const Ordertable = () => {
           className="datagrid"
           rows={data}
           columns={columns.concat(actionColumn)}
-          pageSize={6}
-          rowsPerPageOptions={[5]}
+          pageSize={10}
+          pageSizeOptions={[5, 10, 20, 50, 100]}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 10, page: 0 },
+            },
+          }}
           checkboxSelection
           sx={{
             "& .MuiTablePagination-root": {

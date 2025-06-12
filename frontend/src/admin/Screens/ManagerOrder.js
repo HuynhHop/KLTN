@@ -13,7 +13,7 @@ const ManagerOrder = () => {
         <Navbar />
         <div className="productList">
           <div className="datatableTitle">
-            <span>Manager Order</span>
+            <span>Booking Management</span>
             <Link
               to="/admin/orders/orderId/new"
               style={{ textDecoration: "none" }}

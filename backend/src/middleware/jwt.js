@@ -57,7 +57,7 @@ const isAdmin = async (req, res, next) => {
   try {
     const { role } = req.user;
     const userRole = await Role.findById(role);
-    if (!userRole || userRole?.name !== "Admin")
+    if (!userRole || (userRole?.name !== "Admin" && userRole?.name !== "Staff"))
       return res
         .status(401)
         .json({ success: false, message: "REQUIRE ADMIN ROLE" });

@@ -15,7 +15,44 @@ const Widget = ({ type }) => {
   let data;
   const diff = 30; // Static growth percentage (example)
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        let endpoint = "";
+
+        // Define API endpoints for each type
+        if (type === "customer") {
+          endpoint = "http://localhost:8080/v1/api/user/count";
+        } else if (type === "orders") {
+          endpoint = "http://localhost:8080/v1/api/orders/count";
+          // } else if (type === "earnings") {
+          //   endpoint = "http://localhost:8080/v1/api/package/calculateTotalPrice";
+        }
+
+        if (endpoint) {
+          const response = await fetch(endpoint);
+          const result = await response.json();
+
+          if (result.success) {
+            setCount(
+              type === "earnings"
+                ? result.data.totalPrice // Set total earnings for "earnings" widget
+                : type === "customer"
+                ? result.data.userCount // Set user count for "customer" widget
+                : result.data.orderCount // Set package count for "order" widget
+            );
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to fetch data for ${type}:`, error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [type]);
 
   // Define widget data based on type
   switch (type) {
@@ -88,7 +125,7 @@ const Widget = ({ type }) => {
       <div className="left">
         <span className="title">{data.title}</span>
         <span className="counter">
-          {loading ? "Loading..." : data.isMoney ? `$${count}` : count}
+          {loading ? "Loading..." : data.isMoney ? `${count}` : count}
         </span>
         <span className="link" onClick={handleLinkClick}>
           {data.link}

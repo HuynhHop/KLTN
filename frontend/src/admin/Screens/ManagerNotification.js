@@ -13,7 +13,7 @@ const ManagerNotification = () => {
         <Navbar />
         <div className="productList">
           <div className="datatableTitle">
-            <span>Manager Notification</span>
+            <span>Notification Management</span>
             <Link
               to="/admin/notifications/notificationId/new"
               style={{ textDecoration: "none" }}

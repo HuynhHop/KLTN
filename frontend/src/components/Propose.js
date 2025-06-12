@@ -130,6 +130,10 @@ const Propose = ({ hotelId }) => {
   const handleVoucherApply = async () => {
     try {
       setError(null);
+      if (!voucherCode.trim()) {
+        setVoucher(null);
+        return;
+      }
       const res = await fetch(
         `${apiUrl}/vouchers/apply?code=${voucherCode}&type=hotel`
       );
@@ -176,13 +180,14 @@ const Propose = ({ hotelId }) => {
   const renderCashbackInfo = (room) => {
     const baseCashback = room.cashback || 0;
     const actualCashback = calculateCashback(baseCashback);
-    
+
     return (
       <p className="cashback">
         Hoàn {actualCashback.toLocaleString()}₫ vào Cash
         {userLevel !== "bronze" && (
           <span className="level-bonus">
-            (Ưu đãi {userLevel} +{Math.round((actualCashback/baseCashback - 1)*100)}%)
+            (Ưu đãi {userLevel} +
+            {Math.round((actualCashback / baseCashback - 1) * 100)}%)
           </span>
         )}
       </p>
@@ -288,8 +293,14 @@ const Propose = ({ hotelId }) => {
             </div>
             <div className="propose-bed">
               <p>{room.beds}</p>
-              <p className={`room-quantity ${room.quantity === 0 ? 'out' : room.quantity < 5 ? 'low' : ''}`}>
-                {room.quantity === 0 ? 'Hết phòng' : `Còn lại: ${room.quantity} phòng`}
+              <p
+                className={`room-quantity ${
+                  room.quantity === 0 ? "out" : room.quantity < 5 ? "low" : ""
+                }`}
+              >
+                {room.quantity === 0
+                  ? "Hết phòng"
+                  : `Còn lại: ${room.quantity} phòng`}
               </p>
             </div>
             <div className="propose-pricing">
@@ -311,8 +322,9 @@ const Propose = ({ hotelId }) => {
                 <span className="price-tooltip">
                   <FaInfoCircle className="tooltip-icon" />
                   <span className="tooltip-text">
-                    Giá cuối cùng = Giá đã giảm + Phí dịch vụ<br />
-                    ({room.discountedPrice.toLocaleString()}₫ + {room.serviceFee.toLocaleString()}₫)
+                    Giá cuối cùng = Giá đã giảm + Phí dịch vụ
+                    <br />({room.discountedPrice.toLocaleString()}₫ +{" "}
+                    {room.serviceFee.toLocaleString()}₫)
                   </span>
                 </span>
               </p>
@@ -336,12 +348,10 @@ const Propose = ({ hotelId }) => {
                 }}
                 disabled={room.quantity === 0}
               >
-                {room.quantity === 0 ? 'Hết phòng' : 'Đặt phòng'}
+                {room.quantity === 0 ? "Hết phòng" : "Đặt phòng"}
               </button>
 
-              <p className="cashback">
-                {renderCashbackInfo(room)}
-              </p>
+              <p className="cashback">{renderCashbackInfo(room)}</p>
             </div>
           </div>
         ))}

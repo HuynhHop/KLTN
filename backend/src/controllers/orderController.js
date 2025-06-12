@@ -1,9 +1,19 @@
 const Order = require("../models/Order");
 const Room = require("../models/Room");
 const Cash = require("../models/Cash");
-const { getIO } = require('../config/socket');
+const { getIO } = require("../config/socket");
 
 class OrderController {
+  // [GET] /orders/count
+  async getOrderCount(req, res) {
+    try {
+      const orderCount = await Order.countDocuments();
+      res.json({ success: true, data: { orderCount } });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
   async getAllOrder(req, res) {
     try {
       const orders = await Order.find().populate("user serviceId");
@@ -52,22 +62,22 @@ class OrderController {
         guestInfo,
         note,
         imageRoom,
-        cashUsed = 0 // Thêm trường cashUsed, mặc định là 0
+        cashUsed = 0, // Thêm trường cashUsed, mặc định là 0
       } = req.body;
 
       if (serviceType === "Hotel") {
         const room = await Room.findById(serviceId);
         if (!room) {
-          return res.status(404).json({ 
-            success: false, 
-            message: "Không tìm thấy phòng" 
+          return res.status(404).json({
+            success: false,
+            message: "Không tìm thấy phòng",
           });
         }
 
         if (room.quantity < quantity) {
-          return res.status(400).json({ 
-            success: false, 
-            message: "Số lượng phòng không đủ" 
+          return res.status(400).json({
+            success: false,
+            message: "Số lượng phòng không đủ",
           });
         }
 
@@ -82,10 +92,10 @@ class OrderController {
         if (!cash || cash.money < cashUsed) {
           return res.status(400).json({
             success: false,
-            message: "Số dư ví Cash không đủ"
+            message: "Số dư ví Cash không đủ",
           });
         }
-        
+
         cash.money -= cashUsed;
         await cash.save();
       }
@@ -103,7 +113,7 @@ class OrderController {
         status: "Paid",
         note: note || "",
         imageRoom: imageRoom || "",
-        cashUsed // Lưu số tiền đã sử dụng từ Cash vào order
+        cashUsed, // Lưu số tiền đã sử dụng từ Cash vào order
       });
       await newOrder.save();
 
@@ -138,7 +148,7 @@ class OrderController {
             const newCash = new Cash({
               user,
               money: Math.round(cashbackValue),
-              totalSpent: quantity
+              totalSpent: quantity,
             });
             newCash.updateLevel();
             await newCash.save();
@@ -153,41 +163,52 @@ class OrderController {
   }
 
   async updateStatus(req, res) {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
 
-    const validStatuses = ["Reserved", "Pending", "Paid", "Cancelled", "Refunded", "Processing"];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({ message: "Invalid status" });
+      const validStatuses = [
+        "Reserved",
+        "Pending",
+        "Paid",
+        "Cancelled",
+        "Refunded",
+        "Processing",
+      ];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+
+      const updatedOrder = await Order.findByIdAndUpdate(
+        id,
+        { status },
+        { new: true }
+      ).populate("user");
+
+      // Gửi thông báo real-time
+      console.log("Emitting orderStatusChanged event:", {
+        orderId: updatedOrder._id,
+        newStatus: status,
+        userId: updatedOrder.user._id,
+        message: `Yêu cầu hủy đơn #${updatedOrder._id} từ khách hàng ${
+          updatedOrder.user.name || updatedOrder.user.email
+        }`,
+      });
+      const io = getIO();
+      io.emit("orderStatusChanged", {
+        orderId: updatedOrder._id,
+        newStatus: status,
+        userId: updatedOrder.user._id,
+        message: `Yêu cầu hủy đơn #${updatedOrder._id} từ khách hàng ${
+          updatedOrder.user.name || updatedOrder.user.email
+        }`,
+      });
+
+      res.json(updatedOrder);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
-
-    const updatedOrder = await Order.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    ).populate('user');
-
-    // Gửi thông báo real-time
-    console.log('Emitting orderStatusChanged event:', {
-      orderId: updatedOrder._id,
-      newStatus: status,
-      userId: updatedOrder.user._id,
-      message: `Yêu cầu hủy đơn #${updatedOrder._id} từ khách hàng ${updatedOrder.user.name || updatedOrder.user.email}`
-    });
-    const io = getIO();
-    io.emit('orderStatusChanged', {
-    orderId: updatedOrder._id,
-    newStatus: status,
-    userId: updatedOrder.user._id,
-    message: `Yêu cầu hủy đơn #${updatedOrder._id} từ khách hàng ${updatedOrder.user.name || updatedOrder.user.email}`
-  });
-
-    res.json(updatedOrder);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
   }
-}
 
   async deleteOrder(req, res) {
     try {
@@ -197,11 +218,12 @@ class OrderController {
       if (!order) {
         return res.status(404).json({
           success: false,
-          message: "Không tìm thấy đơn hàng"
+          message: "Không tìm thấy đơn hàng",
         });
       }
 
-      const { serviceType, status, user, serviceId, quantity, cashUsed } = order;
+      const { serviceType, status, user, serviceId, quantity, cashUsed } =
+        order;
 
       // Nếu là đơn phòng khách sạn và đã thanh toán, hoàn trả số lượng phòng
       if (serviceType === "Hotel" && status === "Paid") {
@@ -247,28 +269,29 @@ class OrderController {
 
       res.json({
         success: true,
-        message: "Xóa đơn hàng thành công"
+        message: "Xóa đơn hàng thành công",
       });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });
     }
   }
+
   async approveCancelRequest(req, res) {
     try {
       const { id } = req.params;
-      const order = await Order.findById(id).populate('user');
+      const order = await Order.findById(id).populate("user");
 
       if (!order) {
-        return res.status(404).json({ 
-          success: false, 
-          message: "Không tìm thấy đơn hàng" 
+        return res.status(404).json({
+          success: false,
+          message: "Không tìm thấy đơn hàng",
         });
       }
 
       if (order.status !== "Processing") {
-        return res.status(400).json({ 
-          success: false, 
-          message: "Chỉ có thể hủy đơn hàng đang ở trạng thái Processing" 
+        return res.status(400).json({
+          success: false,
+          message: "Chỉ có thể hủy đơn hàng đang ở trạng thái Processing",
         });
       }
 
@@ -276,15 +299,14 @@ class OrderController {
       order.status = "Cancelled";
       await order.save();
 
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         message: "Đã hủy đơn hàng thành công",
-        data: order
+        data: order,
       });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });
     }
   }
-  
 }
 module.exports = new OrderController();

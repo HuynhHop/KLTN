@@ -91,6 +91,7 @@ router.delete("/rooms/:id", roomController.deleteRoom);
 
 router.post("/orders/create", orderController.createOrder);
 router.get("/orders", orderController.getAllOrder);
+router.get("/orders/count", orderController.getOrderCount);
 router.delete("/orders/:id", orderController.deleteOrder);
 router.get("/orders/user/:userId", orderController.getByUser);
 router.get("/orders/:id", orderController.getOrderById);
@@ -108,9 +109,10 @@ router.patch(
 );
 
 router.post("/flights/create", flightController.createFlight);
+router.get("/flights", flightController.getFlights);
 router.put("/flights/:id", flightController.updateFlight);
 router.delete("/flights/:id", flightController.deleteFlight);
-router.get("/flights", flightController.getFlights);
+router.get("/flights/filter", flightController.filterFlights);
 router.get("/flights/:id", flightController.getFlightById);
 router.post("/flights/search", flightController.searchFlights);
 

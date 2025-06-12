@@ -55,19 +55,19 @@ const Datatable = () => {
         }
         const data = await response.json();
         if (data.success) {
+          const roleMap = {
+            1: "Admin",
+            2: "Staff",
+            3: "Customer",
+          };
+
           const formattedData = data.users.map((user) => ({
             id: user._id,
             ...user,
+            roleName: roleMap[user.role] || "Unknown", // chuyển role số thành chữ
           }));
-          const sortedData = formattedData.sort((a, b) => {
-            if (a.role === 2 && b.role === 1) {
-              return -1;
-            } else if (a.role === 1 && b.role === 2) {
-              return 1;
-            } else {
-              return 0;
-            }
-          });
+
+          const sortedData = formattedData.sort((a, b) => b.role - a.role);
           setData(sortedData);
         } else {
           setError("No data available");
@@ -111,7 +111,7 @@ const Datatable = () => {
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        <span>Manager User</span>
+        <span>User Management</span>
         <Link to="/admin/users/userId/new" style={{ textDecoration: "none" }}>
           <span className="link">Add New User</span>
         </Link>
@@ -125,8 +125,13 @@ const Datatable = () => {
           className="datagrid"
           rows={data}
           columns={userColumns.concat(actionColumn)}
-          pageSize={8}
-          rowsPerPageOptions={[5]}
+          pageSize={10}
+          pageSizeOptions={[5, 10, 20, 50, 100]}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 10, page: 0 },
+            },
+          }}
           checkboxSelection
           sx={{
             "& .MuiTablePagination-root": {

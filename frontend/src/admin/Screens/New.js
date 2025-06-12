@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import "../Style/new.scss";
@@ -7,7 +7,12 @@ import { DriveFolderUploadOutlined } from "@mui/icons-material";
 
 const New = ({ inputs, title }) => {
   const [files, setFiles] = useState([]); // Dùng cho nhiều ảnh
-  const [formData, setFormData] = useState({});
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const Id = queryParams.get("hotelId"); // Lấy hotelId từ URL
+  const [formData, setFormData] = useState({
+    hotelId: Id || "", // Gán giá trị hotelId vào formData nếu có
+  });
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -259,6 +264,7 @@ const New = ({ inputs, title }) => {
                     type={input.type}
                     name={input.name}
                     placeholder={input.placeholder}
+                    value={formData[input.name] || ""}
                     onChange={handleChange}
                   />
                 </div>

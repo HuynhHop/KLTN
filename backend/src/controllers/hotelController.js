@@ -204,7 +204,8 @@ class HotelController {
 
   async filterHotels(req, res) {
     try {
-      const { minPrice, maxPrice, starRating, amenities, province } = req.query;
+      const { minPrice, maxPrice, starRating, amenities, province, district } =
+        req.query;
 
       const filter = {};
 
@@ -224,6 +225,10 @@ class HotelController {
 
       if (province) {
         filter.province = new RegExp(province, "i");
+      }
+
+      if (district) {
+        filter.district = new RegExp(district, "i");
       }
 
       const hotels = await Hotel.find(filter);

@@ -3,19 +3,26 @@ import { DarkModeContext } from "../Context/darkModeContext";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import "../Style/lessontable.scss";
 
-const Hoteltable = () => {
+const Hoteltable = ({ filters }) => {
   const { darkMode } = useContext(DarkModeContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("accessToken");
   const apiUrl = process.env.REACT_APP_API_URL;
+  const token = localStorage.getItem("accessToken");
+  const decodedToken = jwtDecode(token);
+  const userRole = decodedToken.role;
 
   useEffect(() => {
     const fetchHotels = async () => {
       try {
-        const response = await fetch(`${apiUrl}/hotels`);
+        const query = new URLSearchParams(filters).toString();
+        const url = query
+          ? `${apiUrl}/hotels/filter?${query}`
+          : `${apiUrl}/hotels`;
+        const response = await fetch(url);
         const data = await response.json();
         if (data.success) {
           const formattedData = data.data.map((hotel) => ({
@@ -34,7 +41,7 @@ const Hoteltable = () => {
     };
 
     fetchHotels();
-  }, [apiUrl]);
+  }, [apiUrl, filters]);
 
   const handleDelete = async (id) => {
     try {
@@ -52,31 +59,39 @@ const Hoteltable = () => {
 
   // Cấu hình cột cho DataGrid
   const columns = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "name", headerName: "Hotel Name", width: 200 },
+    // { field: "id", headerName: "ID", width: 100 },
+    { field: "name", headerName: "Hotel Name", width: 350 },
     {
-      field: "address",
-      headerName: "Address",
-      width: 250,
-      renderCell: (params) => {
-        return <div className="cellScroll">{params.row.address}</div>;
-      },
-    },
-    {
-      field: "amenities",
-      headerName: "Amenities",
+      field: "province",
+      headerName: "Province/City",
       width: 200,
       renderCell: (params) => {
-        return (
-          <div className="cellScroll">
-            {params.row.amenities?.map((item, index) => (
-              <div key={index}>{item}</div>
-            ))}
-          </div>
-        );
+        return <div className="cellScroll">{params.row.province}</div>;
       },
     },
-    { field: "pricePerNight", headerName: "Price", width: 150 },
+    {
+      field: "district",
+      headerName: "District",
+      width: 200,
+      renderCell: (params) => {
+        return <div className="cellScroll">{params.row.district}</div>;
+      },
+    },
+    // {
+    //   field: "amenities",
+    //   headerName: "Amenities",
+    //   width: 200,
+    //   renderCell: (params) => {
+    //     return (
+    //       <div className="cellScroll">
+    //         {params.row.amenities?.map((item, index) => (
+    //           <div key={index}>{item}</div>
+    //         ))}
+    //       </div>
+    //     );
+    //   },
+    // },
+    { field: "pricePerNight", headerName: "Min Room Price", width: 150 },
   ];
 
   const actionColumn = [
@@ -85,6 +100,9 @@ const Hoteltable = () => {
       headerName: "Action",
       width: 150,
       renderCell: (params) => {
+        if (userRole === 2) {
+          return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
+        }
         return (
           <div className="cellAction">
             <Link
@@ -115,8 +133,13 @@ const Hoteltable = () => {
             className="datagrid"
             rows={data}
             columns={columns.concat(actionColumn)}
-            pageSize={8}
-            rowsPerPageOptions={[5]}
+            pageSize={10}
+            pageSizeOptions={[5, 10, 20, 50, 100]}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 10, page: 0 },
+              },
+            }}
             checkboxSelection
             sx={{
               "& .MuiTablePagination-root": {
