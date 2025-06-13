@@ -12,11 +12,11 @@ Ngày phát hành:07/15
 
 Mật khẩu OTP:123456
 
-# Lược đồ usecase
+# 1. Lược đồ usecase
 ![alt text](image.png)
-# Sơ đồ class diagram
+# 2. Sơ đồ class diagram
 ![alt text](image-1.png)
-# Mô tả chức năng
+# 3. Mô tả chức năng
 Nhóm Customer
 -	Đặt phòng: Cho phép khách hàng lựa chọn khách sạn, loại phòng, ngày nhận/trả và tiến hành đặt phòng.
 -	Yêu thích khách sạn: Người dùng có thể đánh dấu và lưu các khách sạn yêu thích để tham khảo sau.
@@ -42,3 +42,56 @@ Nhóm taff
 Nhóm Admin
 -	Quản lý nhân sự: Admin có quyền thêm, xóa tài khoản nhân viên và phân quyền quản trị.
 -	Thống kê: Xem tổng quan hệ thống như số người dùng, doanh thu, số lượng đơn đặt, đánh giá trung bình,...
+# 4. Giao diện website
+4.1. GIAO DIỆN TRANG CHỦ
+ ![alt text](image-2.png)
+Hình 4. 1 Giao diện trang chủ
+4.2. GIAO DIỆN TRANG HIỂN THỊ CÁC SẢN PHẨM
+ ![alt text](image-3.png)
+Hình 4. 2 Giao diện trang hiển thị các khách sạn
+
+ ![alt text](image-4.png)
+Hình 4. 3 Giao diện trang hiển thị các vé máy bay
+
+4.3. GIAO DIỆN TRANG ĐĂNG NHẬP
+ ![alt text](image-5.png)
+Hình 4. 4 Giao diện trang đăng nhập
+4.4. GIAO DIỆN TRANG ĐĂNG KÝ
+ ![alt text](image-6.png)
+Hình 4. 5 Giao diện trang đăng ký
+4.5. GIAO DIỆN TRANG TÌM KIẾM
+ ![alt text](image-7.png)
+Hình 4. 6 Giao diện tìm kiếm của khách sạn
+
+ ![alt text](image-8.png)
+Hình 4. 7 Giao diện tìm kiếm của chuyến bay
+4.6. GIAO DIỆN CHI TIẾT KHÁCH SẠN
+ ![alt text](image-9.png)
+Hình 4. 8 Giao diện chi tiết khách sạn
+
+4.7. GIAO DIỆN CHI TIẾT PHÒNG
+ ![alt text](image-10.png)
+Hình 4. 9 Giao diện chi tiết phòng
+
+4.8. GIAO DIỆN ĐẶT VÉ MÁY BAY
+ ![alt text](image-11.png)
+Hình 4. 10 Giao diện đặt vé máy bay
+
+4.9. GIAO DIỆN TRANG ĐẶT PHÒNG KHÁCH SẠN
+ ![alt text](image-12.png)
+Hình 4. 11 Giao diện trang đặt phòng khách sạn
+4.10. GIAO DIỆN NGƯỜI DÙNG
+ ![alt text](image-13.png)
+Hình 4. 12 Giao diện người dùng
+
+4.11. GIAO DIỆN DANH SÁCH PHÒNG ĐÃ ĐẶT
+ ![alt text](image-14.png)
+Hình 4. 13 Giao diện danh sách phòng đã đặt
+4.12. GIAO DIỆN DANH SÁCH KHÁCH SẠN YÊU THÍCH
+ ![alt text](image-15.png)
+Hình 4. 14 Giao diện danh sách khách sạn yêu thích
+
+4.13. GIAO DIỆN VÍ CASH
+ ![alt text](image-16.png)
+Hình 4. 15 Giao diện ví cash
+
