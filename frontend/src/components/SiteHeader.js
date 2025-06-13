@@ -54,8 +54,8 @@ const Header = () => {
 
         {/* Right Section */}
         <div className="right-menu">
-          <FaBell className="icon" />
-          <FaGift className="icon" />
+          {/* <FaBell className="icon" />
+          <FaGift className="icon" /> */}
           <div className="icon">
             <ChatBox />
           </div>

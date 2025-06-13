@@ -11,7 +11,7 @@ const HotelImages = ({ images }) => {
   }
 
   const mainImage = images[0];
-  const galleryImages = images.slice(1, 8);
+  const galleryImages = images.slice(1, 4);
 
   const openImageModal = (index) => {
     setSelectedImageIndex(index);
@@ -75,12 +75,12 @@ const HotelImages = ({ images }) => {
             onClick={() => openImageModal(index + 1)}
           />
         ))}
-        {images.length > 8 && (
+        {images.length > 4 && (
           <div 
             className="more-images"
             onClick={() => openImageModal(0)}
           >
-            +{images.length - 8} Ảnh
+            +{images.length - 4} Ảnh
           </div>
         )}
       </div>

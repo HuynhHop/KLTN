@@ -9,7 +9,7 @@ const http = require("http"); // Thêm module http
 const router = require("./routes/api");
 const connection = require("./config/database");
 const cors = require("cors");
-const checkExpiredPackages = require("./middleware/cronJobsPackage");
+const sendReviewRequestForHotel = require("./middleware/cronJobsPackage");
 const { init: initSocket } = require("./config/socket"); // Import socket initialization
 
 const app = express();
@@ -45,7 +45,7 @@ app.use("/v1/api/", router);
 (async () => {
   try {
     await connection();
-    checkExpiredPackages();
+    sendReviewRequestForHotel();
 
     server.listen(port, () => {
       console.log(`Backend Nodejs App listening on port ${port}`);
