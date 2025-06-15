@@ -101,9 +101,9 @@ const Airlinetable = ({ filters }) => {
       headerName: "Action",
       width: 120,
       renderCell: (params) => {
-        if (userRole === 2) {
-          return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
-        }
+        // if (userRole === 1) {
+        //   return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
+        // }
         return (
           <div className="cellAction">
             <Link

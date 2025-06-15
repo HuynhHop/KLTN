@@ -30,8 +30,8 @@ const ManagerAirline = () => {
               to="/admin/airlines/airlineId/new"
               style={{
                 textDecoration: "none",
-                pointerEvents: userRole === 2 ? "none" : "auto",
-                opacity: userRole === 2 ? 0.5 : 1,
+                // pointerEvents: userRole === 2 ? "none" : "auto",
+                // opacity: userRole === 2 ? 0.5 : 1,
               }}
             >
               <span className="link">Add New Airline</span>

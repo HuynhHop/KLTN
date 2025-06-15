@@ -6,7 +6,7 @@ const voucherSchema = new mongoose.Schema({
   discountType: { type: String, enum: ["percent", "amount"] },
   discountValue: Number,
   applyTo: { type: String, enum: ["tour", "hotel", "flight"] },
-  // serviceId: mongoose.Schema.Types.ObjectId,
+  serviceId: mongoose.Schema.Types.ObjectId,
   expiresAt: Date,
   image: String,
 });

@@ -4,6 +4,7 @@ import { userColumns } from "../Config/datatableSource";
 import { DarkModeContext } from "../Context/darkModeContext";
 import "../Style/datatable.scss";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const Datatable = () => {
   const { darkMode } = useContext(DarkModeContext);
@@ -14,6 +15,8 @@ const Datatable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem("accessToken");
+  const decodedToken = jwtDecode(token);
+  const userRole = decodedToken.role;
 
   const handleDelete = async (id) => {
     try {
@@ -88,6 +91,9 @@ const Datatable = () => {
       headerName: "Action",
       width: 150,
       renderCell: (params) => {
+        if (userRole === 2) {
+          return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
+        }
         return (
           <div className="cellAction">
             <Link
@@ -112,7 +118,8 @@ const Datatable = () => {
     <div className="datatable">
       <div className="datatableTitle">
         <span>User Management</span>
-        <Link to="/admin/users/userId/new" style={{ textDecoration: "none" }}>
+        <Link to="/admin/users/userId/new" style={{ textDecoration: "none", pointerEvents: userRole === 2 ? "none" : "auto",
+                opacity: userRole === 2 ? 0.5 : 1, }}>
           <span className="link">Add New User</span>
         </Link>
       </div>

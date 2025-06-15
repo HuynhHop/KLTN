@@ -22,8 +22,8 @@ const ManagerRoom = () => {
               to="/admin/rooms/roomId/new"
               style={{
                 textDecoration: "none",
-                pointerEvents: userRole === 2 ? "none" : "auto", // Vô hiệu hóa nút nếu userRole = 2
-                opacity: userRole === 2 ? 0.5 : 1, // Làm mờ nút nếu userRole = 2
+                // pointerEvents: userRole === 2 ? "none" : "auto", // Vô hiệu hóa nút nếu userRole = 2
+                // opacity: userRole === 2 ? 0.5 : 1, // Làm mờ nút nếu userRole = 2
               }}
             >
               <span className="link">Add New Room</span>

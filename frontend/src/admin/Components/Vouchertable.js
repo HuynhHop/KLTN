@@ -76,9 +76,9 @@ const Vouchertable = () => {
       headerName: "Action",
       width: 200,
       renderCell: (params) => {
-        if (userRole === 2) {
-          return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
-        }
+        // if (userRole === 2) {
+        //   return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
+        // }
         return (
           <div className="cellAction">
             <Link

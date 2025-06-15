@@ -277,36 +277,90 @@ class OrderController {
   }
 
   async approveCancelRequest(req, res) {
-    try {
-      const { id } = req.params;
-      const order = await Order.findById(id).populate("user");
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id).populate("user");
 
-      if (!order) {
-        return res.status(404).json({
-          success: false,
-          message: "Không tìm thấy đơn hàng",
-        });
-      }
-
-      if (order.status !== "Processing") {
-        return res.status(400).json({
-          success: false,
-          message: "Chỉ có thể hủy đơn hàng đang ở trạng thái Processing",
-        });
-      }
-
-      // Cập nhật trạng thái
-      order.status = "Cancelled";
-      await order.save();
-
-      res.json({
-        success: true,
-        message: "Đã hủy đơn hàng thành công",
-        data: order,
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy đơn hàng",
       });
-    } catch (err) {
-      res.status(500).json({ success: false, message: err.message });
     }
+
+    if (order.status !== "Processing") {
+      return res.status(400).json({
+        success: false,
+        message: "Chỉ có thể hủy đơn hàng đang ở trạng thái Processing",
+      });
+    }
+
+    // Thu hồi cashback nếu đơn hàng là loại Hotel và đã thanh toán
+    if (order.serviceType === "Hotel" && order.status === "Paid") {
+      const cash = await Cash.findOne({ user: order.user._id });
+      if (cash) {
+        // Tìm thông tin phòng để lấy cashback rate
+        const room = await Room.findById(order.serviceId);
+        if (room && room.cashback) {
+          let cashbackValue = room.cashback * order.quantity;
+
+          // Tính toán cashback theo level (giống logic khi tạo order)
+          let actualCashback = cashbackValue;
+          switch (cash.level) {
+            case "silver":
+              actualCashback *= 1.1;
+              break;
+            case "gold":
+              actualCashback *= 1.2;
+              break;
+            case "diamond":
+              actualCashback *= 1.5;
+              break;
+          }
+
+          // Trừ lại số tiền cashback đã cộng
+          cash.money -= Math.round(actualCashback);
+          if (cash.money < 0) cash.money = 0;
+
+          // Giảm totalSpent để đồng bộ level
+          cash.totalSpent -= order.quantity;
+          if (cash.totalSpent < 0) cash.totalSpent = 0;
+
+          // Cập nhật level
+          cash.updateLevel();
+          await cash.save();
+        }
+      }
+
+      // Hoàn trả số lượng phòng nếu là đơn khách sạn
+      const room = await Room.findById(order.serviceId);
+      if (room) {
+        room.quantity += order.quantity;
+        await room.save();
+      }
+    }
+
+    // Hoàn trả tiền từ cashUsed nếu có
+    if (order.cashUsed > 0) {
+      const cash = await Cash.findOne({ user: order.user._id });
+      if (cash) {
+        cash.money += order.cashUsed;
+        await cash.save();
+      }
+    }
+
+    // Cập nhật trạng thái
+    order.status = "Cancelled";
+    await order.save();
+
+    res.json({
+      success: true,
+      message: "Đã hủy đơn hàng thành công",
+      data: order,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
+}
 }
 module.exports = new OrderController();
