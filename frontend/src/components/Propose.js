@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Propose.css";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaTags } from "react-icons/fa";
 import RoomDetailModal from "./RoomDetailModal";
 
 const Propose = ({ hotelId }) => {
@@ -18,6 +18,28 @@ const Propose = ({ hotelId }) => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const userId = localStorage.getItem("userId");
   const [userLevel, setUserLevel] = useState();
+  const [availableVouchers, setAvailableVouchers] = useState([]);
+  const [showVoucherList, setShowVoucherList] = useState(false);
+  const voucherPopupRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        voucherPopupRef.current &&
+        !voucherPopupRef.current.contains(event.target)
+      ) {
+        setShowVoucherList(false);
+      }
+    };
+
+    if (showVoucherList) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showVoucherList]);
 
   useEffect(() => {
     const fetchUserLevel = async () => {
@@ -75,7 +97,10 @@ const Propose = ({ hotelId }) => {
         const res = await fetch(`${apiUrl}/rooms/hotel/${hotelId}`);
         const data = await res.json();
         if (data.success) {
-          const updatedRooms = data.data.map((room) => {
+          // Lọc chỉ lấy các phòng còn trống (quantity > 0)
+          const availableRooms = data.data.filter(room => room.quantity > 0);
+          
+          const updatedRooms = availableRooms.map((room) => {
             const booking = bookings.find(
               (b) =>
                 b.serviceType === "Hotel" &&
@@ -134,15 +159,17 @@ const Propose = ({ hotelId }) => {
         setVoucher(null);
         return;
       }
+      
       const res = await fetch(
-        `${apiUrl}/vouchers/apply?code=${voucherCode}&type=hotel`
+        `${apiUrl}/vouchers/apply?code=${voucherCode}&hotelId=${hotelId}`
       );
       const data = await res.json();
-      if (data && data._id) {
-        setVoucher(data);
+      
+      if (data.success && data.voucher) {
+        setVoucher(data.voucher);
       } else {
         setVoucher(null);
-        setError("Voucher không hợp lệ hoặc đã hết hạn.");
+        setError(data.error || "Voucher không hợp lệ hoặc đã hết hạn.");
       }
     } catch (err) {
       console.error("Lỗi khi áp dụng voucher:", err);
@@ -150,6 +177,28 @@ const Propose = ({ hotelId }) => {
       setVoucher(null);
     }
   };
+
+  const selectVoucher = (voucher) => {
+    setVoucherCode(voucher.code);
+    setVoucher(voucher);
+    setShowVoucherList(false);
+  };
+
+  const fetchAvailableVouchers = async () => {
+    try {
+      const res = await fetch(`${apiUrl}/vouchers/hotel/${hotelId}`);
+      const data = await res.json();
+      if (data) {
+        setAvailableVouchers(data);
+      }
+    } catch (error) {
+      console.error("Error fetching available vouchers:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAvailableVouchers();
+  }, [hotelId, apiUrl]);
 
   const toggleDetails = (roomId) => {
     setExpandedDetails((prev) => ({ ...prev, [roomId]: !prev[roomId] }));
@@ -199,18 +248,46 @@ const Propose = ({ hotelId }) => {
       <div className="propose-header">⭐ Được đề xuất</div>
 
       <div className="voucher-input">
-        <label htmlFor="voucherCode">Mã giảm giá:</label>
-        <input
-          id="voucherCode"
-          type="text"
-          placeholder="Nhập mã và nhấn Enter"
-          value={voucherCode}
-          onChange={(e) => setVoucherCode(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleVoucherApply();
-          }}
-        />
+        <div className="voucher-input-group">
+          <input
+            id="voucherCode"
+            type="text"
+            placeholder="Nhập mã và nhấn Enter"
+            value={voucherCode}
+            onChange={(e) => setVoucherCode(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleVoucherApply();
+            }}
+          />
+          <button 
+            className="voucher-list-btn"
+            onClick={() => setShowVoucherList(!showVoucherList)}
+            title="Xem tất cả voucher"
+          >
+            <FaTags />
+          </button>
+        </div>
         {error && <p className="voucher-error">{error}</p>}
+        
+        {showVoucherList && (
+          <div className="voucher-list-popup" ref={voucherPopupRef}>
+            <h4>Voucher có sẵn cho khách sạn này:</h4>
+            {availableVouchers.length > 0 ? (
+              <ul>
+                {availableVouchers.map((v) => (
+                  <li key={v._id} onClick={() => selectVoucher(v)}>
+                    <strong>{v.code}</strong> - 
+                    Giảm {v.discountValue}
+                    {v.discountType === "percent" ? "%" : "₫"}
+                    {v.hotelId ? " (Áp dụng riêng)" : " (Áp dụng chung)"}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Không có voucher nào khả dụng</p>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="propose-list">

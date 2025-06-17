@@ -117,6 +117,7 @@ router.get("/flights/:id", flightController.getFlightById);
 router.post("/flights/search", flightController.searchFlights);
 
 router.post("/vouchers/create", voucherController.createVoucher);
+router.get('/vouchers/hotel/:hotelId', voucherController.getVouchersByHotel);
 router.get("/vouchers/apply", voucherController.applyVoucher);
 router.put("/vouchers/:id", voucherController.updateVoucher);
 router.get("/vouchers", voucherController.getAll);
