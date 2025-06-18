@@ -106,6 +106,12 @@ router.get("/orders/:id", orderController.getOrderById);
 router.put("/orders/:id/status", orderController.updateStatus);
 router.put("/orders/:id/approve-cancel", orderController.approveCancelRequest);
 
+
+// Phê duyệt yêu cầu hủy (chuyển từ processing => cancelled)
+router.put("/order-flight/:id/approve-cancel", orderFlightController.approveCancelRequest);
+
+// Cập nhật trạng thái thanh toán (paid / unpaid)
+router.put("/order-flight/:id/payment-status", orderFlightController.updateStatus);
 router.post("/order-flight/", orderFlightController.create);
 router.get("/order-flight/user/:userId", orderFlightController.getUserOrders);
 router.get("/order-flight/:id", orderFlightController.getOrder);

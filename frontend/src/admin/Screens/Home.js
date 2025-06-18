@@ -1,3 +1,4 @@
+// Home.js
 import React, { useEffect, useState } from "react";
 import Chart from "../Config/Chart.js";
 import Featured from "../Components/Featured";
@@ -16,19 +17,37 @@ const Home = () => {
 
   useEffect(() => {
     const socket = io(apiUrl, {
-      // transports: ['websocket'],  
       withCredentials: true
     });
 
-      console.log('Socket connected:', socket.connected);
+    console.log('Socket connected:', socket.connected);
     socket.on('connect', () => {
       console.log('Connected to Socket.IO server');
     });
+
+    // Thông báo hủy phòng
     socket.on('orderStatusChanged', (data) => {
       if (data.newStatus === 'Processing') {
         toast.info(`🆘 Yêu cầu hủy đơn: ${data.message}`, {
           position: "top-right",
-          autoClose: 8000,  // Longer display time
+          autoClose: 8000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          icon: "⚠️"
+        });
+      }
+    });
+
+    // Thông báo hủy vé máy bay
+    socket.on('flightStatusChanged', (data) => {
+      if (data.newStatus === 'processing') {
+        toast.info(`✈️ Yêu cầu hủy vé máy bay: ${data.message} (Hành trình: ${data.flightInfo})`, {
+          position: "top-right",
+          autoClose: 8000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,

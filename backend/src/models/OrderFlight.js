@@ -16,7 +16,7 @@ const OrderFlight = new mongoose.Schema({
   },
   note: String,
   totalPrice: { type: Number, required: true },
-  status: { type: String, enum: ['pending', 'confirmed', 'cancelled'], default: 'confirmed' },
+  status: { type: String, enum: ['pending', 'confirmed', 'processing', 'cancelled'], default: 'pending' },
   isBookingForOthers: { type: Boolean, default: false },
   paymentMethod: String,
   paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'], default: 'paid' }
