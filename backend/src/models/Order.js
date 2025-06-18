@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const Hotel = require("./Hotel");
+const Room = require("./Room");
 var mongooseDelete = require("mongoose-delete");
 
 const orderSchema = new mongoose.Schema(
@@ -17,16 +19,20 @@ const orderSchema = new mongoose.Schema(
     hotelName: { type: String, required: true }, // Tên khách sạn
     roomName: { type: String, required: true }, // Tên loại phòng
     quantity: { type: Number, default: 1 },
+    originalPrice: Number, // Giá gốc của phòng
+    commission: Number, // Phí hoa hồng
+    netRevenue: Number,
     totalPrice: Number,
     bookingDate: { type: Date, default: Date.now }, // Thêm ngày đặt chỗ
     status: {
       type: String,
       enum: [
         "Reserved", // Đã giữ chỗ
-        "Pending", // Đang chờ thanh toán
+        "Completed", // Đã hoàn thành
         "Paid", // Đã thanh toán
         "Cancelled", // Đã hủy
         "Refunded", // Đã hoàn tiền
+        "Processing", // Đang xử lý
       ],
       default: "Paid",
     },
@@ -42,6 +48,10 @@ const orderSchema = new mongoose.Schema(
     },
     note: { type: String }, // Ghi chú của khách hàng
     imageRoom: { type: String }, // Hình ảnh phòng đã đặt
+    transactionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Transaction",
+    },
   },
   { timestamps: true }
 );

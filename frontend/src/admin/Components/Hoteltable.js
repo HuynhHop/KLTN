@@ -25,7 +25,11 @@ const Hoteltable = ({ filters }) => {
         const response = await fetch(url);
         const data = await response.json();
         if (data.success) {
-          const formattedData = data.data.map((hotel) => ({
+          const filteredData =
+            userRole === 4
+              ? data.data.filter((hotel) => hotel._id === decodedToken.hotelId)
+              : data.data;
+          const formattedData = filteredData.map((hotel) => ({
             id: hotel._id,
             ...hotel,
           }));

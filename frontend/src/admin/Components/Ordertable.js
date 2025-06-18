@@ -28,8 +28,15 @@ const Ordertable = () => {
           },
         });
         const data = await response.json();
+        console.log("Fetched hotels:", data.data);
         if (data.success) {
-          const formattedData = data.data.map((order) => ({
+          const filteredData =
+            userRole === 4
+              ? data.data.filter(
+                  (order) => order.serviceId.hotel === decodedToken.hotelId
+                )
+              : data.data;
+          const formattedData = filteredData.map((order) => ({
             id: order._id,
             ...order,
           }));
@@ -101,14 +108,17 @@ const Ordertable = () => {
 
   const columns = [
     // { field: "id", headerName: "ID", width: 120 },
-    { field: "serviceType", headerName: "ServiceType", width: 150 },
-    { field: "hotelName", headerName: "Hotel", width: 220 },
-    { field: "roomName", headerName: "Room", width: 220 },
-    { field: "totalPrice", headerName: "Price", width: 150 },
+    // { field: "serviceType", headerName: "ServiceType", width: 100 },
+    { field: "hotelName", headerName: "Hotel", width: 200 },
+    { field: "roomName", headerName: "Room", width: 200 },
+    { field: "totalPrice", headerName: "Price Paid", width: 100 },
+    { field: "originalPrice", headerName: "Base Price", width: 100 },
+    { field: "commission", headerName: "Commission", width: 100 },
+    { field: "netRevenue", headerName: "Net Revenue", width: 100 },
     {
       field: "status",
       headerName: "Status",
-      width: 120,
+      width: 100,
       renderCell: (params) => (
         <div className={`cellWithStatus ${params.value}`}>{params.value}</div>
       ),
@@ -119,7 +129,7 @@ const Ordertable = () => {
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 150,
       renderCell: (params) => {
         // if (userRole === 1) {
         //   return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
@@ -135,7 +145,7 @@ const Ordertable = () => {
 
             {params.row.status === "Processing" && (
               <div
-                className="approveButton"
+                className="viewButton"
                 onClick={() => handleApproveCancel(params.row.id)}
               >
                 Approve

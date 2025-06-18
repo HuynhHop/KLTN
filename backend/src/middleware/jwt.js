@@ -8,8 +8,8 @@ const Role = require("../models/Role");
 const path = require("path");
 const privateKeyPath = path.join(__dirname, "../public/private.pem");
 const privateKey = fs.readFileSync(privateKeyPath, "utf8");
-const generateAccessToken = (uid, role) =>
-  jwt.sign({ _id: uid, role }, privateKey, {
+const generateAccessToken = (uid, role, hotelId) =>
+  jwt.sign({ _id: uid, role, hotelId }, privateKey, {
     expiresIn: "2d",
     algorithm: "RS256",
   });

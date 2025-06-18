@@ -26,8 +26,8 @@ const Widget = ({ type }) => {
           endpoint = "http://localhost:8080/v1/api/user/count";
         } else if (type === "orders") {
           endpoint = "http://localhost:8080/v1/api/orders/count";
-          // } else if (type === "earnings") {
-          //   endpoint = "http://localhost:8080/v1/api/package/calculateTotalPrice";
+        } else if (type === "earnings") {
+          endpoint = "http://localhost:8080/v1/api/orders/revenue";
         }
 
         if (endpoint) {
@@ -37,7 +37,7 @@ const Widget = ({ type }) => {
           if (result.success) {
             setCount(
               type === "earnings"
-                ? result.data.totalPrice // Set total earnings for "earnings" widget
+                ? result.data.totalRevenue // Set total earnings for "earnings" widget
                 : type === "customer"
                 ? result.data.userCount // Set user count for "customer" widget
                 : result.data.orderCount // Set package count for "order" widget

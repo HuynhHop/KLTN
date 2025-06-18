@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const config = require("../config/vnpay.json");
 const qs = require("qs");
 const sortObject = require("../util/sortObject");
+const Transaction = require("../models/Transaction");
 
 class PaymentController {
   async createPaymentUrl(req, res) {
@@ -29,7 +30,9 @@ class PaymentController {
       vnp_Params["vnp_Locale"] = language || "vn";
       vnp_Params["vnp_CurrCode"] = currCode;
       vnp_Params["vnp_TxnRef"] = orderId;
-      vnp_Params["vnp_OrderInfo"] = `Thanh toan cho ${req.body.serviceType || 'dich vu'}:${orderId}`;
+      vnp_Params["vnp_OrderInfo"] = `Thanh toan cho ${
+        req.body.serviceType || "dich vu"
+      }:${orderId}`;
       vnp_Params["vnp_OrderType"] = "other";
       vnp_Params["vnp_Amount"] = amount * 100;
       vnp_Params["vnp_ReturnUrl"] = returnUrl;
@@ -167,20 +170,50 @@ class PaymentController {
       let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
       if (secureHash !== signed) {
-        return res.status(200).json({ RspCode: "97", Message: "Checksum failed" });
+        return res
+          .status(200)
+          .json({ RspCode: "97", Message: "Checksum failed" });
       }
 
       // Kiểm tra tồn tại đơn hàng trong hệ thống
-      const orderInfo = vnp_Params["vnp_OrderInfo"];
-      const isFlight = orderInfo.includes("Flight");
-      const redirectBase = isFlight 
-        ? `http://localhost:3000/checkout-flight/${orderId}`
-        : `http://localhost:3000/checkout`;
+      // const orderInfo = vnp_Params["vnp_OrderInfo"];
+      // const isFlight = orderInfo.includes("Flight");
+      // const redirectBase = isFlight
+      //   ? `http://localhost:3000/checkout-flight/${orderId}`
+      //   : `http://localhost:3000/checkout`;
 
-      if (rspCode === "00") {
-        return res.redirect(`${redirectBase}?success=true`);
+      // if (rspCode === "00") {
+      //   return res.redirect(`${redirectBase}?success=true`);
+      // } else {
+      //   return res.redirect(`${redirectBase}?success=false`);
+      // }
+      const orderInfo = vnp_Params["vnp_OrderInfo"];
+      let redirectBase;
+
+      if (orderInfo.includes("Flight")) {
+        redirectBase = `http://localhost:3000/checkout-flight/${orderId}`;
+      } else if (orderInfo.includes("Hotel")) {
+        redirectBase = `http://localhost:3000/checkout`;
       } else {
-        return res.redirect(`${redirectBase}?success=false`);
+        redirectBase = `http://localhost:3000/account?tab=booking`;
+      }
+
+      // Nếu redirectBase đã có dấu ?, thì dùng &success=...
+      const separator = redirectBase.includes("?") ? "&" : "?";
+      if (rspCode === "00") {
+        await Transaction.create({
+          orderId,
+          amount: parseInt(vnp_Params["vnp_Amount"]) / 100,
+          bankCode: vnp_Params["vnp_BankCode"],
+          payDate: vnp_Params["vnp_PayDate"],
+          transactionNo: vnp_Params["vnp_TransactionNo"],
+          cardType: vnp_Params["vnp_CardType"],
+          orderInfo: vnp_Params["vnp_OrderInfo"],
+          status: "success",
+        });
+        return res.redirect(`${redirectBase}${separator}success=true`);
+      } else {
+        return res.redirect(`${redirectBase}${separator}success=false`);
       }
     } catch (error) {
       console.error("Error in vnpayIpn:", error);

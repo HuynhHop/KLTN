@@ -286,7 +286,7 @@ const DetailHotel = () => {
                 checkboxSelection
                 initialState={{
                   pagination: {
-                    paginationModel: { pageSize: 2, page: 0 },
+                    paginationModel: { pageSize: 5, page: 0 },
                   },
                 }}
               />

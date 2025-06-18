@@ -100,6 +100,8 @@ router.delete("/rooms/:id", roomController.deleteRoom);
 router.post("/orders/create", orderController.createOrder);
 router.get("/orders", orderController.getAllOrder);
 router.get("/orders/count", orderController.getOrderCount);
+router.get("/orders/revenue", orderController.getRevenue);
+router.get("/orders/statistics", orderController.getRecentSixMonthsStatistics);
 router.delete("/orders/:id", orderController.deleteOrder);
 router.get("/orders/user/:userId", orderController.getByUser);
 router.get("/orders/:id", orderController.getOrderById);
@@ -131,7 +133,7 @@ router.get("/flights/:id", flightController.getFlightById);
 router.post("/flights/search", flightController.searchFlights);
 
 router.post("/vouchers/create", voucherController.createVoucher);
-router.get('/vouchers/hotel/:hotelId', voucherController.getVouchersByHotel);
+router.get("/vouchers/hotel/:hotelId", voucherController.getVouchersByHotel);
 router.get("/vouchers/apply", voucherController.applyVoucher);
 router.put("/vouchers/:id", voucherController.updateVoucher);
 router.get("/vouchers", voucherController.getAll);
@@ -179,6 +181,7 @@ router.post("/user/login", userController.login);
 router.post("/user/loginGoogle", userController.loginWithGoogle);
 router.post("/user/loginFacebook", userController.loginWithFacebook);
 router.post("/user/createAccount", userController.createAccRole);
+router.post("/user/createHotelManager", userController.createHotelManager);
 
 router.put("/user/refreshAccessToken", userController.refreshAccessToken);
 router.post("/user/resetPassword", userController.resetPassword);

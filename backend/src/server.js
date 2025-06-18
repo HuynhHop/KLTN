@@ -9,7 +9,8 @@ const http = require("http"); // Thêm module http
 const router = require("./routes/api");
 const connection = require("./config/database");
 const cors = require("cors");
-const sendReviewRequestForHotel = require("./middleware/cronJobsPackage");
+const sendReviewRequestForHotel = require("./middleware/sendReviewRequestForHotel");
+const orderStatusCron = require("./middleware/orderStatusCron");
 const { init: initSocket } = require("./config/socket"); // Import socket initialization
 
 const app = express();
@@ -25,7 +26,7 @@ const io = initSocket(server);
 const corsOptions = {
   origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -46,6 +47,7 @@ app.use("/v1/api/", router);
   try {
     await connection();
     sendReviewRequestForHotel();
+    orderStatusCron();
 
     server.listen(port, () => {
       console.log(`Backend Nodejs App listening on port ${port}`);

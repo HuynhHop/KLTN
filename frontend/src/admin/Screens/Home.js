@@ -8,8 +8,8 @@ import Sidebar from "../Components/Sidebar";
 import Widget from "../Config/Widget.js";
 import "../Style/home.scss";
 import { io } from "socket.io-client";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const [notification, setNotification] = useState(null);
@@ -17,44 +17,26 @@ const Home = () => {
 
   useEffect(() => {
     const socket = io(apiUrl, {
-      withCredentials: true
+      // transports: ['websocket'],
+      withCredentials: true,
     });
 
-    console.log('Socket connected:', socket.connected);
-    socket.on('connect', () => {
-      console.log('Connected to Socket.IO server');
+    console.log("Socket connected:", socket.connected);
+    socket.on("connect", () => {
+      console.log("Connected to Socket.IO server");
     });
-
-    // Thông báo hủy phòng
-    socket.on('orderStatusChanged', (data) => {
-      if (data.newStatus === 'Processing') {
+    socket.on("orderStatusChanged", (data) => {
+      if (data.newStatus === "Processing") {
         toast.info(`🆘 Yêu cầu hủy đơn: ${data.message}`, {
           position: "top-right",
-          autoClose: 8000,
+          autoClose: 8000, // Longer display time
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
           theme: "colored",
-          icon: "⚠️"
-        });
-      }
-    });
-
-    // Thông báo hủy vé máy bay
-    socket.on('flightStatusChanged', (data) => {
-      if (data.newStatus === 'processing') {
-        toast.info(`✈️ Yêu cầu hủy vé máy bay: ${data.message} (Hành trình: ${data.flightInfo})`, {
-          position: "top-right",
-          autoClose: 8000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          icon: "⚠️"
+          icon: "⚠️",
         });
       }
     });
@@ -77,12 +59,12 @@ const Home = () => {
             <Widget type="earnings" />
           </div>
           <div className="charts">
-            <Featured />
+            {/* <Featured /> */}
             <Chart title="Last 6 months (Revenue)" aspect={2 / 1} />
           </div>
-          <div className="listContainer">
+          {/* <div className="listContainer">
             <div className="listTitle">Latest Transactions</div>
-          </div>
+          </div> */}
         </div>
       </>
     </div>

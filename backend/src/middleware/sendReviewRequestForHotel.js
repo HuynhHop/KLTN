@@ -22,7 +22,8 @@ const sendReviewRequestForHotel = () => {
       });
 
       for (const order of orders) {
-        const reviewLink = "http://localhost:3000/hotelInfo?id=${order.serviceId";
+        const reviewLink =
+          "http://localhost:3000/hotelInfo?id=${order.serviceId";
         const email = order.contactInfo?.email || order.guestInfo?.email;
 
         if (email) {
@@ -112,7 +113,10 @@ const sendReviewRequestForHotel = () => {
 
       console.log("Review request job for hotel completed!");
     } catch (error) {
-      console.error("Error during review request job for hotel:", error.message);
+      console.error(
+        "Error during review request job for hotel:",
+        error.message
+      );
     }
   });
 };

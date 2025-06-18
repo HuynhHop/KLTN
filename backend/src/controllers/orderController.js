@@ -2,6 +2,7 @@ const Order = require("../models/Order");
 const Room = require("../models/Room");
 const Cash = require("../models/Cash");
 const { getIO } = require("../config/socket");
+const Transaction = require("../models/Transaction");
 
 class OrderController {
   // [GET] /orders/count
@@ -16,7 +17,13 @@ class OrderController {
   }
   async getAllOrder(req, res) {
     try {
-      const orders = await Order.find().populate("user serviceId");
+      const orders = await Order.find()
+        .populate("user")
+        .populate("transactionId")
+        .populate({
+          path: "serviceId",
+          model: "Room",
+        });
       res.json({ success: true, data: orders });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });
@@ -36,7 +43,14 @@ class OrderController {
   async getOrderById(req, res) {
     try {
       const { id } = req.params; // Lấy orderId từ URL
-      const order = await Order.findById(id).populate("user serviceId"); // Tìm order theo id và populate các trường liên quan
+      const order = await Order.findById(id)
+        .populate("user")
+        .populate("transactionId")
+        .populate({
+          path: "serviceId",
+          model: "Room",
+        });
+
       if (!order) {
         return res
           .status(404)
@@ -57,12 +71,15 @@ class OrderController {
         hotelName,
         roomName,
         quantity,
+        originalPrice,
+        commission,
         totalPrice,
         contactInfo,
         guestInfo,
         note,
         imageRoom,
         cashUsed = 0, // Thêm trường cashUsed, mặc định là 0
+        status = "Paid", // Mặc định là Paid
       } = req.body;
 
       if (serviceType === "Hotel") {
@@ -99,7 +116,13 @@ class OrderController {
         cash.money -= cashUsed;
         await cash.save();
       }
-
+      let latestTxn = null;
+      if (status === "Paid") {
+        latestTxn = await Transaction.findOne({
+          orderId: { $exists: true },
+          status: "success",
+        }).sort({ createdAt: -1 });
+      }
       const newOrder = new Order({
         user,
         serviceType,
@@ -107,13 +130,17 @@ class OrderController {
         hotelName,
         roomName,
         quantity,
+        originalPrice,
+        commission,
+        netRevenue: originalPrice - commission,
         totalPrice,
         contactInfo,
         guestInfo,
-        status: "Paid",
+        status: status || "Paid",
         note: note || "",
         imageRoom: imageRoom || "",
         cashUsed, // Lưu số tiền đã sử dụng từ Cash vào order
+        transactionId: latestTxn ? latestTxn._id : null, // Lưu transactionId nếu có
       });
       await newOrder.save();
 
@@ -169,8 +196,8 @@ class OrderController {
 
       const validStatuses = [
         "Reserved",
-        "Pending",
         "Paid",
+        "Completed",
         "Cancelled",
         "Refunded",
         "Processing",
@@ -178,7 +205,20 @@ class OrderController {
       if (!validStatuses.includes(status)) {
         return res.status(400).json({ message: "Invalid status" });
       }
-
+      if (status === "Cancelled") {
+        try {
+          const order = await Order.findById(id);
+          const room = await Room.findById(order.serviceId);
+          if (room) {
+            room.quantity += order.quantity; // Hoàn lại số phòng
+            await room.save();
+          }
+        } catch (error) {
+          return res
+            .status(500)
+            .json({ message: "Lỗi khi update phòng trống" });
+        }
+      }
       const updatedOrder = await Order.findByIdAndUpdate(
         id,
         { status },
@@ -277,90 +317,179 @@ class OrderController {
   }
 
   async approveCancelRequest(req, res) {
-  try {
-    const { id } = req.params;
-    const order = await Order.findById(id).populate("user");
+    try {
+      const { id } = req.params;
+      const order = await Order.findById(id).populate("user");
 
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Không tìm thấy đơn hàng",
-      });
-    }
+      if (!order) {
+        return res.status(404).json({
+          success: false,
+          message: "Không tìm thấy đơn hàng",
+        });
+      }
 
-    if (order.status !== "Processing") {
-      return res.status(400).json({
-        success: false,
-        message: "Chỉ có thể hủy đơn hàng đang ở trạng thái Processing",
-      });
-    }
+      if (order.status !== "Processing") {
+        return res.status(400).json({
+          success: false,
+          message: "Chỉ có thể hủy đơn hàng đang ở trạng thái Processing",
+        });
+      }
 
-    // Thu hồi cashback nếu đơn hàng là loại Hotel và đã thanh toán
-    if (order.serviceType === "Hotel" && order.status === "Paid") {
-      const cash = await Cash.findOne({ user: order.user._id });
-      if (cash) {
-        // Tìm thông tin phòng để lấy cashback rate
-        const room = await Room.findById(order.serviceId);
-        if (room && room.cashback) {
-          let cashbackValue = room.cashback * order.quantity;
+      // Thu hồi cashback nếu đơn hàng là loại Hotel và đã thanh toán
+      if (order.serviceType === "Hotel" && order.status === "Paid") {
+        const cash = await Cash.findOne({ user: order.user._id });
+        if (cash) {
+          // Tìm thông tin phòng để lấy cashback rate
+          const room = await Room.findById(order.serviceId);
+          if (room && room.cashback) {
+            let cashbackValue = room.cashback * order.quantity;
 
-          // Tính toán cashback theo level (giống logic khi tạo order)
-          let actualCashback = cashbackValue;
-          switch (cash.level) {
-            case "silver":
-              actualCashback *= 1.1;
-              break;
-            case "gold":
-              actualCashback *= 1.2;
-              break;
-            case "diamond":
-              actualCashback *= 1.5;
-              break;
+            // Tính toán cashback theo level (giống logic khi tạo order)
+            let actualCashback = cashbackValue;
+            switch (cash.level) {
+              case "silver":
+                actualCashback *= 1.1;
+                break;
+              case "gold":
+                actualCashback *= 1.2;
+                break;
+              case "diamond":
+                actualCashback *= 1.5;
+                break;
+            }
+
+            // Trừ lại số tiền cashback đã cộng
+            cash.money -= Math.round(actualCashback);
+            if (cash.money < 0) cash.money = 0;
+
+            // Giảm totalSpent để đồng bộ level
+            cash.totalSpent -= order.quantity;
+            if (cash.totalSpent < 0) cash.totalSpent = 0;
+
+            // Cập nhật level
+            cash.updateLevel();
+            await cash.save();
           }
+        }
 
-          // Trừ lại số tiền cashback đã cộng
-          cash.money -= Math.round(actualCashback);
-          if (cash.money < 0) cash.money = 0;
+        // Hoàn trả số lượng phòng nếu là đơn khách sạn
+        const room = await Room.findById(order.serviceId);
+        if (room) {
+          room.quantity += order.quantity;
+          await room.save();
+        }
+      }
 
-          // Giảm totalSpent để đồng bộ level
-          cash.totalSpent -= order.quantity;
-          if (cash.totalSpent < 0) cash.totalSpent = 0;
-
-          // Cập nhật level
-          cash.updateLevel();
+      // Hoàn trả tiền từ cashUsed nếu có
+      if (order.cashUsed > 0) {
+        const cash = await Cash.findOne({ user: order.user._id });
+        if (cash) {
+          cash.money += order.cashUsed;
           await cash.save();
         }
       }
 
-      // Hoàn trả số lượng phòng nếu là đơn khách sạn
-      const room = await Room.findById(order.serviceId);
-      if (room) {
-        room.quantity += order.quantity;
-        await room.save();
-      }
+      // Cập nhật trạng thái
+      order.status = "Cancelled";
+      await order.save();
+
+      res.json({
+        success: true,
+        message: "Đã hủy đơn hàng thành công",
+        data: order,
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, message: err.message });
     }
-
-    // Hoàn trả tiền từ cashUsed nếu có
-    if (order.cashUsed > 0) {
-      const cash = await Cash.findOne({ user: order.user._id });
-      if (cash) {
-        cash.money += order.cashUsed;
-        await cash.save();
-      }
-    }
-
-    // Cập nhật trạng thái
-    order.status = "Cancelled";
-    await order.save();
-
-    res.json({
-      success: true,
-      message: "Đã hủy đơn hàng thành công",
-      data: order,
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
   }
-}
+
+  async getRevenue(req, res) {
+    try {
+      // Tìm tất cả các đơn hàng có trạng thái Completed
+      const completedOrders = await Order.find({ status: "Completed" });
+
+      // Tính tổng tiền thu được từ Commission
+      const totalRevenue = completedOrders.reduce((sum, order) => {
+        return sum + (order.commission || 0); // Nếu không có commission, mặc định là 0
+      }, 0);
+
+      res.json({
+        success: true,
+        data: {
+          totalRevenue,
+          completedOrdersCount: completedOrders.length, // Số lượng đơn hàng Completed
+        },
+      });
+    } catch (err) {
+      console.error("Error calculating revenue:", err);
+      res.status(500).json({ success: false, message: err.message });
+    }
+  }
+
+  async getRecentSixMonthsStatistics(req, res) {
+    try {
+      const now = new Date();
+      const currentMonth = now.getMonth() + 2; // Lấy tháng hiện tại (1-12)
+      const currentYear = now.getFullYear();
+
+      let startMonth, startYear;
+
+      // Nếu tháng hiện tại <= 6, cần lấy dữ liệu từ năm trước
+      if (currentMonth <= 6) {
+        startMonth = 12 - (6 - currentMonth); // Tính tháng bắt đầu từ năm trước
+        startYear = currentYear - 1;
+      } else {
+        startMonth = currentMonth - 6; // Tính tháng bắt đầu từ năm hiện tại
+        startYear = currentYear;
+      }
+
+      // Tìm tất cả các đơn hàng trong khoảng thời gian 6 tháng gần nhất
+      const orders = await Order.find({
+        status: { $in: ["Paid", "Completed"] }, // Chỉ lấy các đơn hàng đã thanh toán hoặc hoàn tất
+        bookingDate: {
+          $gte: new Date(`${startYear}-${startMonth}-01`), // Ngày đầu của tháng bắt đầu
+          $lte: new Date(`${currentYear}-${currentMonth - 1}-31`), // Ngày cuối của tháng trước
+        },
+      });
+
+      // Tạo thống kê theo từng tháng
+      const monthlyStatistics = [];
+      for (let i = 0; i < 6; i++) {
+        const month = (startMonth + i) % 12 || 12; // Tính tháng (1-12)
+        const year = startYear + Math.floor((startMonth + i - 1) / 12); // Tính năm
+        monthlyStatistics.push({
+          month,
+          year,
+          totalPricePaid: 0,
+          totalCommission: 0,
+          orderCount: 0,
+        });
+      }
+
+      orders.forEach((order) => {
+        const orderDate = new Date(order.bookingDate);
+        const orderMonth = orderDate.getMonth() + 1;
+        const orderYear = orderDate.getFullYear();
+
+        const stat = monthlyStatistics.find(
+          (item) => item.month === orderMonth && item.year === orderYear
+        );
+
+        if (stat) {
+          stat.totalPricePaid += order.totalPrice || 0;
+          stat.totalCommission += order.commission || 0;
+          stat.orderCount += 1;
+        }
+      });
+
+      res.json({
+        success: true,
+        data: monthlyStatistics,
+      });
+    } catch (err) {
+      console.error("Error calculating recent six months statistics:", err);
+      res.status(500).json({ success: false, message: err.message });
+    }
+  }
 }
 module.exports = new OrderController();
