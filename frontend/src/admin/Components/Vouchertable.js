@@ -58,8 +58,15 @@ const Vouchertable = () => {
     { field: "code", headerName: "Voucher", width: 170 },
     { field: "discountType", headerName: "Discount Type", width: 150 },
     { field: "discountValue", headerName: "Discount Value", width: 150 },
-    { field: "applyTo", headerName: "Apply To", width: 200 },
     {
+      field: "hotelId",
+      headerName: "Hotel Name",
+      width: 250,
+      renderCell: (params) => {
+        return <div>{params.row.hotelId?.name || "Tất cả khách sạn"}</div>;
+      },
+    },  
+     {
       field: "expiresAt",
       headerName: "Time Expires",
       width: 200,

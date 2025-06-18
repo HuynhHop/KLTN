@@ -12,6 +12,7 @@ import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import AirplaneTicketOutlinedIcon from "@mui/icons-material/AirplaneTicketOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import DiscountOutlinedIcon from "@mui/icons-material/DiscountOutlined";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import "../Style/sidebar.scss";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -118,6 +119,12 @@ const Sidebar = () => {
             </li>
           </Link>
 
+          <Link to="/admin/transactions" style={{ textDecoration: "none" }}>
+            <li>
+              <ReceiptLongOutlinedIcon className="icon" />
+              <span>Transaction</span>
+            </li>
+          </Link>
           {/* <Link to="/admin/notifications" style={{ textDecoration: "none" }}>
             <li>
               <NotificationsActiveOutlinedIcon className="icon" />

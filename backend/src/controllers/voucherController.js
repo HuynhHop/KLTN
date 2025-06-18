@@ -29,7 +29,7 @@ class VoucherController {
 
   async getAll(req, res) {
     try {
-      const vouchers = await Voucher.find();
+      const vouchers = await Voucher.find().populate("hotelId"); // <-- thêm populate
       res.json(vouchers);
     } catch (err) {
       res.status(500).json({ error: "Lỗi server khi lấy danh sách voucher" });

@@ -29,6 +29,8 @@ import ManagerNotification from "../Screens/ManagerNotification";
 import EditlOrder from "../Screens/EditOrder";
 import ManagerRoom from "../Screens/ManagerRoom";
 import Edit from "../Screens/Edit";
+import DetailTransaction from "../Screens/DetailTransaction";
+import ManagerTransaction from "../Screens/ManagerTransaction";
 
 const AdminLayout = () => {
   const { darkMode } = useContext(DarkModeContext);
@@ -75,6 +77,8 @@ const AdminLayout = () => {
             <New inputs={hotelInputs} title={"Add New Hotel & Service"} />
           }
         />
+        <Route path="transactions" element={<ManagerTransaction />} />
+        <Route path="transactions/:type/:id" element={<DetailTransaction />} />
 
         <Route path="rooms" element={<ManagerRoom />} />
         <Route path="rooms/:roomId" element={<DetailHotel />} />

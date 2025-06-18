@@ -50,13 +50,15 @@ const FlightCheckout = () => {
 
   const handlePaymentReturn = useCallback(
     async (success) => {
+          const savedFlightId = localStorage.getItem("flightId");
       if (success) {
         try {
+          const user = JSON.parse(localStorage.getItem("user"));
           const savedContactInfo = JSON.parse(localStorage.getItem("contactInfo"));
           const savedPassengerInfo = JSON.parse(localStorage.getItem("passengerInfo"));
           const savedNote = localStorage.getItem("note");
           const savedIsBookingForOthers = localStorage.getItem("isBookingForOthers");
-          const savedFlightId = localStorage.getItem("flightId");
+          // const savedFlightId = localStorage.getItem("flightId");
           const savedPrice = localStorage.getItem("price");
 
           const response = await fetch(`${apiUrl}/order-flight/`, {
@@ -75,7 +77,23 @@ const FlightCheckout = () => {
           });
           
           const data = await response.json();
-          if (data.success) {
+          if (data.success && data.data && data.data._id) {
+            const orderId = data.data._id;
+
+            // ✅ Bước 2: Tạo Transaction
+            await fetch(`${apiUrl}/transactions/flight`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                user: user._id,
+                order: orderId,
+                flight: savedFlightId,
+                price: Number(savedPrice.toString().replace(/\./g, "")),
+              }),
+            });
+
             alert("Đặt vé thành công!");
             navigate("/account?tab=flight");
           } else {
@@ -83,11 +101,10 @@ const FlightCheckout = () => {
             navigate(`/checkout-flight/${savedFlightId}`);
           }
         } catch (error) {
-          console.error("Error creating order:", error);
+          console.error("Error creating order or transaction:", error);
           alert("Có lỗi xảy ra khi lưu thông tin đặt vé!");
         }
       } else {
-        const savedFlightId = localStorage.getItem("flightId");
         alert("Thanh toán thất bại. Vui lòng thử lại!");
         navigate(`/checkout-flight/${savedFlightId}`);
       }
@@ -138,7 +155,7 @@ const FlightCheckout = () => {
       localStorage.setItem("passengerInfo", JSON.stringify(passengerInfo));
       localStorage.setItem("note", note);
       localStorage.setItem("isBookingForOthers", isBookingForOthers);
-      localStorage.setItem("flightId", id);
+      localStorage.setItem("flightId",flight._id);
       localStorage.setItem("price", (flight.originalPrice || 0) + (flight.taxPrice || 0));
       localStorage.setItem("image", flight.image);
       localStorage.setItem("departure", flight.departure);
