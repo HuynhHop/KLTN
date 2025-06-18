@@ -127,13 +127,11 @@ const HotelCheckout = () => {
 
               originalPrice: Number(finalPrice),
               commission: commission,
-              totalPrice: Number(savedPrice.toString().replace(/\./g, "")),
-              contactInfo: savedContactInfo,
-              guestInfo: savedIsBookingForOthers
-                ? savedGuestInfo
-                : savedContactInfo,
-              note: savedNote,
-              imageRoom: savedImage,
+              totalPrice: Number(amountToPay.toString().replace(/\./g, "")),
+              contactInfo: contactInfo,
+              guestInfo: isBookingForOthers ? guestInfo : contactInfo,
+              note: note,
+              imageRoom: imageRoom,
               cashUsed: cashToUse, // Sử dụng cash nếu có
             }),
           });
