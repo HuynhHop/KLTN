@@ -119,13 +119,9 @@ const Propose = ({ hotelId }) => {
             }
 
             let discountedPrice = room.price;
-            if (
-              voucher &&
-              (voucher.serviceId === null || voucher.serviceId === room._id)
-            ) {
+            if (voucher && (voucher.hotelId === null || voucher.hotelId === hotelId)) {
               if (voucher.discountType === "percent") {
-                discountedPrice =
-                  room.price - room.price * (voucher.discountValue / 100);
+                discountedPrice = room.price - room.price * (voucher.discountValue / 100);
               } else if (voucher.discountType === "amount") {
                 discountedPrice = room.price - voucher.discountValue;
               }
@@ -307,11 +303,7 @@ const Propose = ({ hotelId }) => {
               <p className="light-text">
                 {room.people} | {room.area} | {room.view}
               </p>
-              <ul className="bullet-list">
-                <li>✅ Hoàn huỷ một phần</li>
-                <li>✅ Giá đã bao gồm bữa sáng</li>
-                <li>⚠️ Xác nhận trong 15 phút</li>
-              </ul>
+
               <div className="propose-advantages">
                 <div
                   className="advantage-frame"
