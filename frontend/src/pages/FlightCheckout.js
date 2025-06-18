@@ -229,38 +229,7 @@ const FlightCheckout = () => {
                 <span>{flight.departure} → {flight.destination}</span>
               </div>
               
-              <div className="booking-dates">
-                <div className="date-item">
-                  <FaCalendarAlt className="date-icon" />
-                  <div>
-                    <div className="date-label">KHỞI HÀNH</div>
-                    <div className="date-value">
-                      {new Date(flight.departureTime).toLocaleString("vi-VN", {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </div>
-                  </div>
-                </div>
-                <div className="date-item">
-                  <FaCalendarAlt className="date-icon" />
-                  <div>
-                    <div className="date-label">ĐẾN NƠI</div>
-                    <div className="date-value">
-                      {new Date(flight.arrivalTime).toLocaleString("vi-VN", {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
+          
               
               <div className="booking-summary">
                 <div className="summary-item">
@@ -271,10 +240,7 @@ const FlightCheckout = () => {
                   <span className="summary-label">Hạng vé</span>
                   <span className="summary-value">Phổ thông</span>
                 </div>
-                <div className="summary-item">
-                  <span className="summary-label">Hành lý</span>
-                  <span className="summary-value">7kg xách tay</span>
-                </div>
+
               </div>
             </div>
           </div>
@@ -432,38 +398,7 @@ const FlightCheckout = () => {
                 </div>
               </div>
             </div>
-            <div className="booking-dates">
-              <div className="date-item">
-                <FaCalendarAlt className="date-icon" />
-                <div>
-                  <div className="date-label">KHỞI HÀNH</div>
-                  <div className="date-value">
-                    {new Date(flight.departureTime).toLocaleString("vi-VN", {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="date-item">
-                <FaCalendarAlt className="date-icon" />
-                <div>
-                  <div className="date-label">ĐẾN NƠI</div>
-                  <div className="date-value">
-                    {new Date(flight.arrivalTime).toLocaleString("vi-VN", {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
+            
             <div className="booking-summary">
               <div className="summary-item">
                 <span className="summary-label">Hãng hàng không</span>

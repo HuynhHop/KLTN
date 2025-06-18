@@ -392,7 +392,7 @@ const HotelCheckout = () => {
               </div>
 
               <div className="booking-dates">
-                <div className="date-item">
+                {/* <div className="date-item">
                   <FaCalendarAlt className="date-icon" />
                   <div>
                     <div className="date-label">Nhận phòng</div>
@@ -405,7 +405,7 @@ const HotelCheckout = () => {
                     <div className="date-label">Trả phòng</div>
                     <div className="date-value">11:00, T7, 05 tháng 4</div>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               <div className="booking-summary">
@@ -417,12 +417,12 @@ const HotelCheckout = () => {
                   <span className="summary-label">Loại phòng:</span>
                   <span className="summary-value">1 x {room.name}</span>
                 </div>
-                <div className="summary-item">
+                {/* <div className="summary-item">
                   <span className="summary-label">Sức chứa:</span>
                   <span className="summary-value">
                     {room.capacity} người lớn
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
