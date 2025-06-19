@@ -6,6 +6,25 @@
     background-color: #111;
   }
 
+  .filter {
+    margin-bottom: 20px;
+    display: flex; /* Sử dụng flexbox */
+    justify-content: flex-end; /* Căn sang bên phải */
+    align-items: center;
+  }
+
+  .filter label {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+
+  .filter select {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
   .tableCell {
     display: inline;
     background-color: whitesmoke !important;
@@ -68,7 +87,7 @@
       background-color: rgba(0, 128, 0, 0.05);
       color: green;
     }
-    &.Reversed {
+    &.Reserved {
       background-color: rgba(255, 0, 0, 0.05);
       color: rgb(255, 0, 162);
     }

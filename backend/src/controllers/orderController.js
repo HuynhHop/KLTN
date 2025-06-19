@@ -1,6 +1,7 @@
 const Order = require("../models/Order");
 const Room = require("../models/Room");
 const Cash = require("../models/Cash");
+const OrderFlight = require("../models/OrderFlight");
 const { getIO } = require("../config/socket");
 const Transaction = require("../models/Transaction");
 
@@ -8,8 +9,23 @@ class OrderController {
   // [GET] /orders/count
   async getOrderCount(req, res) {
     try {
-      const orderCount = await Order.countDocuments();
-      res.json({ success: true, data: { orderCount } });
+      const orderCount = await Order.countDocuments({
+        status: { $ne: "Cancelled" },
+      });
+      const flightOrderCount = await OrderFlight.countDocuments({
+        status: { $ne: "Cancelled" },
+      });
+
+      const totalOrders = orderCount + flightOrderCount;
+
+      res.json({
+        success: true,
+        data: {
+          orderCount: totalOrders,
+          hotelOrders: orderCount,
+          flightOrders: flightOrderCount,
+        },
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, message: error.message });
@@ -405,19 +421,34 @@ class OrderController {
 
   async getRevenue(req, res) {
     try {
-      // Tìm tất cả các đơn hàng có trạng thái Completed
-      const completedOrders = await Order.find({ status: "Completed" });
+      // Đơn khách sạn có trạng thái Completed
+      const completedHotelOrders = await Order.find({ status: "Completed" });
 
-      // Tính tổng tiền thu được từ Commission
-      const totalRevenue = completedOrders.reduce((sum, order) => {
-        return sum + (order.commission || 0); // Nếu không có commission, mặc định là 0
+      // Đơn vé máy bay khác Cancelled
+      const validFlightOrders = await OrderFlight.find({
+        status: { $ne: "Cancelled" },
+      });
+
+      // Tính tổng doanh thu từ commission của khách sạn
+      const hotelRevenue = completedHotelOrders.reduce((sum, order) => {
+        return sum + (order.commission || 0);
       }, 0);
+
+      // Tính tổng doanh thu từ 10% giá trị đơn bay
+      const flightRevenue = validFlightOrders.reduce((sum, order) => {
+        return sum + Math.round((order.totalPrice || 0) * 0.1);
+      }, 0);
+
+      const totalRevenue = hotelRevenue + flightRevenue;
 
       res.json({
         success: true,
         data: {
           totalRevenue,
-          completedOrdersCount: completedOrders.length, // Số lượng đơn hàng Completed
+          hotelRevenue,
+          flightRevenue,
+          completedOrdersCount: completedHotelOrders.length,
+          validFlightOrdersCount: validFlightOrders.length,
         },
       });
     } catch (err) {
@@ -452,6 +483,14 @@ class OrderController {
         },
       });
 
+      const flights = await OrderFlight.find({
+        status: { $in: ["pending", "paid", "confirmed"] }, // Chỉ lấy các đơn hàng đã thanh toán hoặc xác nhận
+        createdAt: {
+          $gte: new Date(`${startYear}-${startMonth}-01`), // Ngày đầu của tháng bắt đầu
+          $lte: new Date(`${currentYear}-${currentMonth}-01`), // Ngày cuối của tháng trước
+        },
+      });
+
       // Tạo thống kê theo từng tháng
       const monthlyStatistics = [];
       for (let i = 0; i < 6; i++) {
@@ -461,8 +500,8 @@ class OrderController {
           month,
           year,
           totalPricePaid: 0,
-          totalCommission: 0,
-          orderCount: 0,
+          hotelIncome: 0,
+          flightIncome: 0,
         });
       }
 
@@ -477,8 +516,20 @@ class OrderController {
 
         if (stat) {
           stat.totalPricePaid += order.totalPrice || 0;
-          stat.totalCommission += order.commission || 0;
-          stat.orderCount += 1;
+          stat.hotelIncome += order.commission || 0;
+        }
+      });
+      flights.forEach((flight) => {
+        const flightDate = new Date(flight.createdAt);
+        const flightMonth = flightDate.getMonth() + 1;
+        const flightYear = flightDate.getFullYear();
+
+        const stat = monthlyStatistics.find(
+          (item) => item.month === flightMonth && item.year === flightYear
+        );
+
+        if (stat) {
+          stat.flightIncome += Math.round(flight.totalPrice * 0.1); // Tính 10% của totalPrice từ OrderFlight
         }
       });
 

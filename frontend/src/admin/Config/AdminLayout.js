@@ -7,6 +7,7 @@ import New from "../Screens/New";
 import { DarkModeContext } from "../Context/darkModeContext";
 import {
   userInputs,
+  managerInputs,
   hotelInputs,
   airlineInputs,
   voucherInputs,
@@ -41,6 +42,10 @@ const AdminLayout = () => {
         <Route path="" element={<Home />} />
         <Route path="users" element={<ManagerUser />} />
         <Route path="users/:userId" element={<DetailUser />} />
+        <Route
+          path="user/:managerId/new"
+          element={<New inputs={managerInputs} title={"Add Hotel Manager"} />}
+        />
         <Route
           path="users/:userId/new"
           element={<New inputs={userInputs} title={"Add New User"} />}

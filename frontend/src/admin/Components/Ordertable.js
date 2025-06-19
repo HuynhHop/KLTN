@@ -9,6 +9,9 @@ import { jwtDecode } from "jwt-decode";
 const Ordertable = () => {
   const { darkMode } = useContext(DarkModeContext);
 
+  const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState("All");
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const [data, setData] = useState([]);
@@ -40,7 +43,9 @@ const Ordertable = () => {
             id: order._id,
             ...order,
           }));
-          setData(formattedData);
+          // setData(formattedData);
+          setOrders(formattedData);
+          setFilteredOrders(formattedData);
         } else {
           console.error("Failed to fetch Order", data.message);
         }
@@ -52,6 +57,19 @@ const Ordertable = () => {
     };
     fetchData();
   }, [apiUrl]);
+
+  const handleStatusChange = (e) => {
+    const status = e.target.value;
+    setSelectedStatus(status);
+
+    // Lọc dữ liệu theo trạng thái
+    if (status === "All") {
+      setFilteredOrders(orders); // Hiển thị tất cả đơn hàng
+    } else {
+      const filtered = orders.filter((order) => order.status === status);
+      setFilteredOrders(filtered);
+    }
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -131,9 +149,9 @@ const Ordertable = () => {
       headerName: "Action",
       width: 150,
       renderCell: (params) => {
-        // if (userRole === 1) {
-        //   return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
-        // }
+        if (userRole !== 1 && userRole !== 2) {
+          return <div style={{ color: "gray" }}>No Access</div>; // Hiển thị thông báo "No Access" nếu userRole = 2
+        }
         return (
           <div className="cellAction">
             <Link
@@ -166,10 +184,26 @@ const Ordertable = () => {
 
   return (
     <div className="productable">
+      <div className="filter">
+        <label htmlFor="status">Status:</label>
+        <select
+          id="status"
+          value={selectedStatus}
+          onChange={handleStatusChange}
+        >
+          <option value="All">All</option>
+          <option value="Reserved">Reserved</option>
+          <option value="Paid">Paid</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Refunded">Refunded</option>
+          <option value="Processing">Processing</option>
+        </select>
+      </div>
       <Paper className="productContainer">
         <DataGrid
           className="datagrid"
-          rows={data}
+          rows={filteredOrders}
           columns={columns.concat(actionColumn)}
           pageSize={10}
           pageSizeOptions={[5, 10, 20, 50, 100]}

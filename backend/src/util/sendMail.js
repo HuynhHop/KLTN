@@ -11,7 +11,7 @@ const sendMail = async (action, { email, html }) => {
       },
     });
     const info = await transporter.sendMail({
-      from: '"Speaking English" <no-reply@speakingen.gmail.com>', // sender address
+      from: '"Mytour" <no-reply@tourvn.gmail.com>', // sender address
       to: email, // list of receivers
       subject: action, // Subject line
       text: "Hello world", // plain text body
@@ -70,7 +70,7 @@ const sendMailEditProfile = async ({ email, html }) => {
   }
 };
 
-const sendMailCancelPackage = async ({ email, html }) => {
+const sendMailReviewHotel = async ({ email, html }) => {
   try {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -82,9 +82,9 @@ const sendMailCancelPackage = async ({ email, html }) => {
       },
     });
     const info = await transporter.sendMail({
-      from: '"Speaking English" <no-reply@speakingen.gmail.com>', // sender address
+      from: '"Mytour" <no-reply@tour.gmail.com>', // sender address
       to: email, // list of receivers
-      subject: "Package Cancelled Notification", // Subject line
+      subject: "Review Hotel Notification", // Subject line
       text: "Hello world", // plain text body
       html: html, // html body
     });
@@ -94,4 +94,9 @@ const sendMailCancelPackage = async ({ email, html }) => {
   }
 };
 
-module.exports = { sendMail, sendMailRegister, sendMailEditProfile, sendMailCancelPackage };
+module.exports = {
+  sendMail,
+  sendMailRegister,
+  sendMailEditProfile,
+  sendMailReviewHotel,
+};

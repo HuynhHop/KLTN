@@ -23,11 +23,11 @@ const Widget = ({ type }) => {
 
         // Define API endpoints for each type
         if (type === "customer") {
-          endpoint = "http://localhost:8080/v1/api/user/count";
+          endpoint = `${apiUrl}/user/count`;
         } else if (type === "orders") {
-          endpoint = "http://localhost:8080/v1/api/orders/count";
+          endpoint = `${apiUrl}/orders/count`;
         } else if (type === "earnings") {
-          endpoint = "http://localhost:8080/v1/api/orders/revenue";
+          endpoint = `${apiUrl}/orders/revenue`;
         }
 
         if (endpoint) {
@@ -37,10 +37,10 @@ const Widget = ({ type }) => {
           if (result.success) {
             setCount(
               type === "earnings"
-                ? result.data.totalRevenue // Set total earnings for "earnings" widget
+                ? `${result.data.hotelRevenue} + ${result.data.flightRevenue} = ${result.data.totalRevenue}` // Set total earnings for "earnings" widget
                 : type === "customer"
                 ? result.data.userCount // Set user count for "customer" widget
-                : result.data.orderCount // Set package count for "order" widget
+                : `${result.data.hotelOrders} + ${result.data.flightOrders} = ${result.data.orderCount}` // Set package count for "order" widget
             );
           }
         }
@@ -72,7 +72,7 @@ const Widget = ({ type }) => {
       break;
     case "orders":
       data = {
-        title: "ORDERED",
+        title: "HOTEL & FLIGHT BOOKING",
         isMoney: false,
         link: "View all orders",
         icon: (
@@ -121,7 +121,7 @@ const Widget = ({ type }) => {
   };
 
   return (
-    <div className="widget">
+    <div className={`widget ${type}`}>
       <div className="left">
         <span className="title">{data.title}</span>
         <span className="counter">

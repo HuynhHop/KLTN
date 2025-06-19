@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import "../Style/datatable.scss";
+import "../Style/lessontable.scss";
 
 const TransactionTable = ({ filters }) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
 
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -29,19 +32,31 @@ const TransactionTable = ({ filters }) => {
           const hotelRows = (data.data.hotelTransactions || []).map((t) => ({
             id: t._id,
             type: "Hotel",
-            user: t.user?.fullname || t.user?.username || t.user?.email || "Unknown",
+            user:
+              t.user?.fullname ||
+              t.user?.username ||
+              t.user?.email ||
+              "Unknown",
             item: t.hotel?.name || "Unknown Hotel",
             price: t.order?.totalPrice || 0,
-            date: t.order?.createdAt ? new Date(t.order.createdAt).toLocaleString() : "N/A",
+            date: t.order?.createdAt
+              ? new Date(t.order.createdAt).toLocaleString()
+              : "N/A",
           }));
 
           const flightRows = (data.data.flightTransactions || []).map((t) => ({
             id: t._id,
             type: "Flight",
-            user: t.user?.fullname || t.user?.username || t.user?.email || "Unknown",
+            user:
+              t.user?.fullname ||
+              t.user?.username ||
+              t.user?.email ||
+              "Unknown",
             item: t.flight?.flightNumber || "Unknown Flight",
             price: t.order?.totalPrice || 0,
-            date: t.order?.createdAt ? new Date(t.order.createdAt).toLocaleString() : "N/A",
+            date: t.order?.createdAt
+              ? new Date(t.order.createdAt).toLocaleString()
+              : "N/A",
           }));
 
           setRows([...hotelRows, ...flightRows]);
@@ -67,21 +82,29 @@ const TransactionTable = ({ filters }) => {
       field: "action",
       headerName: "Action",
       width: 120,
-      renderCell: (params) => (
-        <div className="cellAction">
-          <div
-            className="viewButton"
-            onClick={() => navigate(`/admin/transactions/${params.row.type.toLowerCase()}/${params.row.id}`)}
-          >
-            View
+      renderCell: (params) => {
+        return (
+          <div className="cellAction">
+            <div
+              className="viewButton"
+              onClick={() =>
+                navigate(
+                  `/admin/transactions/${params.row.type.toLowerCase()}/${
+                    params.row.id
+                  }`
+                )
+              }
+            >
+              View
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
   return (
-    <Paper className="productContainer">
+    <Paper className="productable">
       <DataGrid
         className="datagrid"
         rows={rows}

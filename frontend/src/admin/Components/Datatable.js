@@ -62,6 +62,7 @@ const Datatable = () => {
             1: "Admin",
             2: "Staff",
             3: "Customer",
+            4: "Hotel Manager",
           };
 
           const formattedData = data.users.map((user) => ({
@@ -118,9 +119,25 @@ const Datatable = () => {
     <div className="datatable">
       <div className="datatableTitle">
         <span>User Management</span>
-        <Link to="/admin/users/userId/new" style={{ textDecoration: "none", pointerEvents: userRole === 2 ? "none" : "auto",
-                opacity: userRole === 2 ? 0.5 : 1, }}>
+        <Link
+          to="/admin/users/userId/new"
+          style={{
+            textDecoration: "none",
+            pointerEvents: userRole === 2 ? "none" : "auto",
+            opacity: userRole === 2 ? 0.5 : 1,
+          }}
+        >
           <span className="link">Add New User</span>
+        </Link>
+        <Link
+          to="/admin/user/managerId/new"
+          style={{
+            textDecoration: "none",
+            pointerEvents: userRole === 2 ? "none" : "auto",
+            opacity: userRole === 2 ? 0.5 : 1,
+          }}
+        >
+          <span className="link">Add Hotel Manager</span>
         </Link>
       </div>
       {loading ? (

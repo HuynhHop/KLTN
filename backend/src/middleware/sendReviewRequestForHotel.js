@@ -1,31 +1,42 @@
 const cron = require("node-cron");
 const Order = require("../models/Order");
+const User = require("../models/User");
 const sendMail = require("../util/sendMail");
 
 const sendReviewRequestForHotel = () => {
+  const url_server = process.env.URL_SERVER;
   // Chạy cron mỗi ngày lúc 00:00
   cron.schedule("0 0 * * *", async () => {
     console.log("Running review request job for hotel...");
 
     const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1); // Ngày mai
+    const twoDaysAgo = new Date(today);
+    twoDaysAgo.setDate(today.getDate() - 2); // Ngày hôm trước của ngày hôm qua
+    twoDaysAgo.setHours(0, 0, 0, 0); // Bắt đầu ngày hôm trước của ngày hôm qua
+    const endOfTwoDaysAgo = new Date(twoDaysAgo);
+    endOfTwoDaysAgo.setHours(23, 59, 59, 999); // Kết thúc ngày hôm trước của ngày hôm qua
 
     try {
       // Tìm các order liên quan đến khách sạn có ngày đặt là ngày mai
       const orders = await Order.find({
         serviceType: "Hotel", // Chỉ lấy các order liên quan đến khách sạn
         bookingDate: {
-          $gte: new Date(tomorrow.setHours(0, 0, 0, 0)), // Bắt đầu ngày mai
-          $lt: new Date(tomorrow.setHours(23, 59, 59, 999)), // Kết thúc ngày mai
+          $gte: twoDaysAgo, // Bắt đầu ngày hôm trước của ngày hôm qua
+          $lt: endOfTwoDaysAgo, // Kết thúc ngày hôm trước của ngày hôm qua
         },
-      });
+      })
+        .populate("user")
+        .populate({
+          path: "serviceId",
+          model: "Room",
+        });
 
       for (const order of orders) {
-        const reviewLink =
-          "http://localhost:3000/hotelInfo?id=${order.serviceId";
-        const email = order.contactInfo?.email || order.guestInfo?.email;
-
+        const reviewLink = `${url_server}/hotelInfo?id=${order.serviceId.hotel}`;
+        const email = order.user?.email;
+        console.log(
+          `Sending review request to ${email} for order ${order._id}...`
+        );
         if (email) {
           const html = `
             <!DOCTYPE html>
@@ -103,9 +114,8 @@ const sendReviewRequestForHotel = () => {
           `;
 
           // Gửi email
-          await sendMail.sendMail({
+          await sendMail.sendMailReviewHotel({
             email,
-            subject: "Yêu cầu đánh giá dịch vụ",
             html,
           });
         }
@@ -117,6 +127,7 @@ const sendReviewRequestForHotel = () => {
         "Error during review request job for hotel:",
         error.message
       );
+      console.log("Error details:", error);
     }
   });
 };

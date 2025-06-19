@@ -56,8 +56,8 @@ const Vouchertable = () => {
   // Cấu hình cột cho DataGrid
   const columns = [
     { field: "code", headerName: "Voucher", width: 170 },
-    { field: "discountType", headerName: "Discount Type", width: 150 },
-    { field: "discountValue", headerName: "Discount Value", width: 150 },
+    { field: "discountType", headerName: "Discount Type", width: 120 },
+    { field: "discountValue", headerName: "Discount Value", width: 120 },
     {
       field: "hotelId",
       headerName: "Hotel Name",
@@ -65,8 +65,8 @@ const Vouchertable = () => {
       renderCell: (params) => {
         return <div>{params.row.hotelId?.name || "Tất cả khách sạn"}</div>;
       },
-    },  
-     {
+    },
+    {
       field: "expiresAt",
       headerName: "Time Expires",
       width: 200,

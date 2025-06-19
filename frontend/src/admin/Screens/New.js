@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
@@ -6,7 +6,8 @@ import "../Style/new.scss";
 import { DriveFolderUploadOutlined } from "@mui/icons-material";
 
 const New = ({ inputs, title }) => {
-  const [files, setFiles] = useState([]); // Dùng cho nhiều ảnh
+  const [files, setFiles] = useState([]);
+  const [hotels, setHotels] = useState([]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const Id = queryParams.get("hotelId"); // Lấy hotelId từ URL
@@ -16,7 +17,8 @@ const New = ({ inputs, title }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
   const apiUrl = process.env.REACT_APP_API_URL;
-  const { userId, hotelId, roomId, voucherId, airlineId } = useParams();
+  const { userId, hotelId, roomId, voucherId, airlineId, managerId } =
+    useParams();
 
   const resourceType = userId
     ? "user"
@@ -28,7 +30,38 @@ const New = ({ inputs, title }) => {
     ? "voucher"
     : airlineId
     ? "flight"
+    : managerId
+    ? "manager"
     : "";
+
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/hotels`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        if (data.success) {
+          setHotels(data.data); // Lưu danh sách khách sạn
+        }
+      } catch (error) {
+        console.error("Error fetching hotels:", error);
+      }
+    };
+
+    fetchHotels();
+  }, [apiUrl, token]);
+
+  const handleHotelChange = (e) => {
+    const selectedHotelId = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      hotelId: selectedHotelId, // Gán _id của khách sạn vào formData
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -114,7 +147,7 @@ const New = ({ inputs, title }) => {
 
     // Add files to FormData
     if (files.length > 0) {
-      if (resourceType === "user") {
+      if (resourceType === "user" || resourceType === "manager") {
         data.append("avatar", files[0]); // Chỉ 1 ảnh cho User
       } else if (resourceType === "voucher" || resourceType === "flight") {
         data.append("image", files[0]);
@@ -129,6 +162,14 @@ const New = ({ inputs, title }) => {
       // Send request based on resourceType
       if (resourceType === "user") {
         response = await fetch(`${apiUrl}/user/createAccount`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: data,
+        });
+      } else if (resourceType === "manager") {
+        response = await fetch(`${apiUrl}/user/createHotelManager`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -175,6 +216,8 @@ const New = ({ inputs, title }) => {
         alert("Resource created successfully!");
         if (resourceType === "flight") {
           navigate(`/admin/airlines`);
+        } else if (resourceType === "manager") {
+          navigate(`/admin/users`);
         } else {
           navigate(`/admin/${resourceType}s`);
         }
@@ -199,7 +242,8 @@ const New = ({ inputs, title }) => {
           <div className="left">
             {(resourceType === "user" ||
               resourceType === "flight" ||
-              resourceType === "voucher") && (
+              resourceType === "voucher" ||
+              resourceType === "manager") && (
               <img
                 src={
                   files.length > 0
@@ -244,7 +288,8 @@ const New = ({ inputs, title }) => {
               )}
               {(resourceType === "user" ||
                 resourceType === "flight" ||
-                resourceType === "voucher") && (
+                resourceType === "voucher" ||
+                resourceType === "manager") && (
                 <div className="formInput">
                   <label htmlFor="file">
                     Avatar: <DriveFolderUploadOutlined className="icon" />
@@ -257,6 +302,7 @@ const New = ({ inputs, title }) => {
                   />
                 </div>
               )}
+
               {inputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
@@ -269,6 +315,27 @@ const New = ({ inputs, title }) => {
                   />
                 </div>
               ))}
+
+              {resourceType !== "hotel" &&
+                resourceType !== "user" &&
+                resourceType !== "flight" && (
+                  // inputs.some((input) => input.name === "hotelId") &&
+                  <div className="formInput">
+                    <label>Hotel</label>
+                    <select
+                      name="hotelId"
+                      value={formData.hotelId}
+                      onChange={handleHotelChange}
+                    >
+                      <option value="">Select a hotel</option>
+                      {hotels.map((hotel) => (
+                        <option key={hotel._id} value={hotel._id}>
+                          {hotel.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
               <button type="submit">Send</button>
             </form>

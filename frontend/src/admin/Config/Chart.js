@@ -70,8 +70,8 @@ const Chart = ({ aspect, title }) => {
           const formattedData = result.data.map((item) => ({
             name: `Tháng ${item.month}/${item.year}`,
             PricePaid: item.totalPricePaid,
-            Commission: item.totalCommission,
-            OrderCount: item.orderCount,
+            HotelIncome: item.hotelIncome,
+            FlightIncome: item.flightIncome,
           }));
           setData(formattedData);
         }
@@ -99,13 +99,13 @@ const Chart = ({ aspect, title }) => {
             className="chatGrid"
           />
           <XAxis dataKey="name" />
-          <YAxis yAxisId="left" />
-          <YAxis yAxisId="right" orientation="right" />
+          <YAxis />
           <Tooltip />
           <Legend />
-          <Bar yAxisId="left" dataKey="PricePaid" fill="#8884d8" />
-          <Bar yAxisId="left" dataKey="Commission" fill="#82ca9d" />
-          <Bar yAxisId="right" dataKey="OrderCount" fill="#ffc658" />
+          {/* <Bar dataKey="PricePaid" fill="#8884d8" /> */}
+          <Bar dataKey="HotelIncome" fill="#82ca9d" />
+          <Bar dataKey="FlightIncome" fill="#ffc658" />
+          {/* Hiển thị thu nhập của Flight */}
         </BarChart>
       </ResponsiveContainer>
     </div>

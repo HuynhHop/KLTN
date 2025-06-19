@@ -17,13 +17,17 @@ class VoucherController {
       });
 
       if (vouchers.length === 0) {
-        return res.status(404).json({ error: "Không tìm thấy voucher nào cho khách sạn này" });
+        return res
+          .status(404)
+          .json({ error: "Không tìm thấy voucher nào cho khách sạn này" });
       }
 
       res.json(vouchers);
     } catch (error) {
       console.error("Lỗi getVouchersByHotel:", error);
-      res.status(500).json({ error: "Lỗi server khi lấy voucher theo khách sạn" });
+      res
+        .status(500)
+        .json({ error: "Lỗi server khi lấy voucher theo khách sạn" });
     }
   }
 
@@ -46,13 +50,20 @@ class VoucherController {
           error: err.message,
         });
       }
-
+      const { code, discountType, discountValue, hotelId, expiresAt } =
+        req.body;
       if (req.file && req.file.path) {
         req.body.image = req.file.path;
       }
 
       try {
-        const voucher = new Voucher(req.body);
+        const voucher = new Voucher({
+          code,
+          discountType,
+          discountValue,
+          hotelId: hotelId || null,
+          expiresAt,
+        });
         await voucher.save();
         res.json(voucher);
       } catch (error) {
@@ -69,7 +80,9 @@ class VoucherController {
       const voucher = await Voucher.findOne({ code });
 
       if (!voucher || new Date(voucher.expiresAt) < new Date()) {
-        return res.status(404).json({ error: "Mã không hợp lệ hoặc đã hết hạn" });
+        return res
+          .status(404)
+          .json({ error: "Mã không hợp lệ hoặc đã hết hạn" });
       }
 
       if (voucher.hotelId) {
@@ -119,7 +132,11 @@ class VoucherController {
       }
 
       try {
-        const updated = await Voucher.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updated = await Voucher.findByIdAndUpdate(
+          req.params.id,
+          req.body,
+          { new: true }
+        );
         if (!updated) {
           return res.status(404).json({ message: "Không tìm thấy voucher" });
         }
@@ -137,10 +154,14 @@ class VoucherController {
       const deleted = await Voucher.findByIdAndDelete(id);
 
       if (!deleted) {
-        return res.status(404).json({ success: false, message: "Không tìm thấy voucher" });
+        return res
+          .status(404)
+          .json({ success: false, message: "Không tìm thấy voucher" });
       }
 
-      res.status(200).json({ success: true, message: "Xoá voucher thành công" });
+      res
+        .status(200)
+        .json({ success: true, message: "Xoá voucher thành công" });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });
     }

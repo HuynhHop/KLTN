@@ -334,7 +334,7 @@ class UserController {
           fullname,
           email,
           phone,
-          role: 4, // Role 2 là HotelManager
+          role: 4,
           hotelId,
         });
         if (req.file && req.file.path) {
